@@ -784,25 +784,57 @@ function compare(target, heard){
   const marks = t.map(w=>{ const m = hs.has(w) || hs.has(w.replace("'","")); if(m) ok++; return {w,m}; });
   return {marks, score: t.length? Math.round(ok/t.length*100):0};
 }
-function startRec(target, box){
+let recTimer=null, recTries=0;
+function isIOS(){ return /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1); }
+function recHelp(kind, box, target){
+  // kind: "network" | "timeout" | "no-speech" | "not-allowed" | "other"
+  const ios=isIOS();
+  let msg;
+  if(kind==="not-allowed") msg = micHelp("麦克风没有打开。");
+  else if(kind==="no-speech") msg = '<b>没有听到声音。</b>请靠近麦克风，大声一点，再试一次。';
+  else {
+    msg = '<b>语音识别服务暂时没有响应。</b>这不是你的问题——“我来读”要把声音发给手机系统的识别服务，有时会慢或者断开。<br>可以：① 再按一次“🎤 我来读”；② 换个网络（Wi‑Fi / 流量）再试；';
+    if(ios) msg += '③ 检查 <b>设置 → 通用 → 键盘 → 启用听写</b> 已打开，并在“听写语言”里添加 <b>英语</b>；';
+    else msg += '③ 确认手机里的 Google 语音服务可用；';
+    msg += '④ 识别不了也没关系——用下面的“🎙️ 录下我的声音”读一遍、听回放，一样算练习。';
+  }
+  box.innerHTML = msg + '<div class="row" style="margin-top:8px"><button class="btn" onclick="startRec('+JSON.stringify(target).replace(/"/g,"&quot;")+',this.closest(\'.result\'))">🎤 再试一次</button><button class="btn sec2" onclick="markSpoken(this.closest(\'.result\'))">✓ 我已经大声读过了</button></div>';
+}
+function markSpoken(box){
+  // manual completion for devices where recognition is unreliable: counts toward the chapter's speaking step
+  const m=/^d(\d+)$/.exec(box.id); const ch=COURSE.find(x=>x.id===cur);
+  if(m && ch){ const k=ch.id+"-"+m[1]; if((S.drill[k]||0)<85){ S.drill[k]=85; save(); } const t=document.querySelector(".ptrack"); if(t) t.outerHTML=trackerHTML(ch); }
+  box.innerHTML='<span class="score g">✓ 已完成</span> 很好！你已经大声读过这句了。想要打分的话，随时再按“🎤 我来读”。';
+  face.mood("happy"); face.bounce();
+}
+function startRec(target, box, isRetry){
   if(!SR){ box.innerHTML = micHelp("这个浏览器不支持语音识别。"); return; }
-  if(activeRec){ try{activeRec.stop();}catch(e){} }
+  if(activeRec){ try{activeRec.abort();}catch(e){} activeRec=null; }
   if(mediaRec && mediaRec.state==="recording"){ try{ mediaRec.stop(); }catch(e){} }
-  stopAll();
+  stopAll(); clearTimeout(recTimer);
+  if(!isRetry) recTries=0;
   const r = new SR(); activeRec=r;
   r.lang="en-US"; r.interimResults=true; r.maxAlternatives=3; r.continuous=false;
   box.innerHTML = '<span class="rec"><span class="dot"></span> 正在听…请大声、慢慢地读上面的英文</span>';
   face.mood("think");
-  let finalText="";
+  let finalText="", gotAudio=false, handled=false, myTimer=null;
+  const finish=(kind)=>{ if(handled) return; handled=true; clearTimeout(myTimer); if(activeRec===r) activeRec=null; face.mood("happy");
+    if(finalText.trim()){ showResult(target, finalText.trim(), box); return; }
+    // transient failure: retry once silently before showing help
+    if((kind==="network"||kind==="timeout"||kind==="aborted") && recTries<1){ recTries++; box.innerHTML='<span class="rec"><span class="dot"></span> 连接有点慢，正在重试…请再读一遍</span>'; setTimeout(()=>startRec(target, box, true), 400); return; }
+    recHelp(kind, box, target); };
+  r.onaudiostart=()=>{ gotAudio=true; };
   r.onresult = e=>{ let s=""; for(let i=e.resultIndex;i<e.results.length;i++){ s+=e.results[i][0].transcript; if(e.results[i].isFinal) finalText+=e.results[i][0].transcript+" "; }
     if(!finalText) box.innerHTML = '<span class="rec"><span class="dot"></span> 听到：<span class="en">'+esc(s)+'</span></span>'; };
-  r.onerror = e=>{ activeRec=null;
-    if(e.error==="not-allowed" || e.error==="service-not-allowed") box.innerHTML = micHelp("麦克风没有打开。");
-    else if(e.error==="no-speech") box.innerHTML = '没有听到声音。请靠近麦克风，大声一点，再试一次。';
-    else box.innerHTML = '识别出错（'+esc(e.error)+'）。请再试一次。'; };
-  r.onend = ()=>{ activeRec=null; if(!finalText){ if(box.textContent.includes("正在听")) box.innerHTML='没有听到完整的句子，再试一次。'; return; }
-    showResult(target, finalText.trim(), box); };
-  try{ r.start(); }catch(err){ box.innerHTML = micHelp("无法启动麦克风。"); }
+  r.onerror = e=>{ const k=e.error; try{ r.abort(); }catch(x){}
+    if(k==="not-allowed"||k==="service-not-allowed") finish("not-allowed");
+    else if(k==="no-speech") finish("no-speech");
+    else if(k==="network"||k==="aborted") finish(k);
+    else finish("other"); };
+  r.onend = ()=>{ finish(gotAudio ? "timeout" : "network"); };
+  // safety net: iOS sometimes never fires onend when the speech service stalls
+  myTimer=setTimeout(()=>{ try{ r.abort(); }catch(e){} finish("timeout"); }, 12000); recTimer=myTimer;
+  try{ r.start(); }catch(err){ finish("other"); }
 }
 function micHelp(head){
   return '<b>'+head+'</b><br>说话练习需要麦克风。请在浏览器地址栏左边点一下“锁”或“设置”图标，把麦克风改为“允许”，然后刷新页面再试。手机上请在弹出的提示里选择“允许”。';
@@ -976,6 +1008,7 @@ function learnHTML(c){
 function speakHTML(c){
   let h='<div class="callout">怎么练：① 点“🔊 听”两三遍，可以用“🐢 慢”。② 点“🎤 我来读”，大声、慢慢读出英文。③ 看结果：绿色是被听清的词，红色是没听清的，点红色词单独再听。④ 用“🎙️ 录下我的声音”回放，和标准读音比。目标是每句 85% 以上。</div>'+speedCtl();
   if(!SR) h+='<div class="callout warn">'+micHelp("这个浏览器不支持语音识别。")+'</div>';
+  else if(isIOS()) h+='<div class="callout" style="font-size:14px">📱 iPhone 小提示：“🎤 我来读”用的是手机系统的听写服务。如果它反复没有反应，请到 设置 → 通用 → 键盘 → 启用听写，并添加英语。“🎙️ 录下我的声音”不需要这个设置。</div>';
   c.drills.forEach(([en,zh],i)=>{ const id="d"+i; h+='<div class="drill"><div class="en">'+esc(en)+'</div><div class="zh">'+esc(zh)+'</div><div class="row"><button class="ib" onclick="say('+JSON.stringify(en).replace(/"/g,"&quot;")+')">🔊 听</button><button class="ib" onclick="say('+JSON.stringify(en).replace(/"/g,"&quot;")+',0.6)">🐢 慢</button><button class="btn" onclick="startRec('+JSON.stringify(en).replace(/"/g,"&quot;")+',document.getElementById(\''+id+'\'))">🎤 我来读</button><button class="btn sec2" onclick="toggleRecord(this,document.getElementById(\''+id+'p\'))">🎙️ 录下我的声音</button></div><div class="result" id="'+id+'">还没有读。点“🎤 我来读”开始。</div><div id="'+id+'p"></div></div>'; });
   h+='<div class="row"><button class="btn" onclick="go(\''+c.id+'\',\'ex\')">去做练习 →</button></div>';
   return h;
