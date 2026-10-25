@@ -748,6 +748,12 @@ const AUDIO = {"A.": "e1354cc842", "apple": "1f3870be27", "B": "9d5ed678fe", "bo
 const AUDIO_BASE = "audio/";
 let curAudio=null; const blobCache={};
 function stopAll(){ try{ speechSynthesis.cancel(); }catch(e){} if(curAudio){ curAudio.pause(); curAudio=null; } face.talk(false); }
+function releaseAudioSession(){
+  // before speech recognition: silence every <audio> (recorded-voice playback keeps the iOS audio session active) and drop any live mic stream
+  stopAll();
+  document.querySelectorAll("audio").forEach(a=>{ try{ a.pause(); a.currentTime=0; }catch(e){} });
+  if(micStream){ try{ micStream.getTracks().forEach(t=>t.stop()); }catch(e){} micStream=null; }
+}
 async function say(text, rate){
   const r = rate ?? S.speed;
   stopAll();
@@ -820,11 +826,12 @@ function startRec(target, box, isRetry){
   if(!SR){ box.innerHTML = micHelp("这个浏览器不支持语音识别。"); return; }
   const prev=activeRec; activeRec=null;
   if(prev){ releaseRec(prev); }
-  if(mediaRec && mediaRec.state==="recording"){ try{ mediaRec.stop(); }catch(e){} }
-  stopAll(); clearTimeout(recTimer);
+  const wasPlaying=[...document.querySelectorAll("audio")].some(a=>!a.paused) || !!curAudio;
+  if(mediaRec && mediaRec.state==="recording"){ try{ mediaRec.stop(); }catch(e){} recBusyUntil=Math.max(recBusyUntil, Date.now()+600); }
+  releaseAudioSession(); clearTimeout(recTimer);
   if(!isRetry) recTries=0;
   // iOS needs a moment after the previous session is released before a new one can take the mic
-  const wait=Math.max(0, recBusyUntil-Date.now(), prev?350:0);
+  const wait=Math.max(0, recBusyUntil-Date.now(), prev?350:0, wasPlaying?500:0);
   if(wait>0){ box.innerHTML='<span class="rec"><span class="dot"></span> 准备中…</span>'; setTimeout(()=>startRec(target, box, isRetry), wait); recBusyUntil=0; return; }
   const r = new SR(); activeRec=r;
   r.lang="en-US"; r.interimResults=true; r.maxAlternatives=3; r.continuous=false;
@@ -878,7 +885,7 @@ function hint(w){
 }
 
 /* ---------- record & play back ---------- */
-let mediaRec=null, chunks=[], recBtn=null;
+let mediaRec=null, chunks=[], recBtn=null, micStream=null;
 function recMime(){
   if(!window.MediaRecorder) return null;
   for(const m of ["audio/mp4","audio/webm;codecs=opus","audio/webm","audio/ogg;codecs=opus","audio/aac","audio/mpeg"]){
@@ -893,20 +900,21 @@ async function toggleRecord(btn, player){
   if(activeRec){ try{ activeRec.abort(); }catch(e){} activeRec=null; }
   stopAll();
   try{
-    const stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}});
+    const stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}}); micStream=stream;
     const mime = recMime(); chunks=[];
     mediaRec = mime ? new MediaRecorder(stream,{mimeType:mime}) : new MediaRecorder(stream);
     recBtn = btn;
     mediaRec.ondataavailable=e=>{ if(e.data && e.data.size) chunks.push(e.data); };
     mediaRec.onerror=()=>{ stream.getTracks().forEach(t=>t.stop()); btn.textContent="🎙️ 录下我的声音"; player.innerHTML='录音出错了，请再试一次。'; };
     mediaRec.onstop=()=>{
-      stream.getTracks().forEach(t=>t.stop());
+      stream.getTracks().forEach(t=>t.stop()); if(micStream===stream) micStream=null;
       const type = mediaRec.mimeType || mime || "audio/webm";
       const blob = new Blob(chunks,{type});
       btn.textContent="🎙️ 录下我的声音"; mediaRec=null; recBusyUntil=Date.now()+500;
       if(!blob.size){ player.innerHTML='没有录到声音。请靠近麦克风，按一下“🎙️ 录下我的声音”，读完再按“⏹ 停止录音”。'; return; }
       const url=URL.createObjectURL(blob);
       player.innerHTML='<div style="margin-top:8px;font-size:14px">回放，和标准读音对比：</div><audio controls playsinline preload="metadata" src="'+url+'" style="width:100%;margin-top:4px"></audio>';
+      const el=player.querySelector("audio"); el.addEventListener("play",()=>{ if(activeRec){ releaseRec(activeRec); activeRec=null; } }); el.addEventListener("ended",()=>{ recBusyUntil=Math.max(recBusyUntil, Date.now()+400); }); el.addEventListener("pause",()=>{ recBusyUntil=Math.max(recBusyUntil, Date.now()+400); });
     };
     mediaRec.start(250);
     btn.textContent="⏹ 停止录音";
