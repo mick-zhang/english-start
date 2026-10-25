@@ -1,0 +1,1091 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>html{color-scheme:light dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>英语起步课堂</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Lexend:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: fixed chapter rail on the left (stacks to a top strip on phones); lesson area with four study tabs; teacher drawer pinned bottom-right. */
+:root{
+  --bg:#f6f8f7; --panel:#ffffff; --fg:#17211f; --muted:#5d6b67; --line:#d9e1de;
+  --accent:#0f6b5c; --accent-ink:#ffffff; --accent-soft:#dff1ec;
+  --good:#1f8a4c; --good-soft:#dff5e7; --bad:#b4322d; --bad-soft:#fbe3e1; --warn:#9a6b00; --warn-soft:#fff3d6;
+  --zh:"Noto Sans SC",system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  --en:"Lexend","Noto Sans SC",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1715; --panel:#172120; --fg:#e8eeec; --muted:#9db0aa; --line:#2b3a36;
+  --accent:#4fc3a9; --accent-ink:#0b1715; --accent-soft:#163b33;
+  --good:#5fd38a; --good-soft:#143826; --bad:#ff8a7f; --bad-soft:#4a1f1c; --warn:#f2c15c; --warn-soft:#3f3112; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1715; --panel:#172120; --fg:#e8eeec; --muted:#9db0aa; --line:#2b3a36;
+  --accent:#4fc3a9; --accent-ink:#0b1715; --accent-soft:#163b33;
+  --good:#5fd38a; --good-soft:#143826; --bad:#ff8a7f; --bad-soft:#4a1f1c; --warn:#f2c15c; --warn-soft:#3f3112; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--zh);font-size:16px;line-height:1.6;margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+button{font-family:inherit;font-size:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.en{font-family:var(--en)}
+.app{display:grid;grid-template-columns:260px minmax(0,1fr);min-height:100%}
+.rail{border-right:1px solid var(--line);background:var(--panel);padding-block:20px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:12px;position:sticky;top:env(safe-area-inset-top,0px);height:calc(100vh - env(safe-area-inset-top,0px));overflow-y:auto}
+.brand{display:flex;flex-direction:column;gap:2px;margin-bottom:6px}
+.brand h1{font-size:20px;margin:0;font-weight:700}
+.brand .en{font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.prog{font-size:13px;color:var(--muted);margin-bottom:14px}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--accent);width:0}
+.lvl{margin-top:14px}
+.lvl h2{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 6px;font-weight:600}
+.chap{display:flex;gap:10px;align-items:center;width:100%;border:0;background:none;color:var(--fg);padding:8px 8px;border-radius:8px;text-align:left;line-height:1.3}
+.chap:hover{background:var(--accent-soft)}
+.chap[aria-current="true"]{background:var(--accent);color:var(--accent-ink)}
+.chap .n{font-family:var(--en);font-size:12px;width:22px;flex:none;opacity:.7;font-variant-numeric:tabular-nums}
+.chap .t{font-size:14px;flex:1;min-width:0}
+.chap .d{width:10px;height:10px;border-radius:50%;border:2px solid currentColor;flex:none;opacity:.5}
+.chap .d.done{background:currentColor;opacity:1}
+.chap.locked{opacity:.5}
+.main{min-width:0;padding-block:24px 120px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:860px;margin:0 auto}
+.eyebrow{font-size:13px;color:var(--accent);font-weight:600;letter-spacing:.04em}
+h2.title{font-size:28px;margin:4px 0 8px;line-height:1.2;text-wrap:balance;overflow-wrap:anywhere}
+.goal{color:var(--muted);margin:0 0 18px;max-width:65ch}
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:20px;overflow-x:auto}
+.tab{border:0;background:none;color:var(--muted);padding:10px 14px;border-bottom:3px solid transparent;font-weight:500;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+.sec{margin-bottom:28px}
+.sec h3{font-size:18px;margin:0 0 6px}
+.sec p.note{color:var(--muted);margin:0 0 12px;max-width:65ch}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.items{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:start}
+.item .w{font-family:var(--en);font-size:22px;font-weight:600;line-height:1.2}
+.item .ipa{font-family:var(--en);color:var(--muted);font-size:13px}
+.item .zh{font-size:15px}
+.item .tip{grid-column:1/-1;font-size:13px;color:var(--muted);border-top:1px dashed var(--line);padding-top:6px;margin-top:4px}
+.item .btns{display:flex;flex-direction:column;gap:6px}
+.ib{border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:8px;padding:6px 10px;font-size:13px;white-space:nowrap;min-height:34px}
+.ib:hover{border-color:var(--accent);color:var(--accent)}
+.btn{border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);border-radius:10px;padding:9px 16px;font-weight:600}
+.btn.sec2{background:transparent;color:var(--accent)}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.danger{background:var(--bad);border-color:var(--bad);color:#fff}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.callout{background:var(--accent-soft);border-radius:12px;padding:12px 16px;margin-bottom:16px}
+.callout.warn{background:var(--warn-soft)}
+.drill{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+.drill .en{font-size:24px;font-weight:600;line-height:1.3}
+.drill .zh{color:var(--muted);margin-bottom:10px}
+.result{margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--bg);border:1px solid var(--line);font-size:15px}
+.result .heard{font-family:var(--en);font-size:18px;margin:4px 0}
+.wd{display:inline-block;padding:0 4px;border-radius:4px;margin:2px 2px 2px 0;font-family:var(--en)}
+.wd.ok{background:var(--good-soft);color:var(--good)}
+.wd.no{background:var(--bad-soft);color:var(--bad);text-decoration:underline wavy}
+.score{font-weight:700}
+.score.g{color:var(--good)} .score.b{color:var(--bad)} .score.w{color:var(--warn)}
+.rec{display:inline-flex;align-items:center;gap:6px}
+.rec .dot{width:10px;height:10px;border-radius:50%;background:var(--bad);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.3}}
+@media (prefers-reduced-motion:reduce){.rec .dot{animation:none}}
+.ex{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+.ex .q{font-weight:600;margin-bottom:8px}
+.ex .q .en{font-size:20px}
+.opts{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+.opt{border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:10px;padding:10px 12px;text-align:left}
+.opt:hover{border-color:var(--accent)}
+.opt.ok{background:var(--good-soft);border-color:var(--good)}
+.opt.no{background:var(--bad-soft);border-color:var(--bad)}
+.ex input[type=text]{font-family:var(--en);font-size:18px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);width:min(100%,320px)}
+.fb{margin-top:8px;font-size:14px}
+.fb.ok{color:var(--good)} .fb.no{color:var(--bad)}
+.hw{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.hw li{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;gap:12px;align-items:flex-start}
+.hw input{width:20px;height:20px;margin-top:3px;accent-color:var(--accent);flex:none}
+.hw .k{font-size:12px;color:var(--accent);font-weight:600;letter-spacing:.04em}
+.foot{display:flex;justify-content:space-between;gap:10px;margin-top:30px;flex-wrap:wrap}
+.teach{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));z-index:20}
+.teach .open{border-radius:999px;padding:12px 18px;box-shadow:0 6px 20px rgba(0,0,0,.18);display:flex;gap:8px;align-items:center}
+.panel{display:none;width:min(420px,calc(100vw - 32px));height:min(560px,calc(100vh - 100px));background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.22);flex-direction:column;overflow:hidden}
+.panel.on{display:flex}
+.panel header{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--accent);color:var(--accent-ink)}
+.panel header b{font-size:15px}
+.panel header button{background:none;border:0;color:inherit;font-size:20px;line-height:1}
+.chat{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;min-height:0}
+.msg{max-width:90%;padding:8px 12px;border-radius:12px;font-size:14px;white-space:pre-wrap;line-height:1.55}
+.msg.me{align-self:flex-end;background:var(--accent-soft)}
+.msg.ai{align-self:flex-start;background:var(--bg);border:1px solid var(--line)}
+.msg .say{display:inline-block;margin-top:6px}
+.compose{display:flex;gap:6px;padding:10px;border-top:1px solid var(--line)}
+.compose textarea{flex:1;resize:none;height:44px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--bg);color:var(--fg);font-family:inherit;font-size:14px;min-width:0}
+.quick{display:flex;gap:6px;flex-wrap:wrap;padding:0 10px 8px}
+.quick button{font-size:12px;border:1px solid var(--line);background:var(--bg);color:var(--muted);border-radius:999px;padding:3px 10px}
+.home .levels{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));margin-top:14px}
+.home .lv{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.home .lv b{font-size:17px}
+.home .lv .en{color:var(--muted);font-size:13px}
+.home .lv ul{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:14px}
+.home .lv.now{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.badge{display:inline-block;font-size:11px;padding:1px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:600;margin-left:6px}
+.ltr{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.ltr .l{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.ltr .l .big{font-family:var(--en);font-size:40px;font-weight:700;line-height:1}
+.ltr .l .nm{font-size:13px;color:var(--muted);margin:4px 0}
+.ltr .l .ex2{font-family:var(--en);font-size:14px}
+.ltr .l .tp{font-size:12px;color:var(--muted);margin-top:4px;text-align:left}
+.mouth{font-size:14px;background:var(--bg);border-left:3px solid var(--accent);padding:8px 12px;border-radius:0 8px 8px 0;margin:8px 0}
+.speed{display:flex;gap:4px;align-items:center;font-size:13px;color:var(--muted)}
+.speed button{border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:6px;padding:6px 10px;font-size:13px;min-height:34px}
+.speed button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+/* mascot face */
+.face{display:inline-block;width:var(--fs,96px);height:var(--fs,96px);vertical-align:middle}
+.face svg{width:100%;height:100%;overflow:visible}
+.face .head{fill:var(--accent-soft);stroke:var(--accent);stroke-width:3}
+.face .eye{fill:var(--fg);transform-origin:center;transform-box:fill-box;animation:blink 4.2s infinite}
+.face .eye.r{animation-delay:.08s}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
+.face .cheek{fill:#ff8fa3;opacity:.55;transition:opacity .3s}
+.face .mouth{fill:none;stroke:var(--fg);stroke-width:3.5;stroke-linecap:round;transition:d .25s}
+.face .tongue{fill:#ff8fa3;opacity:0}
+.face .brow{fill:none;stroke:var(--fg);stroke-width:3;stroke-linecap:round;opacity:0;transition:opacity .2s}
+.face .mouthOpen{fill:var(--fg);opacity:0;transform-origin:center;transform-box:fill-box}
+.face .shine{fill:#fff;opacity:.9}
+.face[data-mood="happy"] .mouth{d:path("M34 70 Q50 86 66 70")}
+.face[data-mood="happy"] .cheek{opacity:.9}
+.face[data-mood="think"] .mouth{d:path("M42 74 Q50 70 58 74")}
+.face[data-mood="think"] .brow{opacity:1}
+.face[data-mood="oops"] .mouth{d:path("M38 76 Q50 68 62 76")}
+.face[data-mood="oops"] .cheek{opacity:.2}
+.face[data-mood="wow"] .mouth{d:path("M42 70 Q50 84 58 70 Q50 64 42 70")}
+.face.talking .mouth{opacity:0}
+.face.talking .mouthOpen{opacity:1;animation:talk .22s infinite alternate}
+@keyframes talk{from{transform:scaleY(.25)}to{transform:scaleY(1)}}
+.face.bounce{animation:bounce .6s}
+@keyframes bounce{0%,100%{transform:translateY(0)}30%{transform:translateY(-10px) rotate(-4deg)}60%{transform:translateY(0) rotate(3deg)}}
+.face .wave{transform-origin:84px 90px;opacity:0}
+.face.hello .wave{opacity:1;animation:wave 1.4s ease-in-out 2}
+@keyframes wave{0%,100%{transform:rotate(0)}25%{transform:rotate(-25deg)}75%{transform:rotate(18deg)}}
+@media (prefers-reduced-motion:reduce){.face .eye,.face.talking .mouthOpen,.face.bounce,.face.hello .wave{animation:none}.face.talking .mouthOpen{transform:scaleY(.6)}}
+.who{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);margin:8px 0 12px}
+.who b{color:var(--fg);display:block;font-size:14px}
+.who button{font-size:12px;border:1px solid var(--line);background:none;color:var(--muted);border-radius:6px;padding:6px 10px;min-height:34px}
+.who img{width:30px;height:30px;border-radius:50%}
+/* login */
+.login{position:fixed;inset:0;z-index:40;background:var(--bg);overflow-y:auto;padding-block:40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.login[hidden]{display:none}
+.login .box{max-width:440px;margin:0 auto;text-align:center}
+.login h1{font-size:30px;margin:10px 0 4px}
+.login .sub{color:var(--muted);margin:0 0 22px}
+.login .card{text-align:left}
+.login label{display:block;font-size:14px;margin:10px 0 4px;font-weight:600}
+.login input{width:100%;font-size:17px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg);font-family:var(--en)}
+.login .err{color:var(--bad);font-size:14px;min-height:20px;margin-top:6px}
+.login .plist{display:grid;gap:8px;margin:10px 0}
+.login .pbtn{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:10px;padding:10px 12px;text-align:left}
+.login .pbtn:hover{border-color:var(--accent)}
+.login .pbtn small{color:var(--muted)}
+.login .fine{font-size:12px;color:var(--muted);margin-top:14px}
+.ptrack{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:0 0 18px}
+.ptrack .top{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+.ptrack .top b{color:var(--fg)}
+.ptrack .bar{height:10px;margin-top:8px}
+.ptrack .bar i{transition:width .5s}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}
+.step{position:relative;border:0;background:var(--bg);border-radius:8px;padding:8px 6px;text-align:center;font-size:13px;color:var(--muted);border-top:4px solid var(--line);line-height:1.3;-webkit-tap-highlight-color:transparent}
+.step.on{background:var(--accent);color:var(--accent-ink);border-top-color:var(--accent);font-weight:600}
+.step.on small{color:inherit;opacity:.9}
+.step .ok{position:absolute;top:6px;right:6px;width:16px;height:16px;border-radius:50%;background:var(--good);color:#fff;font-size:11px;line-height:16px;font-weight:700}
+.step.on .ok{background:#fff;color:var(--good)}
+.step small{display:block;font-size:11px}
+.topbar{display:none}
+.scrim{display:none}
+.closeMenu{display:none}
+@media (max-width:760px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .closeMenu{display:flex}
+  .topbar{display:flex;align-items:center;gap:10px;position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:var(--panel);border-bottom:1px solid var(--line);padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .topbar .menu{border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:8px;width:40px;height:40px;font-size:20px;flex:none}
+  .topbar .tt{flex:1;min-width:0;line-height:1.2}
+  .topbar .tt b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .topbar .tt span{font-size:12px;color:var(--muted)}
+  .topbar .mini{width:46px;height:6px;background:var(--line);border-radius:3px;overflow:hidden;flex:none}
+  .topbar .mini i{display:block;height:100%;background:var(--accent)}
+  .rail{position:fixed;top:0;left:0;bottom:0;width:min(300px,85vw);height:auto;z-index:31;border-right:1px solid var(--line);transform:translateX(-105%);transition:transform .25s;padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:calc(16px + env(safe-area-inset-bottom,0px));box-shadow:0 0 40px rgba(0,0,0,.25)}
+  .rail.open{transform:none}
+  .scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:30;opacity:0;pointer-events:none;transition:opacity .25s}
+  .scrim.on{opacity:1;pointer-events:auto}
+  @media (prefers-reduced-motion:reduce){.rail,.scrim{transition:none}}
+  .main{padding-block:16px 140px}
+  h2.title{font-size:24px}
+  .item .w{font-size:20px}
+  .steps{grid-template-columns:repeat(2,1fr)}
+  .teach{right:max(12px,env(safe-area-inset-right,0px));bottom:max(12px,env(safe-area-inset-bottom,0px))}
+  .teach .open{padding:10px 16px;font-size:15px}
+  .panel{position:fixed;inset:env(safe-area-inset-top,0px) 0 0 0;width:auto;height:auto;border-radius:0;border:0}
+  .panel header{padding-top:12px}
+  .compose{padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}
+  .drill .en{font-size:21px}
+  .ex .q .en{font-size:18px}
+}
+</style>
+
+<div class="login" id="login">
+  <div class="box">
+    <div id="loginFace"></div>
+    <h1>英语起步课堂</h1>
+    <p class="sub">我是小英，你的英语老师。先登录，我才能记住你学到哪里了。</p>
+    <div class="card" id="loginBody"></div>
+    <p class="fine" id="loginFine"></p>
+  </div>
+</div>
+
+<div class="scrim" id="scrim" onclick="toggleMenu(false)"></div>
+<div class="app">
+  <div class="topbar"><button class="menu" onclick="toggleMenu(true)" aria-label="打开菜单">☰</button><div class="tt"><b id="tbTitle">英语起步课堂</b><span id="tbSub">第一级 · 入门</span></div><div class="mini"><i id="tbBar"></i></div></div>
+  <nav class="rail" id="rail" aria-label="章节">
+    <div class="brand"><h1>英语起步课堂</h1><span class="en">English Start · TEST</span></div>
+    <div class="who" id="who"></div>
+    <div class="prog">第一级进度 <span id="pct">0%</span><div class="bar"><i id="pbar"></i></div></div>
+    <button class="chap closeMenu" style="margin-bottom:6px;border:1px solid var(--line)" onclick="toggleMenu(false)" type="button"><span class="n">✕</span><span class="t">关闭菜单</span></button>
+    <button class="chap" id="homeBtn" onclick="go('home')"><span class="n">★</span><span class="t">课程总览</span></button>
+    <div class="lvl" id="chapList"><h2>第一级 · 入门</h2></div>
+  </nav>
+  <main class="main"><div class="wrap" id="view"></div></main>
+</div>
+
+<div class="teach">
+  <div class="panel" id="panel" role="dialog" aria-label="老师">
+    <header><b style="display:flex;align-items:center;gap:8px"><span id="panelFace" style="--fs:40px"></span>问小英老师（中文提问）</b><button onclick="togglePanel(false)" aria-label="关闭">×</button></header>
+    <div class="chat" id="chat"></div>
+    <div class="quick" id="quick"></div>
+    <div class="compose">
+      <textarea id="ask" placeholder="例如：th 的发音我总是发成 s，怎么办？"></textarea>
+      <button class="btn" id="askBtn" onclick="askTeacher()">发送</button>
+    </div>
+  </div>
+  <button class="btn open" id="openBtn" onclick="togglePanel(true)"><span id="openFace" style="--fs:34px"></span>问小英老师</button>
+</div>
+
+<script>
+/* ---------- helpers for pronunciation ---------- */
+const V = {A:"/eɪ/",B:"/biː/",C:"/siː/",D:"/diː/",E:"/iː/",F:"/ef/",G:"/dʒiː/",H:"/eɪtʃ/",I:"/aɪ/",J:"/dʒeɪ/",K:"/keɪ/",L:"/el/",M:"/em/",N:"/en/",O:"/oʊ/",P:"/piː/",Q:"/kjuː/",R:"/ɑːr/",S:"/es/",T:"/tiː/",U:"/juː/",V:"/viː/",W:"/ˈdʌbəl.juː/",X:"/eks/",Y:"/waɪ/",Z:"/ziː/"};
+const LETTERS = [
+ ["A","apple","嘴张大，像说“诶”。字母名读“诶—”（ei），拉长。单词里常发 /æ/，嘴角向两边拉开，下巴往下，像被人捏住脸说“啊”。"],
+ ["B","book","双唇先闭紧再放开，声带要震动。注意：字母名是“比—”，不是“波”。"],
+ ["C","cat","字母名读“西—”。在单词里多数读 /k/（cat），在 e、i、y 前读 /s/（city）。"],
+ ["D","dog","舌尖顶上牙龈后面，弹开，声带震动。字母名“低—”。"],
+ ["E","egg","字母名“衣—”，嘴角用力向两边拉。单词里常读 /e/，嘴半开，像“哎”但更短。"],
+ ["F","fish","上牙轻咬下唇，吹气。中文没有这个动作，一定要咬住下唇，不要读成“夫”。"],
+ ["G","go","字母名“机—”（dʒiː）。单词里多读 /g/，喉咙发力，像“哥”但没有“e”的尾音。"],
+ ["H","hat","字母名“诶吃”（eɪtʃ），很多人漏掉最后的“吃”。单词里读 /h/，轻轻呼气。"],
+ ["I","ice","字母名“爱”。单词里常读 /ɪ/，短而轻，嘴不要太用力，像“衣”和“哎”之间。"],
+ ["J","juice","字母名“杰—”（dʒeɪ）。舌面贴上颚，声带震动，像“ji”但有气流摩擦。"],
+ ["K","key","字母名“剋—”（keɪ）。单词里读 /k/，送气要足。"],
+ ["L","love","字母名“哎奥”（el）：先“哎”，再把舌尖顶到上牙后面。词尾的 l（如 ball）舌尖也要顶上去，不要读成“奥”。"],
+ ["M","milk","字母名“哎姆”：先“哎”，再闭嘴发鼻音。闭嘴这一步不能漏。"],
+ ["N","no","字母名“哎恩”：先“哎”，再舌尖顶上齿龈发鼻音，嘴不闭。"],
+ ["O","open","字母名“欧—”（oʊ），嘴先圆后收小。单词里常读 /ɑ/（hot），嘴张大。"],
+ ["P","pen","字母名“劈—”。双唇闭紧，用力爆破送气，手放嘴前能感到风。"],
+ ["Q","queen","字母名“克优—”（kjuː）。单词里几乎总是 qu，读 /kw/。"],
+ ["R","red","字母名“啊儿”（ɑːr）。发 r 时舌头往后卷，舌尖不碰任何地方，嘴唇略圆。和中文“日”不一样。"],
+ ["S","sun","字母名“哎斯”：先“哎”，再吹气“斯”。"],
+ ["T","tea","字母名“踢—”。舌尖顶上齿龈，爆破送气。"],
+ ["U","up","字母名“优—”（juː）。单词里常读 /ʌ/（up, cup），嘴半开放松，像轻轻的“阿”。"],
+ ["V","very","字母名“vi—”。和 F 动作一样：上牙咬下唇，但声带要震动。千万不要读成 W。"],
+ ["W","water","字母名“打波油”（dʌbəl.juː），三个音节。单词里读 /w/，嘴唇先收圆再放开，像“乌”。"],
+ ["X","box","字母名“哎克斯”（eks），三个声音都要发出来。"],
+ ["Y","yes","字母名“歪”（waɪ）。单词开头读 /j/，像“衣”快速滑出去。"],
+ ["Z","zoo","字母名“zi—”（ziː），像“兹”但声带震动、拉长。不是“zed”（那是英式读法，也对）。"]
+];
+
+/* ---------- curriculum: Level 1 ---------- */
+const COURSE = [
+{ id:"c1", title:"字母表 A–M：名字和声音", goal:"学会前 13 个字母的“名字”（拼读时用）和“声音”（读单词时用），把嘴型练对。",
+  intro:"英语字母有两个身份：<b>名字</b>（比如 B 叫“比”）和<b>声音</b>（b 在 book 里发 /b/）。中国学习者最常见的问题，是把每个字母都加一个“e”的尾音（“波、哥、得”）。英语的辅音是干净的，后面没有元音。本章先把嘴型做对，再去记单词。",
+  letters:[0,13],
+  learn:[{h:"三个必须记住的嘴型",p:"下面三个动作中文里没有，先在镜子前做 10 次。",items:[
+   {en:"F / V", ipa:"/f/ /v/", zh:"上牙咬下唇", tip:"上牙轻放在下唇上，吹气是 F；同样动作加声带震动是 V。摸一下喉咙，V 会震。"},
+   {en:"L", ipa:"/l/", zh:"舌尖顶上牙后", tip:"舌尖顶住上门牙后面的牙龈，让声音从舌头两边出来。"},
+   {en:"B / D / G", ipa:"/b/ /d/ /g/", zh:"没有尾音", tip:"读完立刻停，不要加“e”。对比：book 不是 “bu-ke”。"}]}],
+  drills:[["A B C D E F G","字母名字（前七个）"],["H I J K L M","字母名字（后六个）"],["apple, book, cat","三个单词，注意 b 和 k 后面不加音"],["fish, go, hat","f 咬下唇，h 轻呼气"],["ice, juice, key, love, milk","l 舌尖顶上去，m 要闭嘴"]],
+  ex:[
+   {t:"listen",q:"听一听，选出你听到的字母。",say:"G",opts:["G","J","D","Z"],a:0},
+   {t:"listen",q:"听一听，选出你听到的字母。",say:"H",opts:["A","K","H","F"],a:2},
+   {t:"mc",q:"下面哪个字母的名字里有两个音节（“哎—姆”）？",opts:["M","B","K","D"],a:0},
+   {t:"mc",q:"读 F 的时候，正确的嘴型是？",opts:["上牙咬下唇吹气","双唇闭紧","舌尖顶上牙","嘴张大"],a:0},
+   {t:"type",q:"听写：听到什么字母，就打出来（大写）。",say:"L",a:"L"},
+   {t:"type",q:"听写：听到什么字母，就打出来（大写）。",say:"E",a:"E"}],
+  hw:[["镜子练习","对着镜子，把 A 到 M 每个字母的名字读 5 遍，重点看 F（咬唇）和 L（舌尖）的动作是否做到。"],["生活观察","在家里找 5 件物品上的英文字母（商品包装、衣服标签都可以），大声读出这些字母的名字。"],["开口任务","对家人或朋友说：“我来拼一下我名字的拼音字母”，用英语字母名读出来（例如 LI 读作“哎奥—爱”）。"]]
+},
+{ id:"c2", title:"字母表 N–Z：读完整个字母表", goal:"学完 26 个字母，能清楚地用英语拼出自己的名字、电话号码里的字母和常见缩写。",
+  intro:"后半段字母里有几个“老大难”：<b>R</b>（舌头卷起、不碰任何地方）、<b>V 和 W</b>（一个咬唇、一个圆唇，千万别混）、<b>W</b> 的名字有三个音节。拼读（spelling）是真实生活里最常用的英语能力之一：报名字、报邮箱、报车牌都要用。",
+  letters:[13,26],
+  learn:[{h:"最容易混的三组",p:"每组先听，再模仿，再录下来对比。",items:[
+   {en:"V vs W", ipa:"/v/ /w/", zh:"咬唇 vs 圆唇", tip:"very：上牙咬下唇；water：嘴唇圆起来像“乌”，牙齿不碰唇。"},
+   {en:"R vs L", ipa:"/r/ /l/", zh:"卷舌 vs 顶舌", tip:"red：舌尖往后卷、不碰上颚；led：舌尖顶在上牙后面。"},
+   {en:"N vs M (词尾)", ipa:"/n/ /m/", zh:"开嘴 vs 闭嘴", tip:"sun 结尾舌尖顶上去、嘴微开；sum 结尾嘴闭上。"}]},
+   {h:"用字母拼读自己的信息",p:"这是本课最实用的部分。",items:[
+   {en:"My name is Li. L-I.", ipa:"", zh:"我叫 Li，拼写是 L-I。", tip:"拼读时每个字母之间停一下，清楚。"},
+   {en:"My email is wang at gmail dot com.", ipa:"", zh:"我的邮箱是 wang@gmail.com", tip:"@ 读 at，“.” 读 dot。"},
+   {en:"Can you spell that, please?", ipa:"", zh:"可以请你拼一下吗？", tip:"没听清对方名字时，这句话最有用。"}]}],
+  drills:[["N O P Q R S T","字母名字"],["U V W X Y Z","字母名字，W 是三个音节"],["red, run, rice","R：舌头卷起不碰上颚"],["very, water, very, water","V 咬唇、W 圆唇，交替读"],["My name is Wang. W-A-N-G.","拼读自己的姓（可以换成你的）"]],
+  ex:[
+   {t:"listen",q:"听一听，选出你听到的字母。",say:"R",opts:["L","R","A","O"],a:1},
+   {t:"listen",q:"听一听，是哪个单词？",say:"very",opts:["very","wary","berry","fairy"],a:0},
+   {t:"mc",q:"读 W（water）时，嘴唇应该？",opts:["收圆，像“乌”","上牙咬下唇","闭紧","张大"],a:0},
+   {t:"type",q:"听写：打出你听到的字母（大写）。",say:"Q",a:"Q"},
+   {t:"type",q:"听写：听到的单词是什么？（小写）",say:"zoo",a:"zoo"},
+   {t:"mc",q:"“@” 在英语里读作？",opts:["at","and","dot","a"],a:0}],
+  hw:[["拼读名字","用英语字母把你的姓名、城市名各拼读 5 遍，录下来听。重点：字母之间要清楚分开。"],["真实对话","给一位会英语的朋友，或者用手机语音助手（切到英文），说一遍：“My name is ___. ___（拼读）.” 看对方能不能写对。"],["车牌任务","在路上看到 3 个车牌，用英语读出上面的字母和数字（数字下一章学，先读字母）。"]]
+},
+{ id:"c3", title:"五个短元音：a e i o u", goal:"分清 cat / pen / sit / hot / cup 里五个最基础的元音，这是听懂和说清单词的根基。",
+  intro:"中文的韵母和英语元音不一一对应，所以很多人把 bad 和 bed 读成一样。英语短元音的关键是<b>嘴张多大、舌头多靠前</b>。本章每个元音配一个“嘴型口诀”，练到不看也能做对。",
+  learn:[{h:"五个短元音的嘴型口诀",p:"按顺序读，嘴从大到小、从前到后。",items:[
+   {en:"a — cat, bad, map", ipa:"/æ/", zh:"嘴角向两边拉，下巴往下", tip:"像被人捏住脸颊说“啊”。比中文的“啊”嘴更扁。"},
+   {en:"e — pen, bed, red", ipa:"/e/", zh:"嘴半开，短促", tip:"像中文“哎”但很短，舌头在前面。"},
+   {en:"i — sit, big, fish", ipa:"/ɪ/", zh:"放松，短", tip:"不是“衣—”（那是长音 see），嘴放松，很短，舌头稍微往后退一点。"},
+   {en:"o — hot, dog, box", ipa:"/ɑ/", zh:"嘴张大，舌头后缩", tip:"像看医生张嘴说“啊”。"},
+   {en:"u — cup, bus, sun", ipa:"/ʌ/", zh:"嘴半开，放松", tip:"像轻轻叹气的“阿”，不要读成中文的“乌”。"}]},
+   {h:"最小对比（听出区别）",p:"每组只差一个元音。先听，再读，录音对比。",items:[
+   {en:"bad / bed", ipa:"/æ/ /e/", zh:"坏的 / 床", tip:"bad 嘴更扁、更大。"},
+   {en:"sit / seat", ipa:"/ɪ/ /iː/", zh:"坐 / 座位", tip:"seat 要拉长，嘴角用力。"},
+   {en:"cup / cop", ipa:"/ʌ/ /ɑ/", zh:"杯子 / 警察", tip:"cop 嘴张大很多。"}]}],
+  drills:[["cat, bad, map","/æ/ 嘴扁扁地张开"],["pen, bed, red","/e/ 短促"],["sit, big, fish","/ɪ/ 放松短音"],["hot, dog, box","/ɑ/ 张大嘴"],["cup, bus, sun","/ʌ/ 放松"],["bad, bed, bid, bod, bud","五个元音接力，注意嘴型变化"]],
+  ex:[
+   {t:"listen",q:"听一听，是哪个词？",say:"bed",opts:["bad","bed","bid","bud"],a:1},
+   {t:"listen",q:"听一听，是哪个词？",say:"cup",opts:["cap","cop","cup","keep"],a:2},
+   {t:"listen",q:"听一听，是哪个词？",say:"sit",opts:["seat","set","sit","sat"],a:2},
+   {t:"mc",q:"读 cat 的 a 时，嘴应该？",opts:["嘴角向两边拉，下巴向下","收圆","闭上","像“衣”"],a:0},
+   {t:"type",q:"听写这个单词（小写）。",say:"hot",a:"hot"},
+   {t:"type",q:"听写这个单词（小写）。",say:"sun",a:"sun"}],
+  hw:[["镜子对比","对着镜子读 bad / bed / bid / bod / bud 各 10 遍，用手机录下来，和课堂发音对比。"],["超市任务","去超市或便利店，找到 5 样东西，用英文读出名字里的元音（例如 milk 的 i、egg 的 e）。不会的单词先查，再大声读。"],["每日 3 分钟","连续 3 天，每天把 15 个单词（cat bad map pen bed red sit big fish hot dog box cup bus sun）读一遍，录音。"]]
+},
+{ id:"c4", title:"中国学习者的四大发音难点", goal:"攻克 th、词尾辅音、r 和 l、v 和 w 这四个最影响“别人能不能听懂你”的问题。",
+  intro:"你说英语别人听不懂，80% 的原因在这四个地方。它们不难，但<b>中文里没有</b>，所以要用“动作”去练，而不是靠耳朵模仿。每个难点都给你一个“手的动作提醒”。",
+  learn:[{h:"难点一：th（舌头要伸出来）",p:"手的提醒：用手指轻触上牙，舌尖要碰到手指。",items:[
+   {en:"think, thank you, three", ipa:"/θ/", zh:"不震动的 th", tip:"舌尖轻放在上下牙之间，吹气。不是 s，不是 f。three 和 tree 不一样。"},
+   {en:"this, that, the, they", ipa:"/ð/", zh:"震动的 th", tip:"同样舌位，声带震动。the 是英语里最常用的词，必须读对。"}]},
+   {h:"难点二：词尾辅音不能丢，也不能加音",p:"中文的字大多以元音结尾，所以我们会把 bus 读成“巴士”（多了音）或把 cold 读成 “col”（丢了音）。",items:[
+   {en:"bus, bag, big", ipa:"", zh:"读完辅音就停", tip:"最后一个音发出来，但不加“e/u”。"},
+   {en:"cold, world, friend", ipa:"", zh:"两个连在一起的辅音都要发", tip:"cold 的 l 和 d 都要有。慢慢读：col-d。"},
+   {en:"books, cats, dogs", ipa:"/s/ /z/", zh:"复数的 s", tip:"books 读 /s/，dogs 读 /z/。先保证发出来。"}]},
+   {h:"难点三：r 和 l",p:"手的提醒：说 r 时手掌向后弯（舌头后卷）；说 l 时手指向上点（舌尖顶上）。",items:[
+   {en:"right / light", ipa:"/r/ /l/", zh:"右边 / 灯", tip:"right 舌头后卷不碰；light 舌尖顶上牙后。"},
+   {en:"rice / lice", ipa:"/r/ /l/", zh:"米饭 / 虱子", tip:"读错意思差很多，餐厅点餐一定要练 rice。"}]},
+   {h:"难点四：v 和 w",p:"手的提醒：说 v 时用手指点一下下唇；说 w 时把手指圈成圆。",items:[
+   {en:"very / wary", ipa:"/v/ /w/", zh:"非常 / 谨慎", tip:"very 咬唇。"},
+   {en:"vest / west", ipa:"/v/ /w/", zh:"背心 / 西", tip:"west 圆唇，牙不碰唇。"}]}],
+  drills:[["think, thank you, three, thirty","舌尖伸到牙齿之间"],["this, that, the, they, there","震动的 th"],["bus, bag, big, cold, world, friend","词尾辅音发清楚，不加音"],["right, light, rice, lice, read, lead","r 卷舌，l 顶舌"],["very, wary, vest, west, we, V","v 咬唇，w 圆唇"],["Thank you very much.","th + v 一起练，最常用的一句话"]],
+  ex:[
+   {t:"listen",q:"听一听，是哪个词？",say:"three",opts:["tree","three","free","see"],a:1},
+   {t:"listen",q:"听一听，是哪个词？",say:"light",opts:["right","light","night","white"],a:1},
+   {t:"listen",q:"听一听，是哪个词？",say:"west",opts:["vest","west","best","rest"],a:1},
+   {t:"mc",q:"读 think 的 th 时，舌尖应该？",opts:["伸到上下牙之间","顶住上牙后面","卷到后面","不动"],a:0},
+   {t:"mc",q:"cold 这个词，正确的读法是？",opts:["col（丢掉 d）","cold-e（加尾音）","col-d，两个尾辅音都发出来","kuo-de"],a:2},
+   {t:"type",q:"听写这个单词（小写）。",say:"friend",a:"friend"}],
+  hw:[["每天一句","连续 5 天，每天对一个真人（店员、邻居、同事都可以）说一次“Thank you very much.”，注意 th 和 v 的嘴型。"],["餐厅任务","去一次有英文菜单的餐厅，或者在外卖软件里，大声读出 3 个带 r 或 l 的菜名（rice, salad, roll, noodles……）。"],["录音自查","录下自己读 think / this / cold / right / very 五个词，听回放，检查：th 舌头出来了吗？cold 的 d 有吗？"]]
+},
+{ id:"c5", title:"数字 0–20 与打招呼", goal:"能用英语数数、报电话号码，并和别人完整地打一次招呼。",
+  intro:"从本章开始，你学的每一句话都要<b>当天用一次</b>。打招呼是最安全的练习：对方不会要求你说更多，但你已经开口了。数字则是报电话、问价格、说时间的基础，th 在 three 和 thirteen 里又出现了。",
+  learn:[{h:"数字 0–10",p:"注意 three（th）、five（v）、seven 的两个音节。",items:[
+   {en:"zero, one, two, three", ipa:"", zh:"0 1 2 3", tip:"three：舌尖出来。two 的 t 送气。"},
+   {en:"four, five, six, seven", ipa:"", zh:"4 5 6 7", tip:"four 的 r 轻轻卷。five 结尾是 v，咬唇。"},
+   {en:"eight, nine, ten", ipa:"", zh:"8 9 10", tip:"eight 结尾 t 要有，不是“诶”。"}]},
+   {h:"数字 11–20",p:"13–19 结尾都是 -teen，重音在后面，拉长。",items:[
+   {en:"eleven, twelve, thirteen, fourteen, fifteen", ipa:"", zh:"11–15", tip:"twelve 结尾 lv 两个辅音都要有。"},
+   {en:"sixteen, seventeen, eighteen, nineteen, twenty", ipa:"", zh:"16–20", tip:"twenty 的 t 可以轻一些，但 n 要有。"}]},
+   {h:"打招呼与告别",p:"这些句子今天就能用。",items:[
+   {en:"Hello. / Hi.", ipa:"", zh:"你好。", tip:"Hello 重音在 lo。对陌生人用 Hello，对熟人用 Hi。"},
+   {en:"Good morning. / Good afternoon. / Good evening.", ipa:"", zh:"早上好 / 下午好 / 晚上好", tip:"good 结尾 d 要发，不要读成“鼓”。"},
+   {en:"How are you?", ipa:"", zh:"你好吗？", tip:"语调最后往上。"},
+   {en:"I'm good, thank you. And you?", ipa:"", zh:"我很好，谢谢。你呢？", tip:"这是标准回答，背下来。"},
+   {en:"Nice to meet you.", ipa:"", zh:"很高兴认识你。", tip:"第一次见面说。"},
+   {en:"Goodbye. / Bye. / See you.", ipa:"", zh:"再见", tip:"see 要拉长，嘴角拉开。"}]}],
+  drills:[["zero, one, two, three, four, five","数字 0–5"],["six, seven, eight, nine, ten","数字 6–10"],["eleven, twelve, thirteen, fourteen, fifteen","11–15"],["sixteen, seventeen, eighteen, nineteen, twenty","16–20"],["Hello. How are you?","打招呼，最后语调上扬"],["I'm good, thank you. And you?","标准回答"],["Nice to meet you. Goodbye.","见面与告别"]],
+  ex:[
+   {t:"listen",q:"听一听，是哪个数字？",say:"thirteen",opts:["3","13","30","14"],a:1},
+   {t:"listen",q:"听一听，是哪个数字？",say:"five",opts:["4","5","9","15"],a:1},
+   {t:"mc",q:"别人对你说 “How are you?”，最合适的回答是？",opts:["I'm good, thank you. And you?","Hello.","Goodbye.","Nice to meet you."],a:0},
+   {t:"mc",q:"下午三点见到同事，应该说？",opts:["Good morning.","Good afternoon.","Good evening.","Good night."],a:1},
+   {t:"type",q:"听写：写出阿拉伯数字。",say:"twelve",a:"12"},
+   {t:"type",q:"听写这个单词（小写）。",say:"seven",a:"seven"}],
+  hw:[["真人打招呼","今天对至少 2 个人用英语说 “Hello, how are you?”。对方可以是店员、同事、邻居、外卖员。记下他们怎么回答。"],["报号码","用英语把自己的手机号读 5 遍（一个数字一个数字读），然后读给家人听，看他们能不能记下来。"],["数台阶","走楼梯或散步时，用英语从 1 数到 20，来回 3 次。"]]
+},
+{ id:"c6", title:"自我介绍：I am / My name is", goal:"用 5 句话完整介绍自己：名字、来自哪里、做什么、住哪里、喜欢什么。",
+  intro:"英语句子最重要的骨架是 <b>主语 + be 动词</b>：I am（我是）、You are（你是）、He/She is（他/她是）。中文说“我老师”也能懂，但英语一定要有 am/is/are。本章学完，你要能对一个陌生人做 30 秒自我介绍。",
+  learn:[{h:"be 动词三兄弟",p:"am 只跟 I；is 跟 he/she/it 和单个人或物；are 跟 you/we/they。",items:[
+   {en:"I am a student.", ipa:"", zh:"我是学生。", tip:"口语常缩成 I'm。a 读 /ə/，很轻。"},
+   {en:"You are my friend.", ipa:"", zh:"你是我的朋友。", tip:"缩成 You're。friend 结尾 nd 都要发。"},
+   {en:"She is a doctor. He is a driver.", ipa:"", zh:"她是医生。他是司机。", tip:"she 的 sh 嘴唇稍圆；he 的 h 轻呼气。"},
+   {en:"We are from China.", ipa:"", zh:"我们来自中国。", tip:"China 重音在前：CHI-na。"}]},
+   {h:"自我介绍五句话",p:"把空格换成你自己的信息，整段背下来。",items:[
+   {en:"Hello, my name is Wang Li.", ipa:"", zh:"你好，我叫王丽。", tip:"名字可以按中文顺序说。"},
+   {en:"I am from Beijing, China.", ipa:"", zh:"我来自中国北京。", tip:"from 的 fr：先咬唇 f，再卷舌 r。"},
+   {en:"I am a nurse.", ipa:"", zh:"我是护士。", tip:"职业前面要加 a / an。"},
+   {en:"I live in Toronto now.", ipa:"", zh:"我现在住在多伦多。", tip:"live 的 i 是短音，v 咬唇。"},
+   {en:"I like cooking and music.", ipa:"", zh:"我喜欢做饭和音乐。", tip:"like 结尾 k 要发出来。"}]},
+   {h:"常用职业词",p:"找到自己的那个，读 10 遍。",items:[
+   {en:"teacher, student, nurse, doctor", ipa:"", zh:"老师、学生、护士、医生", tip:"teacher 结尾的 er 轻轻卷舌。"},
+   {en:"driver, cook, worker, engineer", ipa:"", zh:"司机、厨师、工人、工程师", tip:"engineer 重音在最后：engi-NEER。"},
+   {en:"I am retired. / I am a homemaker.", ipa:"", zh:"我退休了。/ 我是家庭主妇（夫）。", tip:"retired 结尾 d 别丢。"}]}],
+  drills:[["I am a student. You are my friend.","be 动词"],["She is a doctor. He is a driver.","sh 和 h"],["Hello, my name is Wang Li.","换成你的名字"],["I am from Beijing, China.","fr 的连读"],["I live in Toronto now. I like cooking and music.","短音 i，词尾 k"],["Hello, my name is Li. I am from China. I am a cook. I live in Toronto. I like music.","完整自我介绍，一口气读完"]],
+  ex:[
+   {t:"mc",q:"选正确的 be 动词：I ___ a teacher.",opts:["am","is","are","be"],a:0},
+   {t:"mc",q:"选正确的 be 动词：She ___ from Shanghai.",opts:["am","is","are","be"],a:1},
+   {t:"mc",q:"选正确的 be 动词：We ___ friends.",opts:["am","is","are","be"],a:2},
+   {t:"listen",q:"听一听，她是做什么的？",say:"She is a nurse.",opts:["护士","医生","老师","司机"],a:0},
+   {t:"type",q:"把中文翻译成英语：我来自中国。（写完整句子）",a:"I am from China.",alt:["I'm from China.","I am from China"]},
+   {t:"type",q:"听写这句话。",say:"I am a student.",a:"I am a student.",alt:["I'm a student.","I am a student"]}],
+  hw:[["30 秒介绍","写下你的 5 句自我介绍（名字、来自哪、职业、住哪、喜欢什么），录一段 30 秒视频，看三遍，找出发音不清楚的词再练。"],["对真人说","找一个人（朋友、同事、语言交换伙伴，或者手机语音助手），完整说一遍自我介绍。对方听懂了几句？记下来。"],["问别人","用 “What is your name?” 和 “Where are you from?” 问一个人，听懂答案后用 “Nice to meet you.” 结束。"]]
+},
+{ id:"c7", title:"这是什么？This is / That is 与 a / an", goal:"能指着身边的东西说出名字，会用 a / an，会问 “What is this?”",
+  intro:"学会问 “What is this?”（这是什么？），你就有了一个永远用不完的练习方法：走到哪里问到哪里。本章同时解决一个小规则：<b>a 和 an</b>——单词开头是元音音（a e i o u）就用 an。",
+  learn:[{h:"this / that / it",p:"this 近，that 远，it 代替前面说过的东西。",items:[
+   {en:"This is a pen.", ipa:"", zh:"这是一支笔。", tip:"this 的 th 震动，is 的 s 读 /z/。"},
+   {en:"That is a car.", ipa:"", zh:"那是一辆车。", tip:"that 的 a 嘴扁。"},
+   {en:"What is this? — It is a key.", ipa:"", zh:"这是什么？——是一把钥匙。", tip:"What is 常连读成 What's。"}]},
+   {h:"a 还是 an？",p:"看开头的声音，不是字母：an hour（h 不发音）用 an。",items:[
+   {en:"a book, a cup, a phone", ipa:"", zh:"辅音开头用 a", tip:"a 读得很轻，/ə/。"},
+   {en:"an apple, an egg, an orange, an umbrella", ipa:"", zh:"元音开头用 an", tip:"an 和后面的词连起来读：a-napple。"}]},
+   {h:"家里 12 件东西",p:"每样东西都指着说一遍。",items:[
+   {en:"table, chair, bed, door", ipa:"", zh:"桌子、椅子、床、门", tip:"chair 的 ch 像“吃”，但送气更强。"},
+   {en:"window, phone, cup, bowl", ipa:"", zh:"窗、手机、杯、碗", tip:"bowl 结尾的 l 要顶舌。"},
+   {en:"key, bag, clock, light", ipa:"", zh:"钥匙、包、钟、灯", tip:"clock 和 light 的 l 位置不同（开头 vs 顶舌）。"}]}],
+  drills:[["This is a pen. That is a car.","th 震动"],["What is this? It is a key.","问与答"],["a book, a cup, a phone","a 读轻"],["an apple, an egg, an orange","an 连读"],["table, chair, bed, door, window, phone","家具"],["This is a table. That is a window. This is an apple.","混合练"]],
+  ex:[
+   {t:"mc",q:"选 a 还是 an：___ egg",opts:["a","an"],a:1},
+   {t:"mc",q:"选 a 还是 an：___ chair",opts:["a","an"],a:0},
+   {t:"mc",q:"选 a 还是 an：___ umbrella",opts:["a","an"],a:1},
+   {t:"listen",q:"听一听，他说的是什么东西？",say:"This is a clock.",opts:["钟","杯子","钥匙","手机"],a:0},
+   {t:"type",q:"翻译：这是一个苹果。",a:"This is an apple.",alt:["This is an apple"]},
+   {t:"type",q:"听写这句话。",say:"What is this?",a:"What is this?",alt:["What is this","What's this?","What's this"]}],
+  hw:[["家里巡回","在家里走一圈，指着 15 样东西说 “This is a ___.” 不知道的词查一下，写在便利贴上贴在物品上。"],["问别人","对一个会英语的人，指着 3 样东西问 “What is this?”，听他们说，然后跟着重复一遍。"],["便利贴复习","3 天后，撕掉便利贴，再指着说一遍，看记住了几个。"]]
+},
+{ id:"c8", title:"我有 / 我要 / 我需要：I have, I want, I need", goal:"能说自己有什么、要什么、需要什么，并学会复数（一个 vs 多个）。",
+  intro:"这三个动词几乎能覆盖日常生活的一半需求：<b>I have</b>（我有）、<b>I want</b>（我要）、<b>I need</b>（我需要）。加上否定 <b>don't</b>，你就能说“我不要”。复数的 <b>s</b> 是发音难点：books 的 s、dogs 的 z 都要发出来。",
+  learn:[{h:"三个最有用的动词",p:"主语是 I / you / we / they 时，动词不变。",items:[
+   {en:"I have a car.", ipa:"", zh:"我有一辆车。", tip:"have 结尾 v 咬唇。"},
+   {en:"I want water.", ipa:"", zh:"我要水。", tip:"want 的 w 圆唇，结尾 t 轻但要有。"},
+   {en:"I need help.", ipa:"", zh:"我需要帮助。", tip:"need 的 ee 拉长，d 结尾。这句紧急时能救命。"},
+   {en:"I don't want it. / I don't need it.", ipa:"", zh:"我不要。/ 我不需要。", tip:"don't 的 t 可以不送气，但 n 要有。"}]},
+   {h:"一个和多个",p:"多个东西，名词后面加 s；有些词特殊。",items:[
+   {en:"one book — two books", ipa:"/s/", zh:"一本书——两本书", tip:"清辅音后 s 读 /s/。"},
+   {en:"one dog — three dogs", ipa:"/z/", zh:"一只狗——三只狗", tip:"浊音后 s 读 /z/，声带震动。"},
+   {en:"one bus — two buses", ipa:"/ɪz/", zh:"一辆公交——两辆", tip:"s/sh/ch 结尾加 -es，读 /ɪz/。"},
+   {en:"one child — two children; one man — two men", ipa:"", zh:"一个孩子——两个孩子；一个男人——两个", tip:"特殊变化，直接记。"}]},
+   {h:"用在真实场景",p:"这些句子今天就能用。",items:[
+   {en:"I have two children.", ipa:"", zh:"我有两个孩子。", tip:"children 重音在 CHIL。"},
+   {en:"I want a coffee, please.", ipa:"", zh:"我要一杯咖啡，谢谢。", tip:"加 please 更礼貌。"},
+   {en:"I need a doctor.", ipa:"", zh:"我需要医生。", tip:"紧急句，读熟。"},
+   {en:"Do you have a bag?", ipa:"", zh:"你们有袋子吗？", tip:"问句用 Do you have，语调上扬。"}]}],
+  drills:[["I have a car. I want water. I need help.","三个动词"],["I don't want it. I don't need it.","否定"],["books, cats, cups","/s/ 结尾"],["dogs, pens, bags","/z/ 结尾"],["buses, boxes, watches","/ɪz/ 结尾"],["I have two children. I want a coffee, please.","真实句"],["Do you have a bag? Do you have water?","问句上扬"]],
+  ex:[
+   {t:"mc",q:"选正确的复数：one box — two ___",opts:["boxs","boxes","boxies","box"],a:1},
+   {t:"mc",q:"选正确的复数：one child — two ___",opts:["childs","childrens","children","childes"],a:2},
+   {t:"mc",q:"在咖啡店想要一杯茶，应该说？",opts:["I want a tea, please.","I have a tea.","I need a tea doctor.","Tea am I."],a:0},
+   {t:"listen",q:"听一听，他有什么？",say:"I have three dogs.",opts:["三只狗","三本书","两只狗","一只狗"],a:0},
+   {t:"type",q:"翻译：我需要帮助。",a:"I need help.",alt:["I need help"]},
+   {t:"type",q:"听写这句话。",say:"I don't want it.",a:"I don't want it.",alt:["I don't want it","I do not want it.","I do not want it"]}],
+  hw:[["点一次单","去咖啡店、奶茶店或快餐店，用 “I want a ___, please.” 点一次单。说完记下店员说了什么。"],["拒绝一次","当有人递给你传单或推销时，用 “No, thank you. I don't need it.” 回应一次。"],["数东西","在家里数 5 类东西，说出复数：“I have four chairs. I have two phones.” 注意 s 的发音。"]]
+},
+{ id:"c9", title:"问问题：What / Where / Who / How much", goal:"学会五个问句，能主动开口问信息，而不是只等别人问你。",
+  intro:"能问问题，你就从“被动听”变成“主动用”。问句的结构很固定：<b>疑问词 + is/are + 东西</b>。问句结尾语调要<b>往下</b>（特殊疑问句）或<b>往上</b>（是不是问句）。本章的每个问句都是你在加拿大/美国生活真的会用到的。",
+  learn:[{h:"五个疑问词",p:"记住中文意思和发音，尤其是 wh 开头都读 /w/（who 例外，读 /h/）。",items:[
+   {en:"What", ipa:"/wʌt/", zh:"什么", tip:"w 圆唇。"},
+   {en:"Where", ipa:"/wer/", zh:"哪里", tip:"结尾 r 卷舌。"},
+   {en:"Who", ipa:"/huː/", zh:"谁", tip:"读“胡—”，不是“屋”。"},
+   {en:"When", ipa:"/wen/", zh:"什么时候", tip:"结尾 n 舌尖顶上。"},
+   {en:"How much", ipa:"/haʊ mʌtʃ/", zh:"多少钱", tip:"much 结尾 ch 像“吃”，要送气。"}]},
+   {h:"生活中的问句",p:"问完要听答案，听不懂就说 “Sorry, again please?”",items:[
+   {en:"What is your name?", ipa:"", zh:"你叫什么名字？", tip:"语调最后往下。"},
+   {en:"Where is the bathroom?", ipa:"", zh:"洗手间在哪里？", tip:"bathroom 的 th 不震动，舌头出来。"},
+   {en:"Who is he?", ipa:"", zh:"他是谁？", tip:"he 的 h 轻呼气。"},
+   {en:"When is the bus?", ipa:"", zh:"公交什么时候来？", tip:"the 在辅音前读 /ðə/。"},
+   {en:"How much is this?", ipa:"", zh:"这个多少钱？", tip:"商店最常用的一句。"},
+   {en:"Sorry, again please? / Slowly, please.", ipa:"", zh:"抱歉，再说一遍？/ 请慢一点。", tip:"听不懂时不要装懂，用这两句。"}]}],
+  drills:[["What, Where, Who, When, How much","五个疑问词"],["What is your name?","语调往下"],["Where is the bathroom?","th 舌头出来"],["How much is this?","ch 送气"],["Sorry, again please? Slowly, please.","听不懂时的救命句"],["Where is the bus? When is the bus? How much is the bus?","换疑问词练"]],
+  ex:[
+   {t:"mc",q:"想知道价格，用哪个？",opts:["How much","Where","Who","When"],a:0},
+   {t:"mc",q:"想知道地点，用哪个？",opts:["What","Where","Who","How"],a:1},
+   {t:"mc",q:"听不懂对方说话，最好说？",opts:["Sorry, again please?","Goodbye.","I am a student.","Yes."],a:0},
+   {t:"listen",q:"听一听，他在问什么？",say:"Where is the bathroom?",opts:["洗手间在哪","几点了","多少钱","你叫什么"],a:0},
+   {t:"type",q:"翻译：这个多少钱？",a:"How much is this?",alt:["How much is this","How much is it?","How much is it"]},
+   {t:"type",q:"听写这句话。",say:"What is your name?",a:"What is your name?",alt:["What is your name","What's your name?","What's your name"]}],
+  hw:[["问价格","去一家店，拿起一件东西问店员 “How much is this?”，听懂价格后说 “Thank you.”（不一定要买）。"],["问路","在商场或车站，问工作人员 “Where is the bathroom?” 或 “Where is the exit?”，按对方指的方向走。"],["问名字","认识一个新的人（哪怕是店员），问 “What is your name?”，然后说 “Nice to meet you, ___.”"]]
+},
+{ id:"c10", title:"购物与点餐", goal:"能独立完成一次买东西和一次点餐，包括问价、付款、说谢谢。",
+  intro:"这是第一个“完整场景”章节：从进门到付款，全程英语。你已经有了所有零件（打招呼、I want、How much、数字），本章把它们<b>串成一次对话</b>。重点：说慢一点、说清楚，比说得快更重要。",
+  learn:[{h:"点餐对话（咖啡店）",p:"A 是店员，B 是你。先听整段，再只读 B 的句子。",items:[
+   {en:"A: Hi, what can I get you?", ipa:"", zh:"店员：你好，要点什么？", tip:"你只要听懂 “get you” 就知道该点单了。"},
+   {en:"B: Can I have a small coffee, please?", ipa:"", zh:"你：请给我一杯小杯咖啡。", tip:"Can I have 比 I want 更礼貌，三个词连读：Ca-ni-have。"},
+   {en:"A: Anything else?", ipa:"", zh:"店员：还要别的吗？", tip:"听到 else 就是在问“还要吗”。"},
+   {en:"B: No, that's all. Thank you.", ipa:"", zh:"你：不要了，就这些，谢谢。", tip:"that's 的 ts 一起读。"},
+   {en:"A: That's three fifty.", ipa:"", zh:"店员：3 块 5。", tip:"价格常省略 dollars：three fifty = $3.50。"},
+   {en:"B: Here you go. / Card, please.", ipa:"", zh:"你：给你。/ 刷卡。", tip:"递钱或卡时说。"}]},
+   {h:"购物常用句",p:"",items:[
+   {en:"Excuse me, where is the milk?", ipa:"", zh:"打扰一下，牛奶在哪里？", tip:"Excuse me 是打断别人、求助的礼貌开头。"},
+   {en:"Do you have this in large?", ipa:"", zh:"这个有大号的吗？", tip:"large 结尾 dʒ 要有摩擦。"},
+   {en:"I'll take it.", ipa:"", zh:"我要了（买这个）。", tip:"I'll 的 l 顶舌。"},
+   {en:"Just looking, thanks.", ipa:"", zh:"只是看看，谢谢。", tip:"店员问 Can I help you? 时用。"},
+   {en:"Can I get a receipt?", ipa:"", zh:"可以给我收据吗？", tip:"receipt 的 p 不发音：re-SEAT。"}]},
+   {h:"钱的说法",p:"",items:[
+   {en:"one dollar, five dollars, ten dollars", ipa:"", zh:"1 块、5 块、10 块", tip:"dollars 结尾 z。"},
+   {en:"two fifty, nine ninety-nine", ipa:"", zh:"2.50、9.99", tip:"小数点后直接读两位数。"},
+   {en:"cash / card / tap", ipa:"", zh:"现金 / 刷卡 / 感应支付", tip:"加拿大店员常问 Cash or card?"}]}],
+  drills:[["Can I have a small coffee, please?","连读 Ca-ni-have"],["No, that's all. Thank you.","ts 一起读"],["Excuse me, where is the milk?","求助开头"],["Just looking, thanks. I'll take it.","两种回应"],["Can I get a receipt?","p 不发音"],["one dollar, two fifty, nine ninety-nine, ten dollars","钱"],["Hi. Can I have a tea, please? No, that's all. Card, please. Thank you.","完整点单，一口气"]],
+  ex:[
+   {t:"listen",q:"听一听，多少钱？",say:"That's four seventy-five.",opts:["$4.75","$4.57","$7.45","$5.47"],a:0},
+   {t:"mc",q:"店员说 “Anything else?”，你不想再要了，怎么回答？",opts:["No, that's all. Thank you.","Yes, hello.","Where is the milk?","I am a student."],a:0},
+   {t:"mc",q:"店员问 “Can I help you?”，你只想随便看看，说？",opts:["Just looking, thanks.","I'll take it.","Card, please.","How are you?"],a:0},
+   {t:"listen",q:"听一听，他要什么？",say:"Can I have a large tea, please?",opts:["大杯茶","小杯咖啡","大杯咖啡","一杯水"],a:0},
+   {t:"type",q:"翻译：可以给我一杯咖啡吗？（用 Can I have）",a:"Can I have a coffee, please?",alt:["Can I have a coffee?","Can I have a coffee please","Can I have a coffee, please"]},
+   {t:"type",q:"听写这句话。",say:"I'll take it.",a:"I'll take it.",alt:["I'll take it","I will take it.","I will take it"]}],
+  hw:[["真实点单","去一家咖啡店或快餐店，全程用英语：打招呼 → Can I have ___ → 回答 Anything else → 付款 → Thank you。完成后给自己打分（1–5）。"],["问一次库存","在超市问工作人员 “Excuse me, where is the ___?”（选一样你真要买的东西）。"],["读小票","拿一张英文小票，把上面的价格一个一个用英语读出来。"]]
+},
+{ id:"c11", title:"问路与交通", goal:"能问路、听懂左右前后，能坐一次公交或地铁。",
+  intro:"问路是最考验“听”的场景，因为对方会说一串。你只需要抓住四个词：<b>left</b>（左）、<b>right</b>（右）、<b>straight</b>（直走）、<b>next to</b>（旁边）。其余听不懂没关系，用 “Sorry, slowly please?” 让对方再说。",
+  learn:[{h:"方向词",p:"用手比划着读，身体记忆比脑子快。",items:[
+   {en:"left / right", ipa:"", zh:"左 / 右", tip:"left 的 ft 两个辅音；right 的 r 卷舌。这两个词读错会走错路。"},
+   {en:"go straight", ipa:"", zh:"直走", tip:"str 三个辅音连在一起，先慢读 s-t-r。"},
+   {en:"turn left / turn right", ipa:"", zh:"左转 / 右转", tip:"turn 的 ur 卷舌。"},
+   {en:"next to / across from / near", ipa:"", zh:"旁边 / 对面 / 附近", tip:"next to 连读 nex-to。"}]},
+   {h:"问路句",p:"",items:[
+   {en:"Excuse me, where is the subway station?", ipa:"", zh:"打扰一下，地铁站在哪里？", tip:"station 的 tion 读 /ʃən/。"},
+   {en:"Is it far?", ipa:"", zh:"远吗？", tip:"far 的 r 轻卷。"},
+   {en:"How do I get to the hospital?", ipa:"", zh:"去医院怎么走？", tip:"get to 连读。"},
+   {en:"Which bus goes downtown?", ipa:"", zh:"哪路车去市中心？", tip:"which 的 wh 读 /w/。"}]},
+   {h:"听懂回答",p:"对方可能这样说，你要能听出关键词。",items:[
+   {en:"Go straight, then turn left.", ipa:"", zh:"直走，然后左转。", tip:"抓住 straight 和 left。"},
+   {en:"It's on your right, next to the bank.", ipa:"", zh:"在你右手边，银行旁边。", tip:"抓住 right 和 bank。"},
+   {en:"Take bus number 52.", ipa:"", zh:"坐 52 路。", tip:"听数字。"},
+   {en:"It's about ten minutes.", ipa:"", zh:"大概十分钟。", tip:"minutes 的 u 读 /ɪ/：MIN-its。"}]}],
+  drills:[["left, right, go straight","三个方向词"],["turn left, turn right, next to the bank","方向短语"],["Excuse me, where is the subway station?","tion 读 shun"],["Is it far? How do I get to the hospital?","问路"],["Go straight, then turn left. It's on your right.","模仿回答，为了听懂"],["Which bus goes downtown? Take bus number 52.","公交"]],
+  ex:[
+   {t:"listen",q:"听一听，应该往哪边转？",say:"Turn right at the bank.",opts:["右转","左转","直走","回头"],a:0},
+   {t:"listen",q:"听一听，坐几路车？",say:"Take bus number fifteen.",opts:["15","50","5","14"],a:0},
+   {t:"mc",q:"“It's next to the bank.” 的意思是？",opts:["在银行旁边","在银行对面","在银行里面","离银行很远"],a:0},
+   {t:"mc",q:"想问“远吗”，说？",opts:["Is it far?","Is it left?","Where is it?","How much?"],a:0},
+   {t:"type",q:"翻译：直走。",a:"Go straight.",alt:["Go straight","go straight"]},
+   {t:"type",q:"听写这句话。",say:"Where is the bus stop?",a:"Where is the bus stop?",alt:["Where is the bus stop","Where's the bus stop?","Where's the bus stop"]}],
+  hw:[["问一次路","在一个你其实认识的地方，故意问一个人路：“Excuse me, where is the ___?”。这样就算听不全也不会迷路，但你练到了真实对话。"],["听广播","坐一次公交或地铁，认真听英文报站，试着抓住站名和 next stop 这两个词。"],["给别人指路","用英语给家人指一次路（哪怕是在家里：Go straight, turn left, the bathroom is on your right.）。"]]
+},
+{ id:"c12", title:"第一级结业：综合复习与实战", goal:"把 11 章的内容串成一次 2 分钟的真实对话，通过结业测试。",
+  intro:"恭喜你走到这里。第一级的目标不是“学了很多”，而是<b>能在真实世界里开口、被听懂</b>。本章先做一次发音总复习，再做一段综合对话，最后是结业测试。完成作业中的“实战任务”，你就正式完成第一级了。",
+  learn:[{h:"发音总复习：五个必须做对的动作",p:"每条读一遍，做不到的回去复习对应章节。",items:[
+   {en:"th — think, this, thank you", ipa:"", zh:"舌尖出来（第 4 章）", tip:"手指放在上牙前，舌尖要碰到。"},
+   {en:"v — very, five, have", ipa:"", zh:"咬下唇（第 1、4 章）", tip:"和 w 分清。"},
+   {en:"l (词尾) — ball, call, I'll", ipa:"", zh:"舌尖顶上牙后（第 1 章）", tip:"不要读成“奥”。"},
+   {en:"r — right, red, from", ipa:"", zh:"卷舌不碰（第 2、4 章）", tip:"和 l 分清。"},
+   {en:"词尾辅音 — cold, friend, books", ipa:"", zh:"不丢、不加音（第 4 章）", tip:"读完就停。"}]},
+   {h:"综合对话：第一次见到新邻居",p:"A 是邻居，B 是你。整段练到流利。",items:[
+   {en:"A: Hi! Are you new here?", ipa:"", zh:"邻居：你好！你是新搬来的吗？", tip:""},
+   {en:"B: Yes. Hello, my name is Chen. Nice to meet you.", ipa:"", zh:"你：是的。你好，我叫陈。很高兴认识你。", tip:""},
+   {en:"A: Nice to meet you too. I'm Sarah. Where are you from?", ipa:"", zh:"邻居：我也很高兴。我叫 Sarah。你从哪里来？", tip:""},
+   {en:"B: I'm from China. I live in apartment three now.", ipa:"", zh:"你：我来自中国。我现在住 3 号公寓。", tip:""},
+   {en:"A: Great! Do you need any help?", ipa:"", zh:"邻居：太好了！需要帮忙吗？", tip:""},
+   {en:"B: Yes, please. Where is the bus stop?", ipa:"", zh:"你：需要。公交站在哪里？", tip:""},
+   {en:"A: Go straight and turn left. It's next to the bank.", ipa:"", zh:"邻居：直走然后左转，在银行旁边。", tip:""},
+   {en:"B: Straight, then left. Thank you very much! See you.", ipa:"", zh:"你：直走，然后左转。非常感谢！再见。", tip:"重复关键词是确认听懂的好习惯。"}]}],
+  drills:[["think, this, very, five, ball, right, cold, friend","发音总复习"],["Hello, my name is Chen. Nice to meet you.","对话句 1"],["I'm from China. I live in apartment three now.","对话句 2"],["Yes, please. Where is the bus stop?","对话句 3"],["Straight, then left. Thank you very much! See you.","对话句 4"],["Hello, my name is Chen. Nice to meet you. I'm from China. I live in apartment three now. Yes, please. Where is the bus stop? Straight, then left. Thank you very much! See you.","整段，你的全部台词"]],
+  ex:[
+   {t:"listen",q:"结业测试 1：听一听，他在问什么？",say:"How much is the coffee?",opts:["咖啡多少钱","咖啡在哪","谁要咖啡","什么时候喝咖啡"],a:0},
+   {t:"listen",q:"结业测试 2：听一听，往哪边？",say:"Go straight and turn left.",opts:["直走左转","直走右转","左转再右转","回头"],a:0},
+   {t:"listen",q:"结业测试 3：听一听，是哪个词？",say:"three",opts:["tree","free","three","see"],a:2},
+   {t:"mc",q:"结业测试 4：选正确的句子。",opts:["She is a nurse.","She am a nurse.","She are a nurse.","She be a nurse."],a:0},
+   {t:"mc",q:"结业测试 5：选 a 还是 an：___ orange",opts:["a","an"],a:1},
+   {t:"mc",q:"结业测试 6：店员问 “Anything else?”，回答？",opts:["No, that's all. Thank you.","I am from China.","Turn left.","Who is he?"],a:0},
+   {t:"type",q:"结业测试 7：翻译：我需要医生。",a:"I need a doctor.",alt:["I need a doctor"]},
+   {t:"type",q:"结业测试 8：听写。",say:"Nice to meet you.",a:"Nice to meet you.",alt:["Nice to meet you"]},
+   {t:"type",q:"结业测试 9：翻译：洗手间在哪里？",a:"Where is the bathroom?",alt:["Where is the bathroom","Where's the bathroom?","Where's the bathroom"]},
+   {t:"type",q:"结业测试 10：听写。",say:"I have two children.",a:"I have two children.",alt:["I have two children"]}],
+  hw:[["实战任务（必做）","在一天之内完成三件事：① 对一个陌生人打招呼并自我介绍（至少 3 句）；② 用英语点一次单；③ 问一次路。三件都做到，第一级结业。"],["录一段 2 分钟","录下你的自我介绍 + 一段购物对话（你一个人读两个角色也可以）。听回放，用第 4 章的四大难点检查自己。"],["写下来","用英语写 5 句关于你自己的话，不查字典。能写出来，说明这些句子真的属于你了。"]]
+}
+];
+
+const LEVELS = [
+ {n:"第一级",en:"Level 1 · 入门 Beginner",now:true,pts:["26 个字母的名字和声音","五个短元音、th / r / l / v / w 四大难点","打招呼、自我介绍、数字 0–20","this / that、a / an、have / want / need","问问题、购物点餐、问路交通","结业：2 分钟真实对话"]},
+ {n:"第二级",en:"Level 2 · 基础 Elementary",pts:["长元音与双元音、重音与连读","现在进行时、过去时","时间、日期、天气、家人","看病、打电话、租房、银行","结业：打一通 3 分钟电话"]},
+ {n:"第三级",en:"Level 3 · 进阶 Pre-intermediate",pts:["语调与句子节奏","将来时、情态动词 can / should / must","工作面试、填表、写短邮件","结业：10 分钟面对面交谈"]},
+ {n:"第四级",en:"Level 4 · 中级 Intermediate",pts:["弱读、缩读、口语自然度","完成时、条件句、被动语态","看懂新闻、讨论观点、工作汇报","结业：5 分钟口头汇报"]},
+ {n:"第五级",en:"Level 5 · 高级 Advanced / Expert",pts:["口音打磨与演讲技巧","复杂语法与地道表达","专业领域英语、谈判、写正式文件","结业：15 分钟演讲 + 问答"]}
+];
+
+/* ---------- mascot face ---------- */
+const FACE_SVG = `<svg viewBox="0 0 100 100" aria-hidden="true">
+ <g class="wave"><path d="M84 90 L92 62" stroke="var(--accent)" stroke-width="7" stroke-linecap="round"/><circle cx="92" cy="60" r="7" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="3"/></g>
+ <circle class="head" cx="50" cy="52" r="44"/>
+ <path d="M14 40 Q50 2 86 40" fill="var(--accent)" opacity=".9"/>
+ <path class="brow" d="M30 34 Q38 28 46 33"/><path class="brow" d="M54 33 Q62 28 70 34"/>
+ <ellipse class="eye l" cx="36" cy="48" rx="6" ry="8"/><ellipse class="eye r" cx="64" cy="48" rx="6" ry="8"/>
+ <circle class="shine" cx="38.5" cy="45" r="2"/><circle class="shine" cx="66.5" cy="45" r="2"/>
+ <circle class="cheek" cx="24" cy="62" r="6"/><circle class="cheek" cx="76" cy="62" r="6"/>
+ <path class="mouth" d="M38 70 Q50 80 62 70"/>
+ <ellipse class="mouthOpen" cx="50" cy="73" rx="9" ry="7"/>
+</svg>`;
+let faces=[];
+function mountFace(el,size){ if(!el) return; faces=faces.filter(f=>f.isConnected); el.classList.add("face"); if(size) el.style.setProperty("--fs",size); el.setAttribute("data-mood","happy"); el.innerHTML=FACE_SVG; faces.push(el); }
+const face = {
+  mood(m,ms){ faces.forEach(f=>f.setAttribute("data-mood",m)); if(ms) setTimeout(()=>faces.forEach(f=>f.setAttribute("data-mood","happy")),ms); },
+  talk(on){ faces.forEach(f=>f.classList.toggle("talking",on)); },
+  bounce(){ faces.forEach(f=>{ f.classList.remove("bounce"); void f.offsetWidth; f.classList.add("bounce"); }); },
+  hello(){ faces.forEach(f=>{ f.classList.remove("hello"); void f.offsetWidth; f.classList.add("hello"); setTimeout(()=>f.classList.remove("hello"),3000); }); }
+};
+document.addEventListener("pointermove",e=>{ const dx=(e.clientX/innerWidth-.5)*4, dy=(e.clientY/innerHeight-.5)*3;
+  faces.forEach(f=>f.querySelectorAll(".eye,.shine").forEach(n=>n.style.transform=`translate(${dx}px,${dy}px)`)); },{passive:true});
+
+/* ---------- state & login ---------- */
+const BLANK = ()=>({done:{}, hw:{}, ex:{}, seen:{}, drill:{}, speed:0.95});
+let S = BLANK();
+let me = null;      // {kind:"claude"|"local", id, name, avatar}
+let dbRef = null;   // db doc for cloud progress
+let saveTimer=null;
+function stateKey(){ return "ys-state:"+(me?me.kind+":"+me.id:"anon"); }
+function save(){
+  try{ localStorage.setItem(stateKey(),JSON.stringify(S)); }catch(e){}
+  if(dbRef){ clearTimeout(saveTimer); saveTimer=setTimeout(()=>{ dbRef.set(Object.assign({},S,{savedAt:Date.now()})).catch(()=>{ dbRef=null; }); },600); }
+}
+async function loadState(){
+  S = BLANK();
+  try{ const s=localStorage.getItem(stateKey()); if(s) Object.assign(S,JSON.parse(s)); }catch(e){}
+  if(dbRef){ try{ const snap=await dbRef.get(); const d=snap.data(); if(d && (d.savedAt||0) >= (S.savedAt||0)){ delete d.savedAt; Object.assign(S,d); } }catch(e){} }
+}
+async function sha(s){ const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join(""); }
+function localProfiles(){ try{ return JSON.parse(localStorage.getItem("ys-profiles")||"[]"); }catch(e){ return []; } }
+function saveProfiles(p){ try{ localStorage.setItem("ys-profiles",JSON.stringify(p)); }catch(e){} }
+
+async function initLogin(){
+  mountFace($("#loginFace"),"150px"); mountFace($("#panelFace"),"40px"); mountFace($("#openFace"),"34px");
+  face.hello();
+  let claudeUser=null, viewer=null;
+  try{ claudeUser = window.claude?.use ? await window.claude.use("user") : null; if(claudeUser){ viewer = await claudeUser.me(); if(!viewer.id) claudeUser=null; } }catch(e){ claudeUser=null; }
+  let remembered=null; try{ remembered=JSON.parse(localStorage.getItem("ys-session")||"null"); }catch(e){}
+  if(claudeUser && viewer){
+    $("#loginBody").innerHTML = '<div style="display:flex;gap:12px;align-items:center"><img src="'+esc(viewer.avatarUrl)+'" alt="" style="width:48px;height:48px;border-radius:50%"><div><div style="font-size:12px;color:var(--muted)">已检测到你的 Claude 账户</div><b id="vname" style="font-size:18px"></b></div></div><div class="row" style="margin-top:14px"><button class="btn" id="cloudBtn">用这个账户登录 →</button></div><div class="fine">学习进度会保存在你的账户里，换一台设备打开同一个链接也能继续。</div>';
+    $("#vname").textContent = viewer.name || "Claude 用户";
+    $("#loginFine").textContent = "";
+    $("#cloudBtn").onclick = async ()=>{
+      me = {kind:"claude", id:viewer.id, name:viewer.name||"同学", avatar:viewer.avatarUrl};
+      try{ const db = await window.claude.use("db"); if(db) dbRef = db.doc("data/users/"+viewer.id+"/progress"); }catch(e){ dbRef=null; }
+      await enter();
+    };
+    if(remembered && remembered.kind==="claude" && remembered.id===viewer.id) $("#cloudBtn").click();
+    return;
+  }
+  renderLocalLogin(remembered);
+}
+function renderLocalLogin(remembered){
+  const ps = localProfiles();
+  let h = '';
+  if(ps.length){ h += '<div style="font-weight:600">选择学员</div><div class="plist">'+ps.map(p=>'<button class="pbtn" data-id="'+esc(p.id)+'"><span class="en" style="font-size:17px">'+esc(p.name)+'</span><small>'+(p.last?'上次学习 '+new Date(p.last).toLocaleDateString("zh-CN"):'新学员')+'</small></button>').join("")+'</div><div id="pinBox"></div><div style="text-align:center;color:var(--muted);font-size:13px;margin:8px 0">或</div>'; }
+  h += '<details'+(ps.length?'':' open')+'><summary style="cursor:pointer;font-weight:600">新学员注册</summary><label for="nm">你的名字（中文或英文都可以）</label><input id="nm" autocomplete="off" placeholder="例如：王丽 / Li"><label for="pin">设一个 4 位数字密码</label><input id="pin" inputmode="numeric" maxlength="4" placeholder="1234" autocomplete="off"><div class="err" id="regErr"></div><button class="btn" id="regBtn" style="margin-top:4px">注册并开始 →</button></details>';
+  $("#loginBody").innerHTML = h;
+  $("#loginFine").textContent = "学员资料和学习进度保存在这台设备的浏览器里。密码只是防止家人之间点错账号，不要用重要的密码。";
+  $("#loginBody").querySelectorAll(".pbtn").forEach(b=>b.onclick=()=>{
+    const p = ps.find(x=>x.id===b.dataset.id);
+    $("#pinBox").innerHTML = '<label for="pin2">'+esc(p.name)+' 的密码</label><div class="row"><input id="pin2" inputmode="numeric" maxlength="4" style="width:140px" autocomplete="off"><button class="btn" id="inBtn">登录</button></div><div class="err" id="inErr"></div>';
+    $("#pin2").focus();
+    const tryIn = async ()=>{ const v=$("#pin2").value.trim(); if(await sha(v+"|"+p.id)===p.hash){ me={kind:"local",id:p.id,name:p.name}; p.last=Date.now(); saveProfiles(ps); await enter(); } else { $("#inErr").textContent="密码不对，再试一次。"; face.mood("oops",1500); } };
+    $("#inBtn").onclick=tryIn; $("#pin2").addEventListener("keydown",e=>{ if(e.key==="Enter") tryIn(); });
+  });
+  $("#regBtn").onclick = async ()=>{
+    const name=$("#nm").value.trim(), pin=$("#pin").value.trim();
+    if(!name){ $("#regErr").textContent="请输入名字。"; return; }
+    if(!/^\d{4}$/.test(pin)){ $("#regErr").textContent="密码要是 4 位数字。"; return; }
+    if(ps.some(p=>p.name===name)){ $("#regErr").textContent="这个名字已经有人用了，换一个或者在上面选择。"; return; }
+    const id = "p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+    ps.push({id,name,hash:await sha(pin+"|"+id),last:Date.now()}); saveProfiles(ps);
+    me={kind:"local",id,name}; await enter();
+  };
+  if(remembered && remembered.kind==="local"){ const p=ps.find(x=>x.id===remembered.id); if(p){ me={kind:"local",id:p.id,name:p.name}; enter(); } }
+}
+async function enter(){
+  try{ localStorage.setItem("ys-session",JSON.stringify({kind:me.kind,id:me.id})); }catch(e){}
+  await loadState();
+  $("#login").hidden = true;
+  renderWho(); renderRail(); render(); face.hello();
+}
+function logout(){ try{ localStorage.removeItem("ys-session"); }catch(e){} location.reload(); }
+function renderWho(){
+  const w=$("#who"); if(!me){ w.innerHTML=""; return; }
+  w.innerHTML = (me.avatar?'<img src="'+esc(me.avatar)+'" alt="">':'<span id="railFace" style="--fs:34px"></span>')+'<div><b></b>'+(me.kind==="claude"?"Claude 账户 · 进度已同步":"本机学员")+'</div><button onclick="logout()">退出</button>';
+  w.querySelector("b").textContent = me.name;
+  mountFace($("#railFace"),"34px");
+}
+let cur = "home", tab = "learn";
+
+/* ---------- speech: listen ---------- */
+let voices=[];
+function loadVoices(){ try{ voices = speechSynthesis.getVoices().filter(v=>/^en[-_]/i.test(v.lang)); }catch(e){} }
+if("speechSynthesis" in window){ loadVoices(); speechSynthesis.onvoiceschanged = ()=>{ loadVoices(); if(document.getElementById("voiceSel")===null && document.querySelector(".speed")) render(); }; }
+function voiceQuality(v){
+  const n=v.name, l=v.lang.toLowerCase(); let q=0;
+  if(/natural|neural|premium|enhanced|online/i.test(n)) q+=40;
+  if(/^google/i.test(n)) q+=25;
+  if(/samantha|ava|allison|zoe|evan|tom|nathan|aria|jenny|guy|clara|liam|heather|emma/i.test(n)) q+=15;
+  if(/zira|david|mark|espeak|compact/i.test(n)) q-=30;
+  if(l==="en-ca") q+=30; else if(l==="en-us") q+=15; else if(l==="en-gb"||l==="en-au") q+=5;
+  if(v.localService===false) q+=5;
+  return q;
+}
+function pickVoice(){
+  if(S.voice){ const v=voices.find(v=>v.name===S.voice); if(v) return v; }
+  return voices.slice().sort((a,b)=>voiceQuality(b)-voiceQuality(a))[0] || null;
+}
+function voiceLabel(v){ const l=v.lang.toLowerCase(); const where=l==="en-ca"?"加拿大":l==="en-us"?"美国":l==="en-gb"?"英国":l==="en-au"?"澳洲":l==="en-in"?"印度":v.lang; const nat=/natural|neural|premium|enhanced|online|^google/i.test(v.name)?" · 自然":""; return v.name.replace(/Microsoft |Online \(Natural\)|\(Natural\)/g,"").trim()+"（"+where+nat+"）"; }
+function voiceCtl(){
+  if(!voices.length) return '';
+  const cur=pickVoice(); const sorted=voices.slice().sort((a,b)=>voiceQuality(b)-voiceQuality(a));
+  let h='<div class="speed" style="margin-top:4px;flex-wrap:wrap">课文朗读用的是真人感录音。老师聊天示范的备用声音：<select id="voiceSel" onchange="S.voice=this.value;save();say(\'Hello! Nice to meet you.\')" style="font-family:inherit;font-size:13px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);padding:3px 6px;max-width:100%">'+sorted.map(v=>'<option value="'+esc(v.name)+'"'+(cur&&v.name===cur.name?" selected":"")+'>'+esc(voiceLabel(v))+'</option>').join("")+'</select><button onclick="voiceHelp()">哪个声音最自然？</button></div>';
+  return h;
+}
+function voiceHelp(){
+  const ua=navigator.userAgent; let tip;
+  if(/Edg\//.test(ua)) tip="你在用 Edge，很好：选择 Clara 或 Liam（加拿大 · 自然），这是最自然的加拿大口音。";
+  else if(/Windows/.test(ua)) tip="在 Windows 上，Chrome 自带的声音比较机械。最自然的办法：用 Microsoft Edge 浏览器打开本课堂，然后选 Clara 或 Liam（加拿大 · 自然）。";
+  else if(/Macintosh/.test(ua)) tip="在 Mac 上：打开“系统设置 → 辅助功能 → 朗读内容 → 系统声音 → 管理声音”，下载 Samantha、Ava 或 Allison 的“增强/高级”版本，然后回到这里重新选择。";
+  else if(/Android/.test(ua)) tip="在安卓手机上：系统设置里搜索“文字转语音”，选择 Google 语音服务并下载英语（美国或加拿大）高质量语音，然后回到这里重新选择。";
+  else if(/iPhone|iPad/.test(ua)) tip="在 iPhone/iPad 上：设置 → 辅助功能 → 朗读内容 → 声音 → 英语，下载 Samantha、Ava 或 Evan 的增强版本，然后回到这里重新选择。";
+  else tip="声音来自你的设备。Microsoft Edge 浏览器自带最自然的加拿大英语声音（Clara、Liam）；Mac 和 iPhone 可以在辅助功能里下载增强声音。";
+  toast(tip, 9000);
+}
+const AUDIO = {"A.": "e1354cc842", "apple": "1f3870be27", "B": "9d5ed678fe", "book": "821f032888", "C": "0d61f8370c", "cat": "d077f244de", "D": "f623e75af3", "dog": "06d80eb0c5", "E": "3a3ea00cfc", "egg": "0e9312087f", "F": "8006189430", "fish": "83e4a96aed", "G": "dfcf28d073", "go": "34d1f91fb2", "H": "c1d9f50f86", "hat": "46b5e59b2f", "I": "dd7536794b", "ice": "7bdff76536", "J": "ff44570aca", "juice": "57f7e96f37", "K": "a5f3c6a11b", "key": "3c6e0b8a9c", "L": "d20caec3b4", "love": "b5c0b187fe", "M": "69691c7bdc", "milk": "ecbdb882ae", "N": "8d9c307cb7", "no": "7fa3b767c4", "O": "f186217753", "open": "7cef8a7348", "P": "44c29edb10", "pen": "03f00e8e9d", "Q": "f09564c9ca", "queen": "72545f3f86", "R": "e1e1d3d405", "red": "bda9643ac6", "S": "5dbc98dcc9", "sun": "ebd556e6df", "T": "b9ece18c95", "tea": "7239ea2b5d", "U": "4c614360da", "up": "46c48bec0d", "V": "5206560a30", "very": "f016441d00", "W": "61e9c06ea9", "water": "9460370bb0", "X": "02129bb861", "box": "34be958a92", "Y": "57cec4137b", "yes": "a6105c0a61", "Z": "21c2e59531", "zoo": "d2cbe65f53", "F. V": "d436a3fd6f", "B. D. G": "cb3cdb9ef8", "A B C D E F G": "94a0b0e4ad", "H I J K L M": "2996f8e7ee", "apple, book, cat": "23f7f4134b", "fish, go, hat": "ec36b076c1", "ice, juice, key, love, milk": "2ab4fe6fe0", "V vs W": "b75d5bf13f", "R vs L": "15d0de4af3", "N vs M (词尾)": "1426ac2b7c", "My name is Li. L-I.": "aece770881", "My email is wang at gmail dot com.": "77cf4b3477", "Can you spell that, please?": "bc74adfc60", "N O P Q R S T": "771ce3d697", "U V W X Y Z": "d86e594e2f", "red, run, rice": "494bcee97f", "very, water, very, water": "57c74e877e", "My name is Wang. W-A-N-G.": "755c79f8b8", "a. cat, bad, map": "b773c27b8a", "e. pen, bed, red": "3bcfe261d4", "i. sit, big, fish": "5bd9cd95d5", "o. hot, dog, box": "3fd592a01a", "u. cup, bus, sun": "1443dd5899", "bad. bed": "838e9f58f3", "sit. seat": "aa783912fa", "cup. cop": "a29e025c6e", "cat, bad, map": "ca96f8c4e2", "pen, bed, red": "ee0188343f", "sit, big, fish": "9831e6b962", "hot, dog, box": "9856d45c77", "cup, bus, sun": "dd6b08b0d6", "bad, bed, bid, bod, bud": "81f41727b3", "bed": "001cbc059a", "cup": "f3f58ee455", "sit": "87d4eeb7de", "hot": "27369b3bf4", "think, thank you, three": "d02d2e709a", "this, that, the, they": "8451355608", "bus, bag, big": "7265de620d", "cold, world, friend": "cee2139e3a", "books, cats, dogs": "bdc973471b", "right. light": "8238240b7b", "rice. lice": "ff98a6848b", "very. wary": "413e7776c5", "vest. west": "e9c4cfaf48", "think, thank you, three, thirty": "17bf71e4ea", "this, that, the, they, there": "001c7f78e4", "bus, bag, big, cold, world, friend": "81841b4b6e", "right, light, rice, lice, read, lead": "20f6384852", "very, wary, vest, west, we, V": "c6ef10e808", "Thank you very much.": "9d197f9a18", "three": "35d6d33467", "light": "2ac43aa43b", "west": "da4f0053a5", "friend": "3af00c6cad", "zero, one, two, three": "bc05a69f79", "four, five, six, seven": "1256f28b27", "eight, nine, ten": "d72b254716", "eleven, twelve, thirteen, fourteen, fifteen": "cad8c48ef2", "sixteen, seventeen, eighteen, nineteen, twenty": "e5612d53e5", "Hello.. Hi.": "de0b18364b", "Good morning.. Good afternoon.. Good evening.": "8df8386e14", "How are you?": "04e35eb3e4", "I'm good, thank you. And you?": "a01beff98f", "Nice to meet you.": "67bd7ea9f2", "Goodbye.. Bye.. See you.": "ea45927bbf", "zero, one, two, three, four, five": "90f9647150", "six, seven, eight, nine, ten": "12e6fc1244", "Hello. How are you?": "cc70815398", "Nice to meet you. Goodbye.": "d4a20c6bc7", "thirteen": "422ecc084f", "five": "30056e1cab", "twelve": "15f6f8dc03", "seven": "bb3aec0fdc", "I am a student.": "2f1f75e8bb", "You are my friend.": "4254f1e9df", "She is a doctor. He is a driver.": "e6dacd3d93", "We are from China.": "1c6a4d6aeb", "Hello, my name is Wang Li.": "eaa7c46b22", "I am from Beijing, China.": "9403b4365f", "I am a nurse.": "5d9bfb7220", "I live in Toronto now.": "83a056bef2", "I like cooking and music.": "9f0ec5d819", "teacher, student, nurse, doctor": "3eaafe5f09", "driver, cook, worker, engineer": "2ac768625e", "I am retired.. I am a homemaker.": "05a6612fe6", "I am a student. You are my friend.": "dc57bf7de7", "I live in Toronto now. I like cooking and music.": "87982f57e6", "Hello, my name is Li. I am from China. I am a cook. I live in Toronto. I like music.": "7dba6a714f", "She is a nurse.": "29682fba1e", "This is a pen.": "26df8d1ff2", "That is a car.": "a3fa0acf7e", "What is this?. It is a key.": "f92db4f0eb", "a book, a cup, a phone": "81e626f9f8", "an apple, an egg, an orange, an umbrella": "a815fbdbe1", "table, chair, bed, door": "ef478ea490", "window, phone, cup, bowl": "f46bf3b32a", "key, bag, clock, light": "df663fdd60", "This is a pen. That is a car.": "95b904bdbf", "What is this? It is a key.": "d6c184d4f9", "an apple, an egg, an orange": "785ea719c6", "table, chair, bed, door, window, phone": "4087d12bc8", "This is a table. That is a window. This is an apple.": "48d229738d", "This is a clock.": "a108b97721", "What is this?": "efc45797dd", "I have a car.": "263370c615", "I want water.": "33b9c8dce6", "I need help.": "d79273b035", "I don't want it.. I don't need it.": "887762dc7c", "one book. two books": "f88dbc812b", "one dog. three dogs": "333bd36925", "one bus. two buses": "d4b9db86ad", "one child. two children; one man. two men": "ebb78cdd33", "I have two children.": "d52f4013a8", "I want a coffee, please.": "f23c88d30f", "I need a doctor.": "9e5af80488", "Do you have a bag?": "aa2c284379", "I have a car. I want water. I need help.": "99b2415b3e", "I don't want it. I don't need it.": "701aa7db8f", "books, cats, cups": "f440bc4ec3", "dogs, pens, bags": "a35b9323c6", "buses, boxes, watches": "9f77674974", "I have two children. I want a coffee, please.": "a676f9af71", "Do you have a bag? Do you have water?": "a88ac3e462", "I have three dogs.": "f40f407def", "I don't want it.": "1d2f1dce92", "What": "124433700b", "Where": "b3c5b21d2c", "Who": "4ee972120b", "When": "4e97aeeaa8", "How much": "3ad058e79e", "What is your name?": "f6429fe0f1", "Where is the bathroom?": "fafa77963a", "Who is he?": "6e04300264", "When is the bus?": "72f4cb3957", "How much is this?": "adf447f1f1", "Sorry, again please?. Slowly, please.": "030fbd1d75", "What, Where, Who, When, How much": "05326ff509", "Sorry, again please? Slowly, please.": "83780ab1b1", "Where is the bus? When is the bus? How much is the bus?": "2b2d098502", "Hi, what can I get you?": "813ace0794", "Can I have a small coffee, please?": "1bfa842c60", "Anything else?": "b16d9ec360", "No, that's all. Thank you.": "723007c5a6", "That's three fifty.": "b4eb5c32ab", "Here you go.. Card, please.": "9990bdd622", "Excuse me, where is the milk?": "682a8cf278", "Do you have this in large?": "cf592fe178", "I'll take it.": "76f427f252", "Just looking, thanks.": "3c9bf5749d", "Can I get a receipt?": "56067640ea", "one dollar, five dollars, ten dollars": "94c661f551", "two fifty, nine ninety-nine": "a1530bc216", "cash. card. tap": "0fe572d469", "Just looking, thanks. I'll take it.": "7b3c5b1291", "one dollar, two fifty, nine ninety-nine, ten dollars": "277209bc71", "Hi. Can I have a tea, please? No, that's all. Card, please. Thank you.": "cc2a249232", "That's four seventy-five.": "a7d82b1699", "Can I have a large tea, please?": "90ac99258a", "left. right": "1d5b52305d", "go straight": "20e2177eab", "turn left. turn right": "7298bd2681", "next to. across from. near": "b38b1cd9cd", "Excuse me, where is the subway station?": "5f945087e6", "Is it far?": "fdba824ddb", "How do I get to the hospital?": "5c78fc87bf", "Which bus goes downtown?": "300da32f6e", "Go straight, then turn left.": "cacd2355be", "It's on your right, next to the bank.": "7379d3d105", "Take bus number 52.": "ecc8bbd1ad", "It's about ten minutes.": "72858d9210", "left, right, go straight": "80176f98c7", "turn left, turn right, next to the bank": "0033658240", "Is it far? How do I get to the hospital?": "3a66197891", "Go straight, then turn left. It's on your right.": "b78b2d6fee", "Which bus goes downtown? Take bus number 52.": "1d7d7f750e", "Turn right at the bank.": "0b2f59e4ab", "Take bus number fifteen.": "295a8d3e62", "Where is the bus stop?": "a4199dcd3f", "th. think, this, thank you": "a2ba4b3b16", "v. very, five, have": "4d58f4a354", "l (词尾). ball, call, I'll": "1eea9642d3", "r. right, red, from": "b8ecfab6bd", "词尾辅音. cold, friend, books": "360cc68c3e", "Hi! Are you new here?": "d0aee92d90", "Yes. Hello, my name is Chen. Nice to meet you.": "a07bfd4711", "Nice to meet you too. I'm Sarah. Where are you from?": "464db2f32a", "I'm from China. I live in apartment three now.": "59f21b138b", "Great! Do you need any help?": "79d7b96b93", "Yes, please. Where is the bus stop?": "bd5b15de17", "Go straight and turn left. It's next to the bank.": "59f7bfe335", "Straight, then left. Thank you very much! See you.": "d54e15e783", "think, this, very, five, ball, right, cold, friend": "6d8eddb868", "Hello, my name is Chen. Nice to meet you.": "769750965a", "Hello, my name is Chen. Nice to meet you. I'm from China. I live in apartment three now. Yes, please. Where is the bus stop? Straight, then left. Thank you very much! See you.": "74cb430161", "How much is the coffee?": "693eeca07d", "Go straight and turn left.": "d83fd0e2b7", "Hello! Nice to meet you.": "cba43328c2", "hello": "5d41402abc"};
+const AUDIO_BASE = "../audio/";
+let curAudio=null; const blobCache={};
+function stopAll(){ try{ speechSynthesis.cancel(); }catch(e){} if(curAudio){ curAudio.pause(); curAudio=null; } if(curSrc){ try{ curSrc.stop(); }catch(e){} curSrc=null; } face.talk(false); }
+/* iOS Safari: once an HTML <audio> element has played, every later SpeechRecognition session is deaf
+   (WebKit bugs 317741 / 321436). Playing clips through the Web Audio API avoids that. iOS only. */
+const USE_WEBAUDIO = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
+let actx=null, curSrc=null; const pcmCache={};
+function getCtx(){ if(!actx){ const C=window.AudioContext||window.webkitAudioContext; actx=new C(); } if(actx.state==="suspended") actx.resume(); return actx; }
+function playBuffer(buf, rate){
+  const ctx=getCtx(); if(curSrc){ try{ curSrc.stop(); }catch(e){} curSrc=null; }
+  const src=ctx.createBufferSource(); src.buffer=buf; src.playbackRate.value=rate||1; src.connect(ctx.destination); curSrc=src;
+  face.talk(true); src.onended=()=>{ face.talk(false); if(curSrc===src) curSrc=null; }; src.start();
+}
+async function say(text, rate){
+  const r = rate ?? S.speed;
+  stopAll();
+  const h = AUDIO[text];
+  if(h && USE_WEBAUDIO){
+    const f = h + (r>=0.9 ? "" : "-s") + ".mp3";
+    const pr = r>=0.9 ? 1 : r>=0.7 ? 1 : 0.88;
+    try{
+      let buf=pcmCache[f];
+      if(!buf){ const res=await fetch(AUDIO_BASE+f); if(!res.ok) throw new Error("audio"); const ab=await res.arrayBuffer();
+        buf=await new Promise((ok,bad)=>{ const p=getCtx().decodeAudioData(ab, ok, bad); if(p && p.then) p.then(ok,bad); }); pcmCache[f]=buf; }
+      playBuffer(buf, pr); return;
+    }catch(e){ /* fall back to the <audio> path below */ }
+  }
+  if(h){
+    // r >= 0.9: natural-speed clip; 0.7-0.9: slow clip; below 0.7: slow clip, slightly slower
+    const f = h + (r>=0.9 ? "" : "-s") + ".mp3";
+    const pr = r>=0.9 ? 1 : r>=0.7 ? 1 : 0.88;
+    try{
+      let url=blobCache[f];
+      if(!url){ const res=await fetch(AUDIO_BASE+f); if(!res.ok) throw new Error("audio"); url=URL.createObjectURL(await res.blob()); blobCache[f]=url; }
+      const a=new Audio(url); curAudio=a; a.preservesPitch=true; a.mozPreservesPitch=true; a.playbackRate=pr;
+      a.onplay=()=>face.talk(true); a.onended=a.onpause=()=>{ face.talk(false); if(curAudio===a) curAudio=null; };
+      await a.play(); return;
+    }catch(e){ /* fall through to device speech */ }
+  }
+  sayTTS(text, r);
+}
+function sayTTS(text, rate){
+  if(!("speechSynthesis" in window)){ toast("这个浏览器不支持朗读，请用 Chrome 打开。"); return; }
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang="en-US"; const v=pickVoice(); if(v) u.voice=v;
+  u.rate = rate ?? S.speed; u.pitch=0.98;
+  u.onstart=()=>face.talk(true); u.onend=u.onerror=()=>face.talk(false);
+  speechSynthesis.speak(u);
+}
+function sayLetter(l){ say(l==="A"?"A.":l, 0.8); }
+
+/* ---------- speech: recognize ---------- */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let activeRec=null;
+function norm(s){ return s.toLowerCase().replace(/[’']/g,"'").replace(/[^a-z0-9' ]+/g," ").replace(/\s+/g," ").trim(); }
+function compare(target, heard){
+  const t = norm(target).split(" ").filter(Boolean), h = norm(heard).split(" ").filter(Boolean);
+  const hs = new Set(h); let ok=0;
+  const marks = t.map(w=>{ const m = hs.has(w) || hs.has(w.replace("'","")); if(m) ok++; return {w,m}; });
+  return {marks, score: t.length? Math.round(ok/t.length*100):0};
+}
+let recTimer=null, recTries=0;
+function isIOS(){ return /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1); }
+function recHelp(kind, box, target){
+  // kind: "network" | "timeout" | "no-speech" | "not-allowed" | "other"
+  const ios=isIOS();
+  let msg;
+  if(kind==="not-allowed") msg = micHelp("麦克风没有打开。");
+  else if(kind==="no-speech") msg = '<b>没有听到声音。</b>请靠近麦克风，大声一点，再试一次。';
+  else {
+    msg = '<b>语音识别服务暂时没有响应。</b>这不是你的问题——“我来读”要把声音发给手机系统的识别服务，有时会慢或者断开。<br>可以：① 再按一次“🎤 我来读”；② 换个网络（Wi‑Fi / 流量）再试；';
+    if(ios) msg += '③ 检查 <b>设置 → 通用 → 键盘 → 启用听写</b> 已打开，并在“听写语言”里添加 <b>英语</b>；';
+    else msg += '③ 确认手机里的 Google 语音服务可用；';
+    msg += '④ 识别不了也没关系——大声读一遍，然后点“✓ 我已经大声读过了”，一样算练习。';
+  }
+  box.innerHTML = msg + '<div class="row" style="margin-top:8px"><button class="btn" onclick="startRec('+JSON.stringify(target).replace(/"/g,"&quot;")+',this.closest(\'.result\'))">🎤 再试一次</button><button class="btn sec2" onclick="markSpoken(this.closest(\'.result\'))">✓ 我已经大声读过了</button></div>';
+}
+function markSpoken(box){
+  // manual completion for devices where recognition is unreliable: counts toward the chapter's speaking step
+  const m=/^d(\d+)$/.exec(box.id); const ch=COURSE.find(x=>x.id===cur);
+  if(m && ch){ const k=ch.id+"-"+m[1]; if((S.drill[k]||0)<85){ S.drill[k]=85; save(); } const t=document.querySelector(".ptrack"); if(t) t.outerHTML=trackerHTML(ch); }
+  box.innerHTML='<span class="score g">✓ 已完成</span> 很好！你已经大声读过这句了。想要打分的话，随时再按“🎤 我来读”。';
+  face.mood("happy"); face.bounce();
+}
+let recBusyUntil=0;
+function releaseRec(r){
+  // drop every handler and abort, so Safari closes the mic session instead of keeping it open
+  if(!r) return;
+  try{ r.onresult=r.onerror=r.onend=r.onaudiostart=r.onaudioend=r.onspeechend=null; }catch(e){}
+  try{ r.abort(); }catch(e){}
+}
+function startRec(target, box, isRetry){
+  if(!SR){ box.innerHTML = micHelp("这个浏览器不支持语音识别。"); return; }
+  const prev=activeRec; activeRec=null;
+  if(prev){ releaseRec(prev); }
+  stopAll(); clearTimeout(recTimer);
+  if(!isRetry) recTries=0;
+  // iOS needs a moment after the previous session is released before a new one can take the mic
+  const wait=Math.max(0, recBusyUntil-Date.now(), prev?350:0);
+  if(wait>0){ box.innerHTML='<span class="rec"><span class="dot"></span> 准备中…</span>'; setTimeout(()=>startRec(target, box, isRetry), wait); recBusyUntil=0; return; }
+  const r = new SR(); activeRec=r;
+  r.lang="en-US"; r.interimResults=true; r.maxAlternatives=3; r.continuous=false;
+  box.innerHTML = '<span class="rec"><span class="dot"></span> 正在听…请大声、慢慢地读上面的英文</span>';
+  face.mood("think");
+  let finalText="", gotAudio=false, handled=false, myTimer=null;
+  const finish=(kind)=>{ if(handled) return; handled=true; clearTimeout(myTimer); if(activeRec===r) activeRec=null; releaseRec(r); recBusyUntil=Date.now()+350; face.mood("happy");
+    if(finalText.trim()){ showResult(target, finalText.trim(), box); return; }
+    // transient failure: retry once silently before showing help
+    if((kind==="network"||kind==="timeout"||kind==="aborted") && recTries<1){ recTries++; box.innerHTML='<span class="rec"><span class="dot"></span> 连接有点慢，正在重试…请再读一遍</span>'; setTimeout(()=>startRec(target, box, true), 400); return; }
+    recHelp(kind, box, target); };
+  r.onaudiostart=()=>{ gotAudio=true; };
+  r.onresult = e=>{ let s=""; for(let i=e.resultIndex;i<e.results.length;i++){ s+=e.results[i][0].transcript; if(e.results[i].isFinal) finalText+=e.results[i][0].transcript+" "; }
+    if(!finalText) box.innerHTML = '<span class="rec"><span class="dot"></span> 听到：<span class="en">'+esc(s)+'</span></span>'; };
+  r.onerror = e=>{ const k=e.error; try{ r.abort(); }catch(x){}
+    if(k==="not-allowed"||k==="service-not-allowed") finish("not-allowed");
+    else if(k==="no-speech") finish("no-speech");
+    else if(k==="network"||k==="aborted") finish(k);
+    else finish("other"); };
+  r.onend = ()=>{ finish(gotAudio ? "timeout" : "network"); };
+  // safety net: iOS sometimes never fires onend when the speech service stalls
+  myTimer=setTimeout(()=>{ try{ r.abort(); }catch(e){} finish("timeout"); }, 12000); recTimer=myTimer;
+  try{ r.start(); }catch(err){ recBusyUntil=Date.now()+700; finish("aborted"); }   // start refused = previous session still closing: treat as transient so the retry runs
+}
+function micHelp(head){
+  return '<b>'+head+'</b><br>说话练习需要麦克风。请在浏览器地址栏左边点一下“锁”或“设置”图标，把麦克风改为“允许”，然后刷新页面再试。手机上请在弹出的提示里选择“允许”。';
+}
+function showResult(target, heard, box){
+  const c = compare(target, heard);
+  const m=/^d(\d+)$/.exec(box.id); const ch=COURSE.find(x=>x.id===cur);
+  if(m && ch){ const k=ch.id+"-"+m[1]; if(c.score>(S.drill[k]||0)){ S.drill[k]=c.score; save(); const t=document.querySelector(".ptrack"); if(t) t.outerHTML=trackerHTML(ch); } }
+  const cls = c.score>=85?"g":c.score>=60?"w":"b";
+  if(c.score>=85){ face.mood("wow",2500); face.bounce(); } else if(c.score<60) face.mood("oops",2000);
+  const verdict = c.score>=85?"很好！几乎全对。":c.score>=60?"不错，但有几个词没被听清。":"再试一次，慢一点，每个词都读完整。";
+  let html = '<div>你的得分：<span class="score '+cls+'">'+c.score+'%</span> · '+verdict+'</div>';
+  html += '<div class="heard">我听到：'+esc(heard)+'</div><div>';
+  html += c.marks.map(m=>'<span class="wd '+(m.m?"ok":"no")+'">'+esc(m.w)+'</span>').join(" ")+'</div>';
+  const missed = c.marks.filter(m=>!m.m).map(m=>m.w);
+  if(missed.length){ html += '<div style="margin-top:6px;font-size:14px;color:var(--muted)">红色的词没被识别出来。点一下单独听：'+missed.map(w=>'<button class="ib" onclick="say(\''+esc(w)+'\',0.6)">🔊 '+esc(w)+'</button>').join(" ")+'</div>';
+    html += '<div style="margin-top:6px;font-size:14px">'+missed.map(hint).filter(Boolean).join("<br>")+'</div>'; }
+  box.innerHTML = html;
+}
+function hint(w){
+  if(/th/.test(w)) return "“"+w+"”有 th：舌尖伸到上下牙之间。";
+  if(/^v|v$/.test(w)||/v/.test(w)) return "“"+w+"”有 v：上牙咬下唇，声带震动。";
+  if(/^r/.test(w)) return "“"+w+"”开头是 r：舌头往后卷，不碰上颚。";
+  if(/l$/.test(w)) return "“"+w+"”结尾是 l：舌尖顶住上牙后面。";
+  if(/[bdgkptsz]$/.test(w)) return "“"+w+"”结尾是辅音：发出来就停，不要加尾音。";
+  if(/^w/.test(w)) return "“"+w+"”开头是 w：嘴唇先收圆。";
+  return "";
+}
+
+/* ---------- record & play back ---------- */
+
+/* ---------- render ---------- */
+const $ = s=>document.querySelector(s);
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function toast(m,ms){ const t=document.createElement("div"); t.textContent=m; t.style.cssText="position:fixed;left:50%;transform:translateX(-50%);bottom:90px;background:var(--fg);color:var(--bg);padding:10px 14px;border-radius:10px;z-index:30;font-size:14px;max-width:min(560px,calc(100vw - 32px));line-height:1.5"; document.body.appendChild(t); setTimeout(()=>t.remove(),ms||3000); }
+
+function chapDone(c){ return !!S.done[c.id]; }
+function stepState(c){
+  const seen=k=>!!(S.seen||{})[c.id+"-"+k];
+  const exOK=c.ex.filter((e,i)=>{const st=S.ex[c.id+"-"+i]; return st!==undefined && (e.t==="type"?typeOK(e,st):st===e.a);}).length;
+  const spoke=c.drills.filter((d,i)=>((S.drill||{})[c.id+"-"+i]||0)>=85).length;
+  const hw=c.hw.filter((_,i)=>S.hw[c.id+"-"+i]).length;
+  return [
+   {k:"learn",n:"① 学",done:seen("learn"),sub:seen("learn")?"已读":"未读"},
+   {k:"speak",n:"② 听与说",done:spoke>=Math.ceil(c.drills.length/2),sub:spoke+"/"+c.drills.length+" 句达标"},
+   {k:"ex",n:"③ 练习",done:exOK===c.ex.length,sub:exOK+"/"+c.ex.length+" 正确"},
+   {k:"hw",n:"④ 作业",done:hw===c.hw.length,sub:hw+"/"+c.hw.length+" 完成"}];
+}
+function chapPct(c){ const st=stepState(c); return Math.round(st.filter(x=>x.done).length/4*100); }
+function trackerHTML(c){
+  const i=COURSE.indexOf(c), n=COURSE.filter(chapDone).length, st=stepState(c), pct=chapPct(c);
+  return '<div class="ptrack"><div class="top"><span>第一级进度：<b>'+n+' / '+COURSE.length+' 章</b></span><span>本章：<b>'+pct+'%</b></span></div><div class="bar"><i style="width:'+Math.round((n+pct/100)/COURSE.length*100)+'%"></i></div><div class="steps">'+st.map(x=>'<button class="step'+(tab===x.k?" on":"")+'" aria-current="'+(tab===x.k?"step":"false")+'" onclick="go(\''+c.id+'\',\''+x.k+'\')">'+(x.done?'<span class="ok" title="已完成">✓</span>':'')+x.n+'<small>'+esc(x.sub)+'</small></button>').join("")+'</div></div>';
+}
+function progress(){ const n=COURSE.filter(chapDone).length; const p=Math.round(COURSE.reduce((a,c)=>a+(chapDone(c)?1:chapPct(c)/100),0)/COURSE.length*100); $("#pct").textContent=p+"%"; $("#pbar").style.width=p+"%"; $("#tbBar").style.width=p+"%"; const c=COURSE.find(x=>x.id===cur); $("#tbTitle").textContent=c?((COURSE.indexOf(c)+1)+". "+c.title.split("：")[0]):"英语起步课堂"; $("#tbSub").textContent=c?("第一级 · 进度 "+p+"%"):("第一级 · 入门 · "+n+"/"+COURSE.length+" 章完成"); }
+function renderRail(){
+  const l=$("#chapList"); l.querySelectorAll(".chap").forEach(e=>e.remove());
+  COURSE.forEach((c,i)=>{ const b=document.createElement("button"); b.className="chap"; b.setAttribute("aria-current", cur===c.id?"true":"false");
+    b.innerHTML='<span class="n">'+(i+1)+'</span><span class="t">'+esc(c.title.split("：")[0])+'</span><span class="d'+(chapDone(c)?" done":"")+'"></span>';
+    b.onclick=()=>go(c.id); l.appendChild(b); });
+  $("#homeBtn").setAttribute("aria-current", cur==="home"?"true":"false");
+  const on=l.querySelector('[aria-current="true"]'); if(on && innerWidth<=760) on.scrollIntoView({block:"nearest",inline:"center"});
+  progress();
+}
+function toggleMenu(on){ $("#rail").classList.toggle("open",on); $("#scrim").classList.toggle("on",on); }
+function go(id, t){ cur=id; tab=t||"learn"; toggleMenu(false); renderRail(); render(); window.scrollTo({top:0}); }
+
+function render(){
+  const v=$("#view");
+  if(cur==="home"){ v.innerHTML = homeHTML(); v.querySelectorAll("[data-face]").forEach(e=>mountFace(e)); return; }
+  if(cur==="review"){ v.innerHTML = reviewHTML(); return; }
+  const c = COURSE.find(x=>x.id===cur); const i=COURSE.indexOf(c);
+  if(tab==="learn" && !(S.seen[c.id+"-learn"])){ S.seen[c.id+"-learn"]=true; save(); }
+  let h = '<div class="eyebrow">第一级 · 第 '+(i+1)+' 章</div><h2 class="title">'+esc(c.title)+'</h2><p class="goal">本章目标：'+esc(c.goal)+'</p>'+trackerHTML(c);
+  h += '<div class="tabs" role="tablist">'+[["learn","① 学"],["speak","② 听与说"],["ex","③ 练习"],["hw","④ 作业"]].map(([k,n])=>'<button class="tab" role="tab" aria-selected="'+(tab===k)+'" onclick="go(\''+c.id+'\',\''+k+'\')">'+n+'</button>').join("")+'</div>';
+  if(tab==="learn") h+=learnHTML(c);
+  if(tab==="speak") h+=speakHTML(c);
+  if(tab==="ex") h+=exHTML(c);
+  if(tab==="hw") h+=hwHTML(c);
+  const prev=COURSE[i-1], next=COURSE[i+1];
+  h += '<div class="foot">'+(prev?'<button class="btn sec2" onclick="go(\''+prev.id+'\')">← 上一章</button>':'<span></span>')+(next?'<button class="btn" onclick="go(\''+next.id+'\')">下一章 →</button>':'<button class="btn" onclick="go(\'home\')">回到总览</button>')+'</div>';
+  v.innerHTML=h;
+  if(tab==="ex") v.querySelectorAll("[data-autosay]").forEach(b=>{ /* exercises with audio: nothing autoplays; viewer clicks */ });
+}
+
+function reviewHTML(){
+  const texts=Object.keys(AUDIO);
+  let h='<div class="eyebrow">录音检查</div><h2 class="title">逐条检查全部 '+texts.length+' 条录音</h2><p class="goal">每条都有“正常”和“慢”两个版本。听到不清楚的，记下编号告诉老师。</p><div class="row" style="margin-bottom:14px"><button class="btn sec2" onclick="go(\'home\')">← 回总览</button><button class="btn" onclick="playAllFrom(0)">▶ 从头连续播放</button><button class="btn sec2" onclick="stopAll();playing=false">■ 停</button></div>';
+  texts.forEach((t,i)=>{ h+='<div class="drill" id="rv'+i+'" style="padding:10px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="n" style="font-family:var(--en);color:var(--muted);width:34px;font-variant-numeric:tabular-nums">'+(i+1)+'</span><span class="en" style="flex:1;min-width:200px;font-size:18px;font-weight:500">'+esc(t)+'</span><button class="ib" onclick="say('+JSON.stringify(t).replace(/"/g,"&quot;")+',0.95)">🔊 正常</button><button class="ib" onclick="say('+JSON.stringify(t).replace(/"/g,"&quot;")+',0.8)">🐢 慢</button></div>'; });
+  return h;
+}
+let playing=false;
+async function playAllFrom(i){
+  const texts=Object.keys(AUDIO); playing=true;
+  for(let k=i;k<texts.length && playing;k++){
+    const el=document.getElementById("rv"+k); if(el){ el.style.borderColor="var(--accent)"; el.scrollIntoView({block:"center"}); }
+    await say(texts[k],0.95); await new Promise(r=>{ const t=setInterval(()=>{ if(!curAudio||!playing){ clearInterval(t); r(); } },100); });
+    if(el) el.style.borderColor="";
+    await new Promise(r=>setTimeout(r,350));
+  }
+  playing=false;
+}
+function homeHTML(){
+  const n=COURSE.filter(chapDone).length;
+  let h='<div class="home"><div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><span data-face style="--fs:84px"></span><div><div class="eyebrow">课程总览</div><h2 class="title" style="margin:0">'+(me?esc(me.name)+'，':'')+'从零开始，学到能在生活里开口</h2></div></div>';
+  h+='<p class="goal">这门课假设你一个英文字母都不会读。每一章都按“学 → 听与说 → 练习 → 作业”四步走，前一章是后一章的基础，请按顺序学。<b>作业都是要在真实生活里完成的</b>（对真人说话、去店里点单、问路），这样学到的英语才能走出手机。</p>';
+  h+='<div class="callout"><b>学习方法（请先读）</b><br>1. 每章先把“学”里的嘴型做到，再去背句子。发音做对一次，比读十遍错的有用。<br>2. “听与说”里，先听标准读音（可以调慢），再按“🎤 我来读”，看哪些词没被听清。<br>3. 卡住了随时按右下角“问老师”，用中文问，老师会用中文解释、用英文示范。<br>4. 作业必须在生活里完成，打勾才算。每章作业完成后，本章自动标记为完成。</div>';
+  h+='<div class="card"><b>第一级进度：</b>'+n+' / '+COURSE.length+' 章完成 '+(n===COURSE.length?'<span class="badge">第一级结业 🎉</span>':'')+'<div class="bar" style="margin-top:8px"><i style="width:'+Math.round(n/COURSE.length*100)+'%"></i></div>';
+  h+='<div class="row" style="margin-top:12px"><button class="btn" onclick="go(\''+(COURSE.find(c=>!chapDone(c))||COURSE[0]).id+'\')">'+(n?'继续学习 →':'开始第 1 章 →')+'</button></div></div>';
+  h+='<div class="levels">'+LEVELS.map(l=>'<div class="lv'+(l.now?" now":"")+'"><b>'+l.n+'</b>'+(l.now?'<span class="badge">当前</span>':'<span class="badge" style="background:var(--line);color:var(--muted)">即将开放</span>')+'<div class="en">'+esc(l.en)+'</div><ul>'+l.pts.map(p=>'<li>'+esc(p)+'</li>').join("")+'</ul></div>').join("")+'</div>';
+  h+='<div class="sec" style="margin-top:24px"><h3>第一级 12 章</h3><div class="items">'+COURSE.map((c,i)=>'<button class="item" style="cursor:pointer;text-align:left" onclick="go(\''+c.id+'\')"><div><div class="w" style="font-family:var(--zh);font-size:16px">'+(i+1)+'. '+esc(c.title)+'</div><div class="zh" style="color:var(--muted);font-size:13px">'+esc(c.goal)+'</div></div><div class="btns"><span class="ib" style="border-color:'+(chapDone(c)?'var(--good)':'var(--line)')+';color:'+(chapDone(c)?'var(--good)':'var(--muted)')+'">'+(chapDone(c)?'✓ 完成':'未完成')+'</span></div></button>').join("")+'</div></div><p style="font-size:13px;color:var(--muted);margin-top:20px"><button class="ib" onclick="go(\'review\')">🎧 录音检查（逐条试听全部录音）</button></p></div>';
+  return h;
+}
+
+function speedCtl(){ return '<div class="speed">朗读速度：'+[[0.6,"很慢"],[0.8,"慢"],[0.95,"正常"]].map(([r,n])=>'<button aria-pressed="'+(S.speed===r)+'" onclick="S.speed='+r+';save();render()">'+n+'</button>').join("")+'</div>'+voiceCtl(); }
+
+function learnHTML(c){
+  let h='<div class="callout">'+c.intro+'</div>'+speedCtl();
+  if(c.letters){ const [a,b]=c.letters; h+='<div class="sec" style="margin-top:14px"><h3>字母卡</h3><p class="note">点 🔊 听字母的名字，点单词听它在词里的声音。每张卡下面是嘴型提示。</p><div class="ltr">';
+    LETTERS.slice(a,b).forEach(([L,ex,tip])=>{ h+='<div class="l"><div class="big">'+L+'<span style="font-size:22px;font-weight:400;opacity:.6">'+L.toLowerCase()+'</span></div><div class="nm">'+V[L]+'</div><div class="row" style="justify-content:center"><button class="ib" onclick="sayLetter(\''+L+'\')">🔊 '+L+'</button><button class="ib" onclick="say(\''+ex+'\',0.7)">🔊 '+ex+'</button></div><div class="tp">'+esc(tip)+'</div></div>'; });
+    h+='</div></div>'; }
+  c.learn.forEach(sec=>{ h+='<div class="sec"><h3>'+esc(sec.h)+'</h3>'+(sec.p?'<p class="note">'+esc(sec.p)+'</p>':'')+'<div class="items">';
+    sec.items.forEach(it=>{ const sayText = it.en.replace(/^[AB]:\s*/,"").replace(/\s*\/\s*/g,". ").replace(/\s*—\s*/g,". ");
+      h+='<div class="item"><div><div class="w">'+esc(it.en)+'</div>'+(it.ipa?'<div class="ipa">'+esc(it.ipa)+'</div>':'')+'<div class="zh">'+esc(it.zh)+'</div></div><div class="btns"><button class="ib" onclick="say('+JSON.stringify(sayText).replace(/"/g,"&quot;")+')">🔊 听</button><button class="ib" onclick="say('+JSON.stringify(sayText).replace(/"/g,"&quot;")+',0.6)">🐢 慢</button></div>'+(it.tip?'<div class="tip">💡 '+esc(it.tip)+'</div>':'')+'</div>'; });
+    h+='</div></div>'; });
+  h+='<div class="row"><button class="btn" onclick="go(\''+c.id+'\',\'speak\')">学完了，去听与说 →</button></div>';
+  return h;
+}
+
+function speakHTML(c){
+  let h='<div class="callout">怎么练：① 点“🔊 听”两三遍，可以用“🐢 慢”。② 点“🎤 我来读”，大声、慢慢读出英文。③ 看结果：绿色是被听清的词，红色是没听清的，点红色词单独再听。目标是每句 85% 以上。</div>'+speedCtl();
+  if(!SR) h+='<div class="callout warn">'+micHelp("这个浏览器不支持语音识别。")+'</div>';
+  else if(isIOS()) h+='<div class="callout" style="font-size:14px">📱 iPhone 小提示：“🎤 我来读”用的是手机系统的听写服务。如果它反复没有反应，请到 设置 → 通用 → 键盘 → 启用听写，并添加英语。</div>';
+  c.drills.forEach(([en,zh],i)=>{ const id="d"+i; h+='<div class="drill"><div class="en">'+esc(en)+'</div><div class="zh">'+esc(zh)+'</div><div class="row"><button class="ib" onclick="say('+JSON.stringify(en).replace(/"/g,"&quot;")+')">🔊 听</button><button class="ib" onclick="say('+JSON.stringify(en).replace(/"/g,"&quot;")+',0.6)">🐢 慢</button><button class="btn" onclick="startRec('+JSON.stringify(en).replace(/"/g,"&quot;")+',document.getElementById(\''+id+'\'))">🎤 我来读</button></div><div class="result" id="'+id+'">还没有读。点“🎤 我来读”开始。</div><div id="'+id+'p"></div></div>'; });
+  h+='<div class="row"><button class="btn" onclick="go(\''+c.id+'\',\'ex\')">去做练习 →</button></div>';
+  return h;
+}
+
+function exHTML(c){
+  let h='<div class="callout">练习会立刻给出对错。“听写”题先点 🔊，可以听很多遍。做完全部题目再去作业。</div>';
+  c.ex.forEach((e,i)=>{ const key=c.id+"-"+i; const st=S.ex[key];
+    h+='<div class="ex" id="ex'+i+'"><div class="q">'+(i+1)+'. '+esc(e.q)+'</div>';
+    if(e.say) h+='<div class="row" style="margin-bottom:8px"><button class="ib" onclick="say('+JSON.stringify(e.say).replace(/"/g,"&quot;")+')">🔊 听</button><button class="ib" onclick="say('+JSON.stringify(e.say).replace(/"/g,"&quot;")+',0.6)">🐢 慢</button></div>';
+    if(e.t==="mc"||e.t==="listen"){ h+='<div class="opts">'+e.opts.map((o,j)=>'<button class="opt'+(st!==undefined&&j===e.a?" ok":"")+(st!==undefined&&st===j&&j!==e.a?" no":"")+'" onclick="answer(\''+c.id+'\','+i+','+j+')"><span class="en">'+esc(o)+'</span></button>').join("")+'</div>'; }
+    else { h+='<div class="row"><input type="text" id="in'+i+'" value="'+(st!==undefined?esc(st):"")+'" placeholder="在这里打字" autocomplete="off"><button class="btn sec2" onclick="answerType(\''+c.id+'\','+i+')">检查</button></div>'; }
+    if(st!==undefined){ const ok = e.t==="type"? typeOK(e,st) : st===e.a; h+='<div class="fb '+(ok?"ok":"no")+'">'+(ok?'✓ 正确！':'✗ 不对。正确答案：<span class="en">'+esc(e.t==="type"?e.a:e.opts[e.a])+'</span>')+(e.say&&!ok?' —— 再听一遍，注意嘴型。':'')+'</div>'; }
+    h+='</div>'; });
+  const total=c.ex.length, right=c.ex.filter((e,i)=>{const st=S.ex[c.id+"-"+i]; return st!==undefined && (e.t==="type"?typeOK(e,st):st===e.a);}).length;
+  h+='<div class="card"><b>本章练习：'+right+' / '+total+' 正确</b>'+(right===total?' <span class="badge">全对 🎉</span>':'')+'<div class="row" style="margin-top:10px"><button class="btn sec2" onclick="resetEx(\''+c.id+'\')">重做本章练习</button><button class="btn" onclick="go(\''+c.id+'\',\'hw\')">去看作业 →</button></div></div>';
+  return h;
+}
+function typeOK(e,ans){ const n=s=>norm(s); return [e.a,...(e.alt||[])].some(x=>n(x)===n(ans)); }
+function react(ok){ if(ok){ face.mood("happy"); face.bounce(); } else face.mood("oops",1800); }
+function answer(cid,i,j){ S.ex[cid+"-"+i]=j; const e=COURSE.find(x=>x.id===cid).ex[i]; react(j===e.a); save(); render(); setTimeout(()=>document.getElementById("ex"+i)?.scrollIntoView({block:"center",behavior:"smooth"}),0); }
+function answerType(cid,i){ const v=document.getElementById("in"+i).value.trim(); if(!v) return; S.ex[cid+"-"+i]=v; react(typeOK(COURSE.find(x=>x.id===cid).ex[i],v)); save(); render(); setTimeout(()=>document.getElementById("ex"+i)?.scrollIntoView({block:"center",behavior:"smooth"}),0); }
+function resetEx(cid){ Object.keys(S.ex).forEach(k=>{ if(k.startsWith(cid+"-")) delete S.ex[k]; }); save(); render(); }
+
+function hwHTML(c){
+  let h='<div class="callout"><b>作业要在真实生活里完成。</b>这是本课堂和“只在手机里学”的根本区别。每项作业完成后打勾。三项都打勾，本章就完成了。做的时候紧张很正常，说错也没关系，对方听懂了一个词就是胜利。</div>';
+  h+='<ul class="hw">'+c.hw.map(([k,t],i)=>{ const id=c.id+"-"+i; return '<li><input type="checkbox" id="hw'+i+'" '+(S.hw[id]?"checked":"")+' onchange="hwToggle(\''+c.id+'\','+i+',this.checked)"><label for="hw'+i+'"><div class="k">'+esc(k)+'</div><div>'+esc(t)+'</div></label></li>'; }).join("")+'</ul>';
+  h+='<div class="card" style="margin-top:14px">'+(chapDone(c)?'<b style="color:var(--good)">✓ 本章已完成</b>':'<b>完成三项作业后，本章自动标记完成。</b>')+'<div style="font-size:14px;color:var(--muted);margin-top:6px">做作业时遇到的问题（对方说了什么听不懂、某个词不会说），回来按“问老师”问我。</div></div>';
+  return h;
+}
+function hwToggle(cid,i,v){ S.hw[cid+"-"+i]=v; const c=COURSE.find(x=>x.id===cid); S.done[cid]=c.hw.every((_,j)=>S.hw[cid+"-"+j]); save(); renderRail(); render(); if(v) face.bounce(); if(S.done[cid]){ toast("本章完成！🎉"); face.mood("wow",3000); } }
+
+/* ---------- teacher (ask Claude) ---------- */
+const RULES = `你是一位耐心的英语老师，学生是中国人，英语零基础，正在用一个叫“英语起步课堂”的课程学习。规则：
+1. 永远用简单的中文解释。英文只出现在需要示范的单词和句子里，并且每个英文例子后面都用括号写中文意思。
+2. 讲发音时，用“嘴型/舌头位置”的动作描述（例如：上牙轻咬下唇），不要只给音标。可以给“近似的中文发音”帮助理解，但要说明只是近似。
+3. 回答要短：3 到 6 句，像在课堂上面对面说话。一次只讲一个重点。
+4. 如果学生问的内容超出入门级（第一级），先用最简单的方式回答，再说“这个在后面的级别会详细学”。
+5. 鼓励学生到真实生活里去用。可以在结尾给一个今天就能做的“小任务”。
+6. 如果学生写的英文有错，先说对的地方，再指出错误并给出正确说法。
+7. 不要用 markdown 标题或表格，可以用简单的换行。`;
+let turns=[], sampleFn=null, ctl=null;
+(async()=>{ try{ sampleFn = window.claude?.use ? await window.claude.use("sample") : null; }catch(e){ sampleFn=null; } })();
+function togglePanel(on){ $("#panel").classList.toggle("on",on); $("#openBtn").hidden=on; if(on){ if(!$("#chat").children.length) seedChat(); setTimeout(()=>$("#ask").focus(),50); } }
+function seedChat(){
+  addMsg("ai",(me?me.name+"，":"")+"你好！我是小英，你的英语老师。你可以用中文问我任何问题：某个音怎么发、这句话什么意思、生活里遇到的英语怎么说。\n\n我会用中文解释，用英文示范，点“🔊”就能听到示范的读音。");
+  renderQuick();
+}
+function renderQuick(){
+  const c = COURSE.find(x=>x.id===cur);
+  const qs = c? ["th 怎么发音？我总发成 s","这一章最难的是什么？","帮我检查这句话：I am go to school","做作业时对方说太快听不懂怎么办？"] : ["我该从哪里开始？","怎么练才能让别人听懂我？","每天学多久合适？"];
+  $("#quick").innerHTML = qs.map(q=>'<button onclick="$(\'#ask\').value='+JSON.stringify(q).replace(/"/g,"&quot;")+';askTeacher()">'+esc(q)+'</button>').join("");
+}
+function addMsg(who,text){ const d=document.createElement("div"); d.className="msg "+who; d.textContent=text; if(who==="ai") addSayButtons(d,text); $("#chat").appendChild(d); $("#chat").scrollTop=1e9; return d; }
+function addSayButtons(d,text){
+  const en = (text.match(/[A-Za-z][A-Za-z' ,.!?-]{2,}/g)||[]).map(s=>s.trim()).filter(s=>/[a-zA-Z]{2,}/.test(s)&&s.length<80);
+  const uniq=[...new Set(en)].slice(0,6); if(!uniq.length) return;
+  const row=document.createElement("div"); row.className="row say";
+  uniq.forEach(s=>{ const b=document.createElement("button"); b.className="ib"; b.textContent="🔊 "+s; b.onclick=()=>say(s,0.75); row.appendChild(b); });
+  d.appendChild(row);
+}
+async function askTeacher(){
+  const q=$("#ask").value.trim(); if(!q) return;
+  $("#ask").value=""; addMsg("me",q);
+  if(!sampleFn){ const d=addMsg("ai","“问老师”在这个网址上不能回答（它需要你的 Claude 账户）。请打开课堂的 claude.ai 版本提问。课程内容一样，进度是分开记录的。"); const a=document.createElement("a"); a.href="https://claude.ai/artifact/UAoxtesh5KrBp7drdj8bd9"; a.target="_blank"; a.rel="noopener"; a.textContent="打开 claude.ai 版本 →"; a.className="btn"; a.style.cssText="display:inline-block;margin-top:8px;text-decoration:none"; d.appendChild(a); return; }
+  const c = COURSE.find(x=>x.id===cur);
+  const ctx = c? "学生现在在学：第一级第"+(COURSE.indexOf(c)+1)+"章《"+c.title+"》。本章目标："+c.goal+"。本章重点句："+c.drills.map(d=>d[0]).join(" | ") : "学生在课程总览页。";
+  turns.push({role:"user",content:q}); if(turns.length>12) turns=turns.slice(-12);
+  const bubble=addMsg("ai","小英在想……"); $("#askBtn").disabled=true;
+  face.mood("think");
+  ctl=new AbortController();
+  try{
+    const {text} = await sampleFn([{role:"user",content:RULES+"\n\n学生的名字："+(me?me.name:"同学")+"。当前上下文："+ctx},...turns],{cache:false,signal:ctl.signal,modelTier:"default",onText:({text})=>{face.mood("happy");face.talk(true);bubble.textContent=text;$("#chat").scrollTop=1e9;}});
+    face.talk(false); bubble.textContent=text; addSayButtons(bubble,text); turns.push({role:"assistant",content:text});
+  }catch(e){
+    face.talk(false); face.mood("oops",2000);
+    const map={not_granted:"你没有允许本页面使用 Claude，所以老师暂时不能回答。可以在页面的权限设置里打开。",rate_limited:"问得太快了，或者今天的用量到了上限。休息一下再问。",session_expired:"登录过期了，请重新登录 claude.ai。",refused:"这个问题老师不能回答，换个问法试试。"};
+    bubble.textContent = e.text || map[e.code] || "老师这边出了点问题，请再问一次。";
+    turns.pop();
+  }finally{ $("#askBtn").disabled=false; $("#chat").scrollTop=1e9; }
+}
+$("#ask").addEventListener("keydown",e=>{ if(e.key==="Enter"&&!e.shiftKey){ e.preventDefault(); askTeacher(); } });
+
+/* ---------- boot ---------- */
+if(/^#(c\d+|review)$/.test(location.hash)){ const id=location.hash.slice(1); if(id==="review"||COURSE.find(c=>c.id===id)) cur=id; }
+renderRail(); render();
+initLogin();
+if(USE_WEBAUDIO){ const unlock=()=>{ try{ getCtx(); }catch(e){} }; document.addEventListener("touchend",unlock,{once:true,passive:true}); document.addEventListener("click",unlock,{once:true}); }
+</script>
+</body></html>
