@@ -187,11 +187,11 @@ h2.title{font-size:28px;margin:4px 0 8px;line-height:1.2;text-wrap:balance;overf
 .ptrack .bar{height:10px;margin-top:8px}
 .ptrack .bar i{transition:width .5s}
 .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}
-.step{border:0;background:var(--bg);border-radius:8px;padding:8px 6px;text-align:center;font-size:13px;color:var(--muted);border-top:4px solid var(--line);line-height:1.3;-webkit-tap-highlight-color:transparent}
-.step.done{border-top-color:var(--good);color:var(--good)}
+.step{position:relative;border:0;background:var(--bg);border-radius:8px;padding:8px 6px;text-align:center;font-size:13px;color:var(--muted);border-top:4px solid var(--line);line-height:1.3;-webkit-tap-highlight-color:transparent}
 .step.on{background:var(--accent);color:var(--accent-ink);border-top-color:var(--accent);font-weight:600}
-.step.on.done{background:var(--good);border-top-color:var(--good);color:#fff}
 .step.on small{color:inherit;opacity:.9}
+.step .ok{position:absolute;top:6px;right:6px;width:16px;height:16px;border-radius:50%;background:var(--good);color:#fff;font-size:11px;line-height:16px;font-weight:700}
+.step.on .ok{background:#fff;color:var(--good)}
 .step small{display:block;font-size:11px}
 .topbar{display:none}
 .scrim{display:none}
@@ -941,7 +941,7 @@ function stepState(c){
 function chapPct(c){ const st=stepState(c); return Math.round(st.filter(x=>x.done).length/4*100); }
 function trackerHTML(c){
   const i=COURSE.indexOf(c), n=COURSE.filter(chapDone).length, st=stepState(c), pct=chapPct(c);
-  return '<div class="ptrack"><div class="top"><span>第一级进度：<b>'+n+' / '+COURSE.length+' 章</b></span><span>本章：<b>'+pct+'%</b></span></div><div class="bar"><i style="width:'+Math.round((n+pct/100)/COURSE.length*100)+'%"></i></div><div class="steps">'+st.map(x=>'<button class="step'+(x.done?" done":"")+(tab===x.k?" on":"")+'" aria-current="'+(tab===x.k?"step":"false")+'" onclick="go(\''+c.id+'\',\''+x.k+'\')">'+(x.done?'✓ ':'')+x.n+'<small>'+esc(x.sub)+'</small></button>').join("")+'</div></div>';
+  return '<div class="ptrack"><div class="top"><span>第一级进度：<b>'+n+' / '+COURSE.length+' 章</b></span><span>本章：<b>'+pct+'%</b></span></div><div class="bar"><i style="width:'+Math.round((n+pct/100)/COURSE.length*100)+'%"></i></div><div class="steps">'+st.map(x=>'<button class="step'+(tab===x.k?" on":"")+'" aria-current="'+(tab===x.k?"step":"false")+'" onclick="go(\''+c.id+'\',\''+x.k+'\')">'+(x.done?'<span class="ok" title="已完成">✓</span>':'')+x.n+'<small>'+esc(x.sub)+'</small></button>').join("")+'</div></div>';
 }
 function progress(){ const n=COURSE.filter(chapDone).length; const p=Math.round(COURSE.reduce((a,c)=>a+(chapDone(c)?1:chapPct(c)/100),0)/COURSE.length*100); $("#pct").textContent=p+"%"; $("#pbar").style.width=p+"%"; $("#tbBar").style.width=p+"%"; const c=COURSE.find(x=>x.id===cur); $("#tbTitle").textContent=c?((COURSE.indexOf(c)+1)+". "+c.title.split("：")[0]):"英语起步课堂"; $("#tbSub").textContent=c?("第一级 · 进度 "+p+"%"):("第一级 · 入门 · "+n+"/"+COURSE.length+" 章完成"); }
 function renderRail(){
