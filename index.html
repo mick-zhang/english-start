@@ -187,9 +187,11 @@ h2.title{font-size:28px;margin:4px 0 8px;line-height:1.2;text-wrap:balance;overf
 .ptrack .bar{height:10px;margin-top:8px}
 .ptrack .bar i{transition:width .5s}
 .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}
-.step{border:0;background:var(--bg);border-radius:8px;padding:8px 6px;text-align:center;font-size:13px;color:var(--muted);border-top:4px solid var(--line);line-height:1.3}
-.step.on{border-top-color:var(--accent);color:var(--fg)}
+.step{border:0;background:var(--bg);border-radius:8px;padding:8px 6px;text-align:center;font-size:13px;color:var(--muted);border-top:4px solid var(--line);line-height:1.3;-webkit-tap-highlight-color:transparent}
 .step.done{border-top-color:var(--good);color:var(--good)}
+.step.on{background:var(--accent);color:var(--accent-ink);border-top-color:var(--accent);font-weight:600}
+.step.on.done{background:var(--good);border-top-color:var(--good);color:#fff}
+.step.on small{color:inherit;opacity:.9}
 .step small{display:block;font-size:11px}
 .topbar{display:none}
 .scrim{display:none}
@@ -807,18 +809,29 @@ function markSpoken(box){
   box.innerHTML='<span class="score g">✓ 已完成</span> 很好！你已经大声读过这句了。想要打分的话，随时再按“🎤 我来读”。';
   face.mood("happy"); face.bounce();
 }
+let recBusyUntil=0;
+function releaseRec(r){
+  // drop every handler and abort, so Safari closes the mic session instead of keeping it open
+  if(!r) return;
+  try{ r.onresult=r.onerror=r.onend=r.onaudiostart=r.onaudioend=r.onspeechend=null; }catch(e){}
+  try{ r.abort(); }catch(e){}
+}
 function startRec(target, box, isRetry){
   if(!SR){ box.innerHTML = micHelp("这个浏览器不支持语音识别。"); return; }
-  if(activeRec){ try{activeRec.abort();}catch(e){} activeRec=null; }
+  const prev=activeRec; activeRec=null;
+  if(prev){ releaseRec(prev); }
   if(mediaRec && mediaRec.state==="recording"){ try{ mediaRec.stop(); }catch(e){} }
   stopAll(); clearTimeout(recTimer);
   if(!isRetry) recTries=0;
+  // iOS needs a moment after the previous session is released before a new one can take the mic
+  const wait=Math.max(0, recBusyUntil-Date.now(), prev?350:0);
+  if(wait>0){ box.innerHTML='<span class="rec"><span class="dot"></span> 准备中…</span>'; setTimeout(()=>startRec(target, box, isRetry), wait); recBusyUntil=0; return; }
   const r = new SR(); activeRec=r;
   r.lang="en-US"; r.interimResults=true; r.maxAlternatives=3; r.continuous=false;
   box.innerHTML = '<span class="rec"><span class="dot"></span> 正在听…请大声、慢慢地读上面的英文</span>';
   face.mood("think");
   let finalText="", gotAudio=false, handled=false, myTimer=null;
-  const finish=(kind)=>{ if(handled) return; handled=true; clearTimeout(myTimer); if(activeRec===r) activeRec=null; face.mood("happy");
+  const finish=(kind)=>{ if(handled) return; handled=true; clearTimeout(myTimer); if(activeRec===r) activeRec=null; releaseRec(r); recBusyUntil=Date.now()+350; face.mood("happy");
     if(finalText.trim()){ showResult(target, finalText.trim(), box); return; }
     // transient failure: retry once silently before showing help
     if((kind==="network"||kind==="timeout"||kind==="aborted") && recTries<1){ recTries++; box.innerHTML='<span class="rec"><span class="dot"></span> 连接有点慢，正在重试…请再读一遍</span>'; setTimeout(()=>startRec(target, box, true), 400); return; }
@@ -834,7 +847,7 @@ function startRec(target, box, isRetry){
   r.onend = ()=>{ finish(gotAudio ? "timeout" : "network"); };
   // safety net: iOS sometimes never fires onend when the speech service stalls
   myTimer=setTimeout(()=>{ try{ r.abort(); }catch(e){} finish("timeout"); }, 12000); recTimer=myTimer;
-  try{ r.start(); }catch(err){ finish("other"); }
+  try{ r.start(); }catch(err){ recBusyUntil=Date.now()+700; finish("aborted"); }   // start refused = previous session still closing: treat as transient so the retry runs
 }
 function micHelp(head){
   return '<b>'+head+'</b><br>说话练习需要麦克风。请在浏览器地址栏左边点一下“锁”或“设置”图标，把麦克风改为“允许”，然后刷新页面再试。手机上请在弹出的提示里选择“允许”。';
@@ -890,7 +903,7 @@ async function toggleRecord(btn, player){
       stream.getTracks().forEach(t=>t.stop());
       const type = mediaRec.mimeType || mime || "audio/webm";
       const blob = new Blob(chunks,{type});
-      btn.textContent="🎙️ 录下我的声音"; mediaRec=null;
+      btn.textContent="🎙️ 录下我的声音"; mediaRec=null; recBusyUntil=Date.now()+500;
       if(!blob.size){ player.innerHTML='没有录到声音。请靠近麦克风，按一下“🎙️ 录下我的声音”，读完再按“⏹ 停止录音”。'; return; }
       const url=URL.createObjectURL(blob);
       player.innerHTML='<div style="margin-top:8px;font-size:14px">回放，和标准读音对比：</div><audio controls playsinline preload="metadata" src="'+url+'" style="width:100%;margin-top:4px"></audio>';
@@ -928,7 +941,7 @@ function stepState(c){
 function chapPct(c){ const st=stepState(c); return Math.round(st.filter(x=>x.done).length/4*100); }
 function trackerHTML(c){
   const i=COURSE.indexOf(c), n=COURSE.filter(chapDone).length, st=stepState(c), pct=chapPct(c);
-  return '<div class="ptrack"><div class="top"><span>第一级进度：<b>'+n+' / '+COURSE.length+' 章</b></span><span>本章：<b>'+pct+'%</b></span></div><div class="bar"><i style="width:'+Math.round((n+pct/100)/COURSE.length*100)+'%"></i></div><div class="steps">'+st.map(x=>'<button class="step'+(x.done?" done":tab===x.k?" on":"")+'" onclick="go(\''+c.id+'\',\''+x.k+'\')">'+(x.done?'✓ ':'')+x.n+'<small>'+esc(x.sub)+'</small></button>').join("")+'</div></div>';
+  return '<div class="ptrack"><div class="top"><span>第一级进度：<b>'+n+' / '+COURSE.length+' 章</b></span><span>本章：<b>'+pct+'%</b></span></div><div class="bar"><i style="width:'+Math.round((n+pct/100)/COURSE.length*100)+'%"></i></div><div class="steps">'+st.map(x=>'<button class="step'+(x.done?" done":"")+(tab===x.k?" on":"")+'" aria-current="'+(tab===x.k?"step":"false")+'" onclick="go(\''+c.id+'\',\''+x.k+'\')">'+(x.done?'✓ ':'')+x.n+'<small>'+esc(x.sub)+'</small></button>').join("")+'</div></div>';
 }
 function progress(){ const n=COURSE.filter(chapDone).length; const p=Math.round(COURSE.reduce((a,c)=>a+(chapDone(c)?1:chapPct(c)/100),0)/COURSE.length*100); $("#pct").textContent=p+"%"; $("#pbar").style.width=p+"%"; $("#tbBar").style.width=p+"%"; const c=COURSE.find(x=>x.id===cur); $("#tbTitle").textContent=c?((COURSE.indexOf(c)+1)+". "+c.title.split("：")[0]):"英语起步课堂"; $("#tbSub").textContent=c?("第一级 · 进度 "+p+"%"):("第一级 · 入门 · "+n+"/"+COURSE.length+" 章完成"); }
 function renderRail(){
