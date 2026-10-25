@@ -798,7 +798,7 @@ function recHelp(kind, box, target){
     msg = '<b>语音识别服务暂时没有响应。</b>这不是你的问题——“我来读”要把声音发给手机系统的识别服务，有时会慢或者断开。<br>可以：① 再按一次“🎤 我来读”；② 换个网络（Wi‑Fi / 流量）再试；';
     if(ios) msg += '③ 检查 <b>设置 → 通用 → 键盘 → 启用听写</b> 已打开，并在“听写语言”里添加 <b>英语</b>；';
     else msg += '③ 确认手机里的 Google 语音服务可用；';
-    msg += '④ 识别不了也没关系——用下面的“🎙️ 录下我的声音”读一遍、听回放，一样算练习。';
+    msg += '④ 识别不了也没关系——大声读一遍，然后点“✓ 我已经大声读过了”，一样算练习。';
   }
   box.innerHTML = msg + '<div class="row" style="margin-top:8px"><button class="btn" onclick="startRec('+JSON.stringify(target).replace(/"/g,"&quot;")+',this.closest(\'.result\'))">🎤 再试一次</button><button class="btn sec2" onclick="markSpoken(this.closest(\'.result\'))">✓ 我已经大声读过了</button></div>';
 }
@@ -820,7 +820,6 @@ function startRec(target, box, isRetry){
   if(!SR){ box.innerHTML = micHelp("这个浏览器不支持语音识别。"); return; }
   const prev=activeRec; activeRec=null;
   if(prev){ releaseRec(prev); }
-  if(mediaRec && mediaRec.state==="recording"){ try{ mediaRec.stop(); }catch(e){} }
   stopAll(); clearTimeout(recTimer);
   if(!isRetry) recTries=0;
   // iOS needs a moment after the previous session is released before a new one can take the mic
@@ -878,48 +877,6 @@ function hint(w){
 }
 
 /* ---------- record & play back ---------- */
-let mediaRec=null, chunks=[], recBtn=null;
-function recMime(){
-  if(!window.MediaRecorder) return null;
-  for(const m of ["audio/mp4","audio/webm;codecs=opus","audio/webm","audio/ogg;codecs=opus","audio/aac","audio/mpeg"]){
-    try{ if(MediaRecorder.isTypeSupported(m)) return m; }catch(e){}
-  }
-  return "";
-}
-async function toggleRecord(btn, player){
-  if(mediaRec && mediaRec.state==="recording"){ try{ mediaRec.stop(); }catch(e){} btn.textContent="🎙️ 录下我的声音"; return; }
-  if(!window.MediaRecorder || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ player.innerHTML=micHelp("这个浏览器不支持录音。请用 Chrome 或 Safari 打开。"); return; }
-  // release the microphone from any speech-recognition session and stop playback first (phones allow one mic user at a time)
-  if(activeRec){ try{ activeRec.abort(); }catch(e){} activeRec=null; }
-  stopAll();
-  try{
-    const stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}});
-    const mime = recMime(); chunks=[];
-    mediaRec = mime ? new MediaRecorder(stream,{mimeType:mime}) : new MediaRecorder(stream);
-    recBtn = btn;
-    mediaRec.ondataavailable=e=>{ if(e.data && e.data.size) chunks.push(e.data); };
-    mediaRec.onerror=()=>{ stream.getTracks().forEach(t=>t.stop()); btn.textContent="🎙️ 录下我的声音"; player.innerHTML='录音出错了，请再试一次。'; };
-    mediaRec.onstop=()=>{
-      stream.getTracks().forEach(t=>t.stop());
-      const type = mediaRec.mimeType || mime || "audio/webm";
-      const blob = new Blob(chunks,{type});
-      btn.textContent="🎙️ 录下我的声音"; mediaRec=null; recBusyUntil=Date.now()+500;
-      if(!blob.size){ player.innerHTML='没有录到声音。请靠近麦克风，按一下“🎙️ 录下我的声音”，读完再按“⏹ 停止录音”。'; return; }
-      const url=URL.createObjectURL(blob);
-      player.innerHTML='<div style="margin-top:8px;font-size:14px">回放，和标准读音对比：</div><audio controls playsinline preload="metadata" src="'+url+'" style="width:100%;margin-top:4px"></audio>';
-    };
-    mediaRec.start(250);
-    btn.textContent="⏹ 停止录音";
-    player.innerHTML='<span class="rec"><span class="dot"></span> 正在录音…读完请按“⏹ 停止录音”</span>';
-  }catch(e){
-    btn.textContent="🎙️ 录下我的声音";
-    if(e && (e.name==="NotAllowedError"||e.name==="SecurityError")) player.innerHTML = micHelp("麦克风没有打开。");
-    else if(e && e.name==="NotFoundError") player.innerHTML = micHelp("没有找到麦克风。");
-    else player.innerHTML = micHelp("无法录音（"+esc((e&&e.name)||"error")+"）。");
-  }
-}
-// stop a recording if the learner starts a speaking drill, so the mic is free for recognition
-document.addEventListener("visibilitychange",()=>{ if(document.hidden && mediaRec && mediaRec.state==="recording"){ try{ mediaRec.stop(); }catch(e){} } });
 
 /* ---------- render ---------- */
 const $ = s=>document.querySelector(s);
@@ -1019,10 +976,10 @@ function learnHTML(c){
 }
 
 function speakHTML(c){
-  let h='<div class="callout">怎么练：① 点“🔊 听”两三遍，可以用“🐢 慢”。② 点“🎤 我来读”，大声、慢慢读出英文。③ 看结果：绿色是被听清的词，红色是没听清的，点红色词单独再听。④ 用“🎙️ 录下我的声音”回放，和标准读音比。目标是每句 85% 以上。</div>'+speedCtl();
+  let h='<div class="callout">怎么练：① 点“🔊 听”两三遍，可以用“🐢 慢”。② 点“🎤 我来读”，大声、慢慢读出英文。③ 看结果：绿色是被听清的词，红色是没听清的，点红色词单独再听。目标是每句 85% 以上。</div>'+speedCtl();
   if(!SR) h+='<div class="callout warn">'+micHelp("这个浏览器不支持语音识别。")+'</div>';
-  else if(isIOS()) h+='<div class="callout" style="font-size:14px">📱 iPhone 小提示：“🎤 我来读”用的是手机系统的听写服务。如果它反复没有反应，请到 设置 → 通用 → 键盘 → 启用听写，并添加英语。“🎙️ 录下我的声音”不需要这个设置。</div>';
-  c.drills.forEach(([en,zh],i)=>{ const id="d"+i; h+='<div class="drill"><div class="en">'+esc(en)+'</div><div class="zh">'+esc(zh)+'</div><div class="row"><button class="ib" onclick="say('+JSON.stringify(en).replace(/"/g,"&quot;")+')">🔊 听</button><button class="ib" onclick="say('+JSON.stringify(en).replace(/"/g,"&quot;")+',0.6)">🐢 慢</button><button class="btn" onclick="startRec('+JSON.stringify(en).replace(/"/g,"&quot;")+',document.getElementById(\''+id+'\'))">🎤 我来读</button><button class="btn sec2" onclick="toggleRecord(this,document.getElementById(\''+id+'p\'))">🎙️ 录下我的声音</button></div><div class="result" id="'+id+'">还没有读。点“🎤 我来读”开始。</div><div id="'+id+'p"></div></div>'; });
+  else if(isIOS()) h+='<div class="callout" style="font-size:14px">📱 iPhone 小提示：“🎤 我来读”用的是手机系统的听写服务。如果它反复没有反应，请到 设置 → 通用 → 键盘 → 启用听写，并添加英语。</div>';
+  c.drills.forEach(([en,zh],i)=>{ const id="d"+i; h+='<div class="drill"><div class="en">'+esc(en)+'</div><div class="zh">'+esc(zh)+'</div><div class="row"><button class="ib" onclick="say('+JSON.stringify(en).replace(/"/g,"&quot;")+')">🔊 听</button><button class="ib" onclick="say('+JSON.stringify(en).replace(/"/g,"&quot;")+',0.6)">🐢 慢</button><button class="btn" onclick="startRec('+JSON.stringify(en).replace(/"/g,"&quot;")+',document.getElementById(\''+id+'\'))">🎤 我来读</button></div><div class="result" id="'+id+'">还没有读。点“🎤 我来读”开始。</div><div id="'+id+'p"></div></div>'; });
   h+='<div class="row"><button class="btn" onclick="go(\''+c.id+'\',\'ex\')">去做练习 →</button></div>';
   return h;
 }
