@@ -748,12 +748,6 @@ const AUDIO = {"A.": "e1354cc842", "apple": "1f3870be27", "B": "9d5ed678fe", "bo
 const AUDIO_BASE = "audio/";
 let curAudio=null; const blobCache={};
 function stopAll(){ try{ speechSynthesis.cancel(); }catch(e){} if(curAudio){ curAudio.pause(); curAudio=null; } face.talk(false); }
-function releaseAudioSession(){
-  // before speech recognition: silence every <audio> (recorded-voice playback keeps the iOS audio session active) and drop any live mic stream
-  stopAll();
-  document.querySelectorAll("audio").forEach(a=>{ try{ a.pause(); a.currentTime=0; }catch(e){} });
-  if(micStream){ try{ micStream.getTracks().forEach(t=>t.stop()); }catch(e){} micStream=null; }
-}
 async function say(text, rate){
   const r = rate ?? S.speed;
   stopAll();
@@ -815,57 +809,45 @@ function markSpoken(box){
   box.innerHTML='<span class="score g">✓ 已完成</span> 很好！你已经大声读过这句了。想要打分的话，随时再按“🎤 我来读”。';
   face.mood("happy"); face.bounce();
 }
-let recBusyUntil=0, recLog=[];
-function rlog(m){ recLog.push(new Date().toISOString().slice(11,23)+" "+m); if(recLog.length>14) recLog.shift(); const el=document.getElementById("reclog"); if(el) el.textContent=recLog.join("\n"); }
-
-/* One recognizer for the whole page. iOS Safari gives a page exactly one working SpeechRecognition session:
-   every recognizer created after the first fires audiostart and then never hears anything. So we create one,
-   keep it in continuous mode, and route each drill's results to whichever box asked for them. */
-let REC=null, recJob=null, recIdleTimer=null;
-function getRec(){
-  if(REC) return REC;
-  const r=new SR(); r.lang="en-US"; r.interimResults=true; r.maxAlternatives=3; r.continuous=true;
-  r.onaudiostart=()=>rlog("audiostart");
-  r.onsoundstart=()=>{ rlog("soundstart"); if(recJob) recJob.heard=true; };
-  r.onspeechstart=()=>{ rlog("speechstart"); if(recJob) recJob.heard=true; };
-  r.onresult=e=>{ const j=recJob; if(!j) return; j.heard=true; let interim="";
-    for(let i=e.resultIndex;i<e.results.length;i++){ const t=e.results[i][0].transcript; if(e.results[i].isFinal) j.final+=t+" "; else interim+=t; }
-    if(j.final.trim()){ clearTimeout(j.timer); jobDone(j,"ok"); }
-    else j.box.innerHTML='<span class="rec"><span class="dot"></span> 听到：<span class="en">'+esc(interim)+'</span></span>'; };
-  r.onerror=e=>{ rlog("error "+e.error); const j=recJob; if(!j) return;
-    if(e.error==="not-allowed"||e.error==="service-not-allowed") jobDone(j,"not-allowed");
-    else if(e.error==="no-speech") jobDone(j,"no-speech");
-    else if(e.error==="aborted") { /* we stopped it ourselves */ }
-    else jobDone(j, e.error==="network"?"network":"other"); };
-  r.onend=()=>{ rlog("end"); REC_running=false; const j=recJob; if(j && !j.done){ jobDone(j, j.final.trim()?"ok":(j.heard?"timeout":"network")); } };
-  REC=r; return r;
+let recBusyUntil=0;
+function releaseRec(r){
+  // drop every handler and abort, so Safari closes the mic session instead of keeping it open
+  if(!r) return;
+  try{ r.onresult=r.onerror=r.onend=r.onaudiostart=r.onaudioend=r.onspeechend=null; }catch(e){}
+  try{ r.abort(); }catch(e){}
 }
-let REC_running=false;
-function recStart(){ const r=getRec(); if(REC_running) return true; try{ r.start(); REC_running=true; rlog("started"); return true; }catch(err){ rlog("start threw "+(err&&err.name)); if(err && err.name==="InvalidStateError"){ REC_running=true; return true; } return false; } }
-function recStop(){ if(REC && REC_running){ try{ REC.stop(); }catch(e){} } }
-function jobDone(j,kind){
-  if(j.done) return; j.done=true; clearTimeout(j.timer); if(recJob===j) recJob=null; face.mood("happy");
-  // keep the session alive briefly for the next drill, then stop it so the mic indicator goes away
-  clearTimeout(recIdleTimer); recIdleTimer=setTimeout(recStop, 4000);
-  if(kind==="ok"){ showResult(j.target, j.final.trim(), j.box); return; }
-  if((kind==="network"||kind==="timeout") && j.tries<1){ j.box.innerHTML='<span class="rec"><span class="dot"></span> 连接有点慢，正在重试…请再读一遍</span>'; setTimeout(()=>startRec(j.target, j.box, true, j.tries+1), 400); return; }
-  recHelp(kind, j.box, j.target);
-}
-function releaseRec(){ /* kept for callers; single recognizer is never released */ }
-async function startRec(target, box, isRetry, tries){
+function startRec(target, box, isRetry){
   if(!SR){ box.innerHTML = micHelp("这个浏览器不支持语音识别。"); return; }
+  const prev=activeRec; activeRec=null;
+  if(prev){ releaseRec(prev); }
   if(mediaRec && mediaRec.state==="recording"){ try{ mediaRec.stop(); }catch(e){} }
-  stopAll(); clearTimeout(recIdleTimer);
-  document.querySelectorAll("audio").forEach(a=>{ try{ a.pause(); }catch(e){} });
-  if(recJob && !recJob.done){ recJob.done=true; clearTimeout(recJob.timer); recJob.box.innerHTML='已切换到另一句。'; }
-  rlog("start ios="+isIOS()+" running="+REC_running+" retry="+!!isRetry);
-  const j={target, box, final:"", heard:false, done:false, tries:tries||0, timer:null}; recJob=j;
-  box.innerHTML='<span class="rec"><span class="dot"></span> 正在听…请大声、慢慢地读上面的英文</span>';
+  stopAll(); clearTimeout(recTimer);
+  if(!isRetry) recTries=0;
+  // iOS needs a moment after the previous session is released before a new one can take the mic
+  const wait=Math.max(0, recBusyUntil-Date.now(), prev?350:0);
+  if(wait>0){ box.innerHTML='<span class="rec"><span class="dot"></span> 准备中…</span>'; setTimeout(()=>startRec(target, box, isRetry), wait); recBusyUntil=0; return; }
+  const r = new SR(); activeRec=r;
+  r.lang="en-US"; r.interimResults=true; r.maxAlternatives=3; r.continuous=false;
+  box.innerHTML = '<span class="rec"><span class="dot"></span> 正在听…请大声、慢慢地读上面的英文</span>';
   face.mood("think");
-  if(!recStart()){ jobDone(j,"other"); return; }
-  // a drill gets 12 s; when it ends we finalize from whatever was heard
-  j.timer=setTimeout(()=>{ if(j.done) return; if(j.final.trim()) jobDone(j,"ok"); else { rlog("drill timeout heard="+j.heard); jobDone(j, j.heard?"timeout":"network"); } }, 12000);
-  activeRec=REC;
+  let finalText="", gotAudio=false, handled=false, myTimer=null;
+  const finish=(kind)=>{ if(handled) return; handled=true; clearTimeout(myTimer); if(activeRec===r) activeRec=null; releaseRec(r); recBusyUntil=Date.now()+350; face.mood("happy");
+    if(finalText.trim()){ showResult(target, finalText.trim(), box); return; }
+    // transient failure: retry once silently before showing help
+    if((kind==="network"||kind==="timeout"||kind==="aborted") && recTries<1){ recTries++; box.innerHTML='<span class="rec"><span class="dot"></span> 连接有点慢，正在重试…请再读一遍</span>'; setTimeout(()=>startRec(target, box, true), 400); return; }
+    recHelp(kind, box, target); };
+  r.onaudiostart=()=>{ gotAudio=true; };
+  r.onresult = e=>{ let s=""; for(let i=e.resultIndex;i<e.results.length;i++){ s+=e.results[i][0].transcript; if(e.results[i].isFinal) finalText+=e.results[i][0].transcript+" "; }
+    if(!finalText) box.innerHTML = '<span class="rec"><span class="dot"></span> 听到：<span class="en">'+esc(s)+'</span></span>'; };
+  r.onerror = e=>{ const k=e.error; try{ r.abort(); }catch(x){}
+    if(k==="not-allowed"||k==="service-not-allowed") finish("not-allowed");
+    else if(k==="no-speech") finish("no-speech");
+    else if(k==="network"||k==="aborted") finish(k);
+    else finish("other"); };
+  r.onend = ()=>{ finish(gotAudio ? "timeout" : "network"); };
+  // safety net: iOS sometimes never fires onend when the speech service stalls
+  myTimer=setTimeout(()=>{ try{ r.abort(); }catch(e){} finish("timeout"); }, 12000); recTimer=myTimer;
+  try{ r.start(); }catch(err){ recBusyUntil=Date.now()+700; finish("aborted"); }   // start refused = previous session still closing: treat as transient so the retry runs
 }
 function micHelp(head){
   return '<b>'+head+'</b><br>说话练习需要麦克风。请在浏览器地址栏左边点一下“锁”或“设置”图标，把麦克风改为“允许”，然后刷新页面再试。手机上请在弹出的提示里选择“允许”。';
@@ -896,7 +878,7 @@ function hint(w){
 }
 
 /* ---------- record & play back ---------- */
-let mediaRec=null, chunks=[], recBtn=null, micStream=null, usedGUM=false;
+let mediaRec=null, chunks=[], recBtn=null;
 function recMime(){
   if(!window.MediaRecorder) return null;
   for(const m of ["audio/mp4","audio/webm;codecs=opus","audio/webm","audio/ogg;codecs=opus","audio/aac","audio/mpeg"]){
@@ -908,26 +890,25 @@ async function toggleRecord(btn, player){
   if(mediaRec && mediaRec.state==="recording"){ try{ mediaRec.stop(); }catch(e){} btn.textContent="🎙️ 录下我的声音"; return; }
   if(!window.MediaRecorder || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ player.innerHTML=micHelp("这个浏览器不支持录音。请用 Chrome 或 Safari 打开。"); return; }
   // release the microphone from any speech-recognition session and stop playback first (phones allow one mic user at a time)
-  if(recJob && !recJob.done){ recJob.done=true; clearTimeout(recJob.timer); recJob.box.innerHTML='已停止，改为录音。'; recJob=null; }
-  recStop(); stopAll();
+  if(activeRec){ try{ activeRec.abort(); }catch(e){} activeRec=null; }
+  stopAll();
   try{
-    const stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}}); micStream=stream; usedGUM=true;
+    const stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}});
     const mime = recMime(); chunks=[];
     mediaRec = mime ? new MediaRecorder(stream,{mimeType:mime}) : new MediaRecorder(stream);
     recBtn = btn;
     mediaRec.ondataavailable=e=>{ if(e.data && e.data.size) chunks.push(e.data); };
     mediaRec.onerror=()=>{ stream.getTracks().forEach(t=>t.stop()); btn.textContent="🎙️ 录下我的声音"; player.innerHTML='录音出错了，请再试一次。'; };
     mediaRec.onstop=()=>{
-      stream.getTracks().forEach(t=>t.stop()); if(micStream===stream) micStream=null; rlog("record stop, tracks closed");
+      stream.getTracks().forEach(t=>t.stop());
       const type = mediaRec.mimeType || mime || "audio/webm";
       const blob = new Blob(chunks,{type});
       btn.textContent="🎙️ 录下我的声音"; mediaRec=null; recBusyUntil=Date.now()+500;
       if(!blob.size){ player.innerHTML='没有录到声音。请靠近麦克风，按一下“🎙️ 录下我的声音”，读完再按“⏹ 停止录音”。'; return; }
       const url=URL.createObjectURL(blob);
       player.innerHTML='<div style="margin-top:8px;font-size:14px">回放，和标准读音对比：</div><audio controls playsinline preload="metadata" src="'+url+'" style="width:100%;margin-top:4px"></audio>';
-      const el=player.querySelector("audio"); el.addEventListener("play",()=>{ if(recJob && !recJob.done){ recJob.done=true; clearTimeout(recJob.timer); recJob=null; } recStop(); }); el.addEventListener("ended",()=>{ recBusyUntil=Math.max(recBusyUntil, Date.now()+400); }); el.addEventListener("pause",()=>{ recBusyUntil=Math.max(recBusyUntil, Date.now()+400); });
     };
-    mediaRec.start(250); rlog("record start mime="+(mime||"default"));
+    mediaRec.start(250);
     btn.textContent="⏹ 停止录音";
     player.innerHTML='<span class="rec"><span class="dot"></span> 正在录音…读完请按“⏹ 停止录音”</span>';
   }catch(e){
@@ -1041,7 +1022,6 @@ function speakHTML(c){
   let h='<div class="callout">怎么练：① 点“🔊 听”两三遍，可以用“🐢 慢”。② 点“🎤 我来读”，大声、慢慢读出英文。③ 看结果：绿色是被听清的词，红色是没听清的，点红色词单独再听。④ 用“🎙️ 录下我的声音”回放，和标准读音比。目标是每句 85% 以上。</div>'+speedCtl();
   if(!SR) h+='<div class="callout warn">'+micHelp("这个浏览器不支持语音识别。")+'</div>';
   else if(isIOS()) h+='<div class="callout" style="font-size:14px">📱 iPhone 小提示：“🎤 我来读”用的是手机系统的听写服务。如果它反复没有反应，请到 设置 → 通用 → 键盘 → 启用听写，并添加英语。“🎙️ 录下我的声音”不需要这个设置。</div>';
-  if(SR && (isIOS() || /Android/.test(navigator.userAgent))) h+='<details style="font-size:12px;color:var(--muted);margin:-6px 0 12px"><summary>调试信息（给开发者看）</summary><pre id="reclog" style="white-space:pre-wrap;font-size:11px;margin:6px 0 0">'+esc(recLog.join("\n"))+'</pre></details>';
   c.drills.forEach(([en,zh],i)=>{ const id="d"+i; h+='<div class="drill"><div class="en">'+esc(en)+'</div><div class="zh">'+esc(zh)+'</div><div class="row"><button class="ib" onclick="say('+JSON.stringify(en).replace(/"/g,"&quot;")+')">🔊 听</button><button class="ib" onclick="say('+JSON.stringify(en).replace(/"/g,"&quot;")+',0.6)">🐢 慢</button><button class="btn" onclick="startRec('+JSON.stringify(en).replace(/"/g,"&quot;")+',document.getElementById(\''+id+'\'))">🎤 我来读</button><button class="btn sec2" onclick="toggleRecord(this,document.getElementById(\''+id+'p\'))">🎙️ 录下我的声音</button></div><div class="result" id="'+id+'">还没有读。点“🎤 我来读”开始。</div><div id="'+id+'p"></div></div>'; });
   h+='<div class="row"><button class="btn" onclick="go(\''+c.id+'\',\'ex\')">去做练习 →</button></div>';
   return h;
@@ -1129,6 +1109,5 @@ $("#ask").addEventListener("keydown",e=>{ if(e.key==="Enter"&&!e.shiftKey){ e.pr
 if(/^#(c\d+|review)$/.test(location.hash)){ const id=location.hash.slice(1); if(id==="review"||COURSE.find(c=>c.id===id)) cur=id; }
 renderRail(); render();
 initLogin();
-
 </script>
 </body></html>
