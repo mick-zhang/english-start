@@ -815,14 +815,15 @@ function markSpoken(box){
   box.innerHTML='<span class="score g">✓ 已完成</span> 很好！你已经大声读过这句了。想要打分的话，随时再按“🎤 我来读”。';
   face.mood("happy"); face.bounce();
 }
-let recBusyUntil=0;
+let recBusyUntil=0, recLog=[];
+function rlog(m){ recLog.push(new Date().toISOString().slice(11,23)+" "+m); if(recLog.length>14) recLog.shift(); const el=document.getElementById("reclog"); if(el) el.textContent=recLog.join("\n"); }
 function releaseRec(r){
   // drop every handler and abort, so Safari closes the mic session instead of keeping it open
   if(!r) return;
   try{ r.onresult=r.onerror=r.onend=r.onaudiostart=r.onaudioend=r.onspeechend=null; }catch(e){}
   try{ r.abort(); }catch(e){}
 }
-function startRec(target, box, isRetry){
+async function startRec(target, box, isRetry){
   if(!SR){ box.innerHTML = micHelp("这个浏览器不支持语音识别。"); return; }
   const prev=activeRec; activeRec=null;
   if(prev){ releaseRec(prev); }
@@ -833,28 +834,36 @@ function startRec(target, box, isRetry){
   // iOS needs a moment after the previous session is released before a new one can take the mic
   const wait=Math.max(0, recBusyUntil-Date.now(), prev?350:0, wasPlaying?500:0);
   if(wait>0){ box.innerHTML='<span class="rec"><span class="dot"></span> 准备中…</span>'; setTimeout(()=>startRec(target, box, isRetry), wait); recBusyUntil=0; return; }
+  rlog("start ios="+isIOS()+" usedGUM="+usedGUM+" retry="+!!isRetry+" audios="+document.querySelectorAll("audio").length);
   const r = new SR(); activeRec=r;
   r.lang="en-US"; r.interimResults=true; r.maxAlternatives=3; r.continuous=false;
+  // iOS Safari: after a MediaRecorder session, recognition only receives audio if a mic stream is open when it starts (then we close it)
+  let primer=null;
+  if(isIOS() && usedGUM && navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+    try{ primer = await navigator.mediaDevices.getUserMedia({audio:true}); rlog("primer stream opened"); }catch(e){ primer=null; rlog("primer failed "+(e&&e.name)); }
+  }
+  const dropPrimer=()=>{ if(primer){ try{ primer.getTracks().forEach(t=>t.stop()); }catch(e){} primer=null; } };
   box.innerHTML = '<span class="rec"><span class="dot"></span> 正在听…请大声、慢慢地读上面的英文</span>';
   face.mood("think");
   let finalText="", gotAudio=false, handled=false, myTimer=null;
-  const finish=(kind)=>{ if(handled) return; handled=true; clearTimeout(myTimer); if(activeRec===r) activeRec=null; releaseRec(r); recBusyUntil=Date.now()+350; face.mood("happy");
+  const finish=(kind)=>{ if(handled) return; handled=true; clearTimeout(myTimer); dropPrimer(); if(activeRec===r) activeRec=null; releaseRec(r); recBusyUntil=Date.now()+350; face.mood("happy");
     if(finalText.trim()){ showResult(target, finalText.trim(), box); return; }
     // transient failure: retry once silently before showing help
     if((kind==="network"||kind==="timeout"||kind==="aborted") && recTries<1){ recTries++; box.innerHTML='<span class="rec"><span class="dot"></span> 连接有点慢，正在重试…请再读一遍</span>'; setTimeout(()=>startRec(target, box, true), 400); return; }
     recHelp(kind, box, target); };
-  r.onaudiostart=()=>{ gotAudio=true; };
+  r.onaudiostart=()=>{ gotAudio=true; rlog("audiostart"); setTimeout(dropPrimer, 300); };
+  r.onsoundstart=()=>rlog("soundstart"); r.onspeechstart=()=>rlog("speechstart"); r.onspeechend=()=>rlog("speechend"); r.onaudioend=()=>rlog("audioend");
   r.onresult = e=>{ let s=""; for(let i=e.resultIndex;i<e.results.length;i++){ s+=e.results[i][0].transcript; if(e.results[i].isFinal) finalText+=e.results[i][0].transcript+" "; }
     if(!finalText) box.innerHTML = '<span class="rec"><span class="dot"></span> 听到：<span class="en">'+esc(s)+'</span></span>'; };
-  r.onerror = e=>{ const k=e.error; try{ r.abort(); }catch(x){}
+  r.onerror = e=>{ const k=e.error; rlog("error "+k); try{ r.abort(); }catch(x){}
     if(k==="not-allowed"||k==="service-not-allowed") finish("not-allowed");
     else if(k==="no-speech") finish("no-speech");
     else if(k==="network"||k==="aborted") finish(k);
     else finish("other"); };
-  r.onend = ()=>{ finish(gotAudio ? "timeout" : "network"); };
+  r.onend = ()=>{ rlog("end gotAudio="+gotAudio+" text="+JSON.stringify(finalText.trim()).slice(0,30)); finish(gotAudio ? "timeout" : "network"); };
   // safety net: iOS sometimes never fires onend when the speech service stalls
   myTimer=setTimeout(()=>{ try{ r.abort(); }catch(e){} finish("timeout"); }, 12000); recTimer=myTimer;
-  try{ r.start(); }catch(err){ recBusyUntil=Date.now()+700; finish("aborted"); }   // start refused = previous session still closing: treat as transient so the retry runs
+  try{ r.start(); rlog("started"); }catch(err){ rlog("start threw "+(err&&err.name)); recBusyUntil=Date.now()+700; finish("aborted"); }   // start refused = previous session still closing: treat as transient so the retry runs
 }
 function micHelp(head){
   return '<b>'+head+'</b><br>说话练习需要麦克风。请在浏览器地址栏左边点一下“锁”或“设置”图标，把麦克风改为“允许”，然后刷新页面再试。手机上请在弹出的提示里选择“允许”。';
@@ -885,7 +894,7 @@ function hint(w){
 }
 
 /* ---------- record & play back ---------- */
-let mediaRec=null, chunks=[], recBtn=null, micStream=null;
+let mediaRec=null, chunks=[], recBtn=null, micStream=null, usedGUM=false;
 function recMime(){
   if(!window.MediaRecorder) return null;
   for(const m of ["audio/mp4","audio/webm;codecs=opus","audio/webm","audio/ogg;codecs=opus","audio/aac","audio/mpeg"]){
@@ -900,14 +909,14 @@ async function toggleRecord(btn, player){
   if(activeRec){ try{ activeRec.abort(); }catch(e){} activeRec=null; }
   stopAll();
   try{
-    const stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}}); micStream=stream;
+    const stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}}); micStream=stream; usedGUM=true;
     const mime = recMime(); chunks=[];
     mediaRec = mime ? new MediaRecorder(stream,{mimeType:mime}) : new MediaRecorder(stream);
     recBtn = btn;
     mediaRec.ondataavailable=e=>{ if(e.data && e.data.size) chunks.push(e.data); };
     mediaRec.onerror=()=>{ stream.getTracks().forEach(t=>t.stop()); btn.textContent="🎙️ 录下我的声音"; player.innerHTML='录音出错了，请再试一次。'; };
     mediaRec.onstop=()=>{
-      stream.getTracks().forEach(t=>t.stop()); if(micStream===stream) micStream=null;
+      stream.getTracks().forEach(t=>t.stop()); if(micStream===stream) micStream=null; rlog("record stop, tracks closed");
       const type = mediaRec.mimeType || mime || "audio/webm";
       const blob = new Blob(chunks,{type});
       btn.textContent="🎙️ 录下我的声音"; mediaRec=null; recBusyUntil=Date.now()+500;
@@ -916,7 +925,7 @@ async function toggleRecord(btn, player){
       player.innerHTML='<div style="margin-top:8px;font-size:14px">回放，和标准读音对比：</div><audio controls playsinline preload="metadata" src="'+url+'" style="width:100%;margin-top:4px"></audio>';
       const el=player.querySelector("audio"); el.addEventListener("play",()=>{ if(activeRec){ releaseRec(activeRec); activeRec=null; } }); el.addEventListener("ended",()=>{ recBusyUntil=Math.max(recBusyUntil, Date.now()+400); }); el.addEventListener("pause",()=>{ recBusyUntil=Math.max(recBusyUntil, Date.now()+400); });
     };
-    mediaRec.start(250);
+    mediaRec.start(250); rlog("record start mime="+(mime||"default"));
     btn.textContent="⏹ 停止录音";
     player.innerHTML='<span class="rec"><span class="dot"></span> 正在录音…读完请按“⏹ 停止录音”</span>';
   }catch(e){
@@ -1030,6 +1039,7 @@ function speakHTML(c){
   let h='<div class="callout">怎么练：① 点“🔊 听”两三遍，可以用“🐢 慢”。② 点“🎤 我来读”，大声、慢慢读出英文。③ 看结果：绿色是被听清的词，红色是没听清的，点红色词单独再听。④ 用“🎙️ 录下我的声音”回放，和标准读音比。目标是每句 85% 以上。</div>'+speedCtl();
   if(!SR) h+='<div class="callout warn">'+micHelp("这个浏览器不支持语音识别。")+'</div>';
   else if(isIOS()) h+='<div class="callout" style="font-size:14px">📱 iPhone 小提示：“🎤 我来读”用的是手机系统的听写服务。如果它反复没有反应，请到 设置 → 通用 → 键盘 → 启用听写，并添加英语。“🎙️ 录下我的声音”不需要这个设置。</div>';
+  if(SR && (isIOS() || /Android/.test(navigator.userAgent))) h+='<details style="font-size:12px;color:var(--muted);margin:-6px 0 12px"><summary>调试信息（给开发者看）</summary><pre id="reclog" style="white-space:pre-wrap;font-size:11px;margin:6px 0 0">'+esc(recLog.join("\n"))+'</pre></details>';
   c.drills.forEach(([en,zh],i)=>{ const id="d"+i; h+='<div class="drill"><div class="en">'+esc(en)+'</div><div class="zh">'+esc(zh)+'</div><div class="row"><button class="ib" onclick="say('+JSON.stringify(en).replace(/"/g,"&quot;")+')">🔊 听</button><button class="ib" onclick="say('+JSON.stringify(en).replace(/"/g,"&quot;")+',0.6)">🐢 慢</button><button class="btn" onclick="startRec('+JSON.stringify(en).replace(/"/g,"&quot;")+',document.getElementById(\''+id+'\'))">🎤 我来读</button><button class="btn sec2" onclick="toggleRecord(this,document.getElementById(\''+id+'p\'))">🎙️ 录下我的声音</button></div><div class="result" id="'+id+'">还没有读。点“🎤 我来读”开始。</div><div id="'+id+'p"></div></div>'; });
   h+='<div class="row"><button class="btn" onclick="go(\''+c.id+'\',\'ex\')">去做练习 →</button></div>';
   return h;
