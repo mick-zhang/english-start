@@ -122,6 +122,16 @@ h2.title{font-size:28px;margin:4px 0 8px;line-height:1.2;text-wrap:balance;overf
 .home .lv .en{color:var(--muted);font-size:13px}
 .home .lv ul{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:14px}
 .home .lv.now{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.lvsec{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-top:12px}
+.lvsec.now{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.lvsec summary{cursor:pointer;list-style:none}
+.lvsec summary::-webkit-details-marker{display:none}
+.lvsec .lvhead{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.lvsec .lvhead b{font-size:17px}
+.lvsec .pts{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:13px;columns:2;column-gap:18px}
+@media (max-width:600px){.lvsec .pts{columns:1}}
+.lvsec summary::after{content:"展开章节 ▾";display:block;font-size:12px;color:var(--accent);margin-top:8px}
+.lvsec[open] summary::after{content:"收起 ▴"}
 .badge{display:inline-block;font-size:11px;padding:1px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:600;margin-left:6px}
 .ltr{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
 .ltr .l{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
@@ -241,10 +251,10 @@ h2.title{font-size:28px;margin:4px 0 8px;line-height:1.2;text-wrap:balance;overf
   <nav class="rail" id="rail" aria-label="章节">
     <div class="brand"><h1>英语起步课堂</h1><span class="en">English Start</span></div>
     <div class="who" id="who"></div>
-    <div class="prog">第一级进度 <span id="pct">0%</span><div class="bar"><i id="pbar"></i></div></div>
+    <div class="prog">总进度 <span id="pct">0%</span><div class="bar"><i id="pbar"></i></div></div>
     <button class="chap closeMenu" style="margin-bottom:6px;border:1px solid var(--line)" onclick="toggleMenu(false)" type="button"><span class="n">✕</span><span class="t">关闭菜单</span></button>
     <button class="chap" id="homeBtn" onclick="go('home')"><span class="n">★</span><span class="t">课程总览</span></button>
-    <div class="lvl" id="chapList"><h2>第一级 · 入门</h2></div>
+    <div class="lvl" id="chapList"></div>
   </nav>
   <main class="main"><div class="wrap" id="view"></div></main>
 </div>
@@ -595,16 +605,817 @@ const COURSE = [
    {t:"type",q:"结业测试 9：翻译：洗手间在哪里？",a:"Where is the bathroom?",alt:["Where is the bathroom","Where's the bathroom?","Where's the bathroom"]},
    {t:"type",q:"结业测试 10：听写。",say:"I have two children.",a:"I have two children.",alt:["I have two children"]}],
   hw:[["实战任务（必做）","在一天之内完成三件事：① 对一个陌生人打招呼并自我介绍（至少 3 句）；② 用英语点一次单；③ 问一次路。三件都做到，第一级结业。"],["录一段 2 分钟","录下你的自我介绍 + 一段购物对话（你一个人读两个角色也可以）。听回放，用第 4 章的四大难点检查自己。"],["写下来","用英语写 5 句关于你自己的话，不查字典。能写出来，说明这些句子真的属于你了。"]]
+},
+/* ===== 第二级 · 基础 Elementary ===== */
+{ id:"l2c1", lv:2, title:"长元音：sheep 还是 ship？", goal:"分清五个长元音和它们的短元音兄弟，不再把 sheep 说成 ship、把 full 说成 fool。",
+  intro:"第一级学了五个<b>短</b>元音。英语里还有一组<b>长</b>元音，它们不只是“拖长一点”，<b>嘴型也不一样</b>。中国学习者最常见的错误是把长短混在一起：beach / bitch、sheet / shit——这几对混了会非常尴尬。本章的办法很简单：长元音<b>嘴更紧、拖两拍</b>，短元音<b>嘴放松、一拍就停</b>。",
+  learn:[{h:"五对长短元音",p:"每一对先听，再模仿。手指在桌上打拍子：长音两拍，短音一拍。",items:[
+   {en:"sheep / ship", ipa:"/iː/ /ɪ/", zh:"绵羊 / 船", tip:"sheep 嘴角往两边拉、像微笑、拖两拍；ship 嘴放松、一拍。"},
+   {en:"food / foot", ipa:"/uː/ /ʊ/", zh:"食物 / 脚", tip:"food 嘴唇收得很圆很小、拖长；foot 嘴唇放松一点、短。"},
+   {en:"car / cup", ipa:"/ɑː/ /ʌ/", zh:"车 / 杯子", tip:"car 嘴张大、舌头放低、拖长；cup 嘴张一半、短促。"},
+   {en:"four / fox", ipa:"/ɔː/ /ɒ/", zh:"四 / 狐狸", tip:"four 嘴圆、拖长；fox 嘴张大、短。北美口音里 fox 更像 /ɑ/。"},
+   {en:"bird / bed", ipa:"/ɜːr/ /e/", zh:"鸟 / 床", tip:"bird 舌头中间抬起、带 r、拖长，像“饿—尔”；bed 嘴型是短 e。"}]},
+   {h:"用在句子里",p:"长音在句子里一样要拖够。",items:[
+   {en:"I need a seat, please.", ipa:"", zh:"我需要一个座位。", tip:"need 和 seat 都是长 /iː/，拖够两拍。sit 是短音，意思变成“坐”。"},
+   {en:"The food is good.", ipa:"", zh:"食物很好吃。", tip:"food 长 /uː/，good 短 /ʊ/，一句话里两种。"},
+   {en:"My car is far.", ipa:"", zh:"我的车很远。", tip:"car、far 都是长 /ɑːr/，北美口音要带 r 的卷舌。"},
+   {en:"The girl works first.", ipa:"", zh:"那个女孩先工作。", tip:"girl、work、first 都是 /ɜːr/：舌头中间抬起带 r。"}]}],
+  drills:[["sheep, ship, sheep, ship","长短交替，两拍一拍"],["food, foot, food, foot","圆唇紧 / 松"],["car, cup, four, fox","张大拖长 / 短促"],["I need a seat, please.","两个长 /iː/"],["The girl works first.","三个 /ɜːr/"],["Please leave the keys here.","连续长音，嘴角一直拉开"]],
+  ex:[
+   {t:"listen",q:"听一听，你听到的是哪个词？",say:"ship",opts:["ship","sheep","shop","shape"],a:0},
+   {t:"listen",q:"听一听，你听到的是哪个词？",say:"food",opts:["foot","food","fed","fit"],a:1},
+   {t:"mc",q:"发长元音 /iː/（如 see）的时候，嘴型是？",opts:["嘴角往两边拉、像微笑","嘴唇收圆","嘴张大","嘴放松微开"],a:0},
+   {t:"mc",q:"下面哪个词的元音是长音？",opts:["seat","sit","six","fish"],a:0},
+   {t:"type",q:"听写这个词。",say:"first",a:"first"},
+   {t:"type",q:"听写这句话。",say:"The food is good.",a:"The food is good.",alt:["The food is good","the food is good"]}],
+  hw:[["最小对立词","把 sheep/ship、food/foot、car/cup 各读 10 遍录下来，回听时能不能自己分出长短。"],["生活找词","今天在包装、路牌、菜单上找出 5 个含长元音的英文词（如 TEA、ROAD、PARK），大声读出来，故意拖长。"],["真人测试","对一位会英语的人读 sheep 和 ship，不告诉对方顺序，问他听到的是哪个。两个都对才算过关。"]]
+},
+{ id:"l2c2", lv:2, title:"双元音、重音与连读", goal:"读准五个双元音，掌握多音节单词的重音，并把相邻的词自然地连起来说。",
+  intro:"中国学习者说英语“听起来一个字一个字的”，原因有两个：<b>每个音节都一样重</b>，以及<b>词与词之间都断开</b>。英语是有节拍的：每个词只有一个音节最重，其余轻读；一个词的结尾辅音会<b>滑到下一个词的元音</b>上。本章先把双元音读“满”（嘴型要从一个滑到另一个），再练重音，再练连读。",
+  learn:[{h:"五个双元音：嘴型要滑动",p:"双元音 = 两个元音滑在一起。中国学习者常常只读前一半。",items:[
+   {en:"day, name, late", ipa:"/eɪ/", zh:"白天、名字、晚", tip:"从“诶”滑到“一”，嘴角越来越开。不要读成扁扁的“dε”。"},
+   {en:"time, like, nice", ipa:"/aɪ/", zh:"时间、喜欢、好", tip:"从“啊”滑到“一”，嘴先张大再收。"},
+   {en:"go, no, home", ipa:"/oʊ/", zh:"去、不、家", tip:"从“欧”滑到“乌”，嘴最后一定要收圆。不要读成“哦”。"},
+   {en:"house, now, how", ipa:"/aʊ/", zh:"房子、现在、怎样", tip:"从“啊”滑到“乌”。"},
+   {en:"boy, toy, enjoy", ipa:"/ɔɪ/", zh:"男孩、玩具、享受", tip:"从“奥”滑到“一”。"}]},
+   {h:"重音：一个词只有一个“重拍”",p:"大写的音节重读：声音大一点、长一点、高一点。其他音节轻快带过。",items:[
+   {en:"BAnana, toMAto, poTAto", ipa:"", zh:"香蕉、西红柿、土豆", tip:"中间那个音节重，前后都轻。中国学习者常把三个音节读得一样重。"},
+   {en:"COffee, WAter, MOrning", ipa:"", zh:"咖啡、水、早上", tip:"两音节的名词多数重音在前面。"},
+   {en:"REcord / reCORD", ipa:"", zh:"记录（名词）/ 录音（动词）", tip:"同一个词，重音换位置，意思和词性就变了。"},
+   {en:"I'd like a baNAna and a toMAto, please.", ipa:"", zh:"我想要一根香蕉和一个西红柿。", tip:"整句里只有 baNAna、toMAto 的中间音节是重拍。"}]},
+   {h:"连读：辅音 + 元音滑过去",p:"前一个词结尾是辅音、后一个词开头是元音，就连在一起读。",items:[
+   {en:"an apple → a-napple", ipa:"", zh:"一个苹果", tip:"n 直接接 a，听起来像 “a napple”。"},
+   {en:"Turn it off. → Tur-ni-toff.", ipa:"", zh:"把它关掉。", tip:"三个词连成一个。"},
+   {en:"I like it a lot. → I li-ki-ta lot.", ipa:"", zh:"我很喜欢它。", tip:"k 接 i，t 接 a。"},
+   {en:"Pick it up. → Pi-ki-tup.", ipa:"", zh:"把它拿起来。", tip:"这是最常见的三词连读之一。"}]}],
+  drills:[["day, time, go, house, boy","五个双元音，嘴型要滑到位"],["banana, tomato, potato, coffee, water","重音在哪儿"],["an apple, an orange, an egg","n 连到元音"],["Turn it off. Pick it up.","三词连读"],["I like it a lot.","k 接 i，t 接 a"],["I'd like a banana and a coffee, please.","重音 + 连读一起用"]],
+  ex:[
+   {t:"listen",q:"听一听，这个词的重音在第几个音节？",say:"banana",opts:["第一个","第二个","第三个","都一样重"],a:1},
+   {t:"listen",q:"听一听，你听到的是哪个词？",say:"home",opts:["home","ham","hum","him"],a:0},
+   {t:"mc",q:"“an apple” 自然连读后听起来像？",opts:["a napple","an a-pple（中间停一下）","ana pple","ap-ple an"],a:0},
+   {t:"mc",q:"读双元音 /oʊ/（如 go）时，最后嘴要？",opts:["收圆","张大","往两边拉","放松不动"],a:0},
+   {t:"type",q:"听写这句话。",say:"Turn it off.",a:"Turn it off.",alt:["Turn it off","turn it off"]},
+   {t:"type",q:"听写这个词。",say:"tomato",a:"tomato"}],
+  hw:[["打拍子读词","找 10 个三音节的英文词（菜单、商品名都可以），每个词先拍出重音位置，再读出来。"],["连读录音","把 “Pick it up. Turn it off. I like it a lot.” 连读录下来，回听：三个词之间有没有断开？断开就重录。"],["真人任务","去店里用 “I'd like a ___, please.” 买一样东西，注意 I'd like 连读、商品名重音正确。"]]
+},
+{ id:"l2c3", lv:2, title:"正在做什么：现在进行时", goal:"能描述现在正在发生的事，会问 “What are you doing?” 并回答。",
+  intro:"第一级的句子都是“是什么、有什么”。从本章开始学<b>动作</b>。英语说“正在做”要用 <b>be + 动词-ing</b>：I am eating（我在吃）。两个关键：① be 要跟人变化（I am / you are / he is）；② 动词后面加 -ing。中国学习者最常漏掉 be：说成 “I eating”——记住，<b>没有 am/is/are 的进行时是错的</b>。",
+  learn:[{h:"be 的三种形式",p:"先把这三组背到不用想。",items:[
+   {en:"I am → I'm", ipa:"", zh:"我是 / 我在", tip:"口语几乎总是缩成 I'm。"},
+   {en:"You are → You're / We are → We're / They are → They're", ipa:"", zh:"你（们）、我们、他们", tip:"You're 和 your 读音一样。"},
+   {en:"He is → He's / She is → She's / It is → It's", ipa:"", zh:"他、她、它", tip:"He's 结尾是 z 音。"}]},
+   {h:"动词 + ing",p:"",items:[
+   {en:"eat → eating, read → reading, work → working", ipa:"", zh:"吃、读、工作", tip:"直接加 -ing。-ing 的 g 不要读出来，鼻音收尾。"},
+   {en:"make → making, write → writing, come → coming", ipa:"", zh:"做、写、来", tip:"结尾的 e 去掉再加 -ing。"},
+   {en:"sit → sitting, run → running, shop → shopping", ipa:"", zh:"坐、跑、购物", tip:"短元音 + 一个辅音结尾：双写辅音。"}]},
+   {h:"用起来",p:"",items:[
+   {en:"I'm eating lunch.", ipa:"", zh:"我在吃午饭。", tip:"I'm 一定要说出来。"},
+   {en:"What are you doing?", ipa:"", zh:"你在做什么？", tip:"口语里 What are you 连读成 “Wha-da-ya”。"},
+   {en:"She's talking on the phone.", ipa:"", zh:"她在打电话。", tip:"talking on 连读：tal-kin-gon。"},
+   {en:"They're waiting for the bus.", ipa:"", zh:"他们在等公交。", tip:"wait for = 等。"},
+   {en:"I'm not working today.", ipa:"", zh:"我今天不上班。", tip:"否定：在 be 后面加 not。"},
+   {en:"Are you coming? — Yes, I'm coming.", ipa:"", zh:"你来吗？——来，我来了。", tip:"问句把 Are 放前面。"}]}],
+  drills:[["I'm eating lunch.","别漏 I'm"],["What are you doing?","Wha-da-ya"],["She's talking on the phone.","tal-kin-gon"],["They're waiting for the bus.","They're 一拍"],["I'm not working today.","not 清楚"],["Are you coming? Yes, I'm coming.","问答一起"]],
+  ex:[
+   {t:"mc",q:"哪一句是对的？",opts:["I am eating.","I eating.","I is eating.","Me eating."],a:0},
+   {t:"mc",q:"“她在读书。” 英语是？",opts:["She's reading.","She reading.","She is read.","Her is reading."],a:0},
+   {t:"listen",q:"听一听，他在做什么？",say:"I'm waiting for the bus.",opts:["等公交","吃午饭","打电话","工作"],a:0},
+   {t:"mc",q:"run 加 -ing 是？",opts:["running","runing","runeing","runn"],a:0},
+   {t:"type",q:"翻译：你在做什么？",a:"What are you doing?",alt:["What are you doing","what are you doing"]},
+   {t:"type",q:"听写这句话。",say:"I'm not working today.",a:"I'm not working today.",alt:["I'm not working today","I am not working today.","I am not working today"]}],
+  hw:[["实况解说","今天任选 3 分钟，把你看到的每个人正在做的事用英语小声说出来：He's walking. She's eating."],["视频通话","和家人视频时问一句 “What are you doing?”，听对方回答（中文也行），然后你用英语把它说出来。"],["发一条消息","给会英语的朋友发一条 “I'm ___ing now.” 的短信，说你现在在做什么。"]]
+},
+{ id:"l2c4", lv:2, title:"昨天发生了什么：过去时", goal:"能讲昨天做了什么，掌握常用动词的过去式和 -ed 的三种读音。",
+  intro:"讲过去的事，英语动词要<b>变形</b>。规则动词加 <b>-ed</b>（work → worked），但有一批最常用的动词是<b>不规则</b>的（go → went，eat → ate），只能一个一个记。-ed 有<b>三种读音</b>，读错了别人也能懂，但读对了会立刻显得地道。另外，过去时的否定和问句都用 <b>did</b>，动词变回原形。",
+  learn:[{h:"-ed 的三种读音",p:"",items:[
+   {en:"worked, cooked, washed", ipa:"/t/", zh:"工作、做饭、洗", tip:"前面是清辅音（k、sh、p 等）：-ed 读 t，不加音节。"},
+   {en:"played, called, cleaned", ipa:"/d/", zh:"玩、打电话、打扫", tip:"前面是元音或浊辅音：-ed 读 d，不加音节。"},
+   {en:"wanted, needed, visited", ipa:"/ɪd/", zh:"想要、需要、拜访", tip:"前面是 t 或 d：-ed 读 “id”，多一个音节。"}]},
+   {h:"十个最常用的不规则动词",p:"只能背。每天读一遍，一周就记住了。",items:[
+   {en:"go → went, eat → ate, see → saw", ipa:"", zh:"去、吃、看见", tip:"went 结尾 t 要有。"},
+   {en:"have → had, do → did, make → made", ipa:"", zh:"有、做、制作", tip:"made 是双元音 /eɪ/。"},
+   {en:"buy → bought, take → took, come → came, get → got", ipa:"", zh:"买、拿、来、得到", tip:"bought 和 brought 只差一个 r。"}]},
+   {h:"用起来",p:"",items:[
+   {en:"Yesterday I went to work.", ipa:"", zh:"昨天我去上班了。", tip:"时间词常放句首。"},
+   {en:"I cooked dinner and watched TV.", ipa:"", zh:"我做了晚饭，看了电视。", tip:"cooked 读 t 结尾，watched 也读 t。"},
+   {en:"Did you sleep well?", ipa:"", zh:"你睡得好吗？", tip:"用 Did 问，sleep 用原形，不是 slept。"},
+   {en:"I didn't go out last night.", ipa:"", zh:"我昨晚没出门。", tip:"didn't 后面动词原形。"},
+   {en:"What did you do on the weekend?", ipa:"", zh:"你周末做了什么？", tip:"这是最常见的周一闲聊开场。"},
+   {en:"It was great. / It was okay.", ipa:"", zh:"很棒。/ 还行。", tip:"is 的过去式是 was，are 的过去式是 were。"}]}],
+  drills:[["worked, played, wanted","三种 -ed"],["went, ate, saw, had, did, made","不规则动词"],["Yesterday I went to work.","went 的 t"],["I cooked dinner and watched TV.","两个 t 结尾"],["Did you sleep well?","Did 开头，sleep 原形"],["What did you do on the weekend? It was great.","周一闲聊"]],
+  ex:[
+   {t:"listen",q:"听一听，-ed 读的是哪种音？",say:"wanted",opts:["/ɪd/（多一个音节）","/t/","/d/","没读出来"],a:0},
+   {t:"mc",q:"go 的过去式是？",opts:["went","goed","gone","going"],a:0},
+   {t:"mc",q:"“我昨天没去上班。” 哪句对？",opts:["I didn't go to work yesterday.","I didn't went to work yesterday.","I not go to work yesterday.","I don't went to work yesterday."],a:0},
+   {t:"listen",q:"听一听，她昨天做了什么？",say:"I bought a new phone yesterday.",opts:["买了新手机","看了电视","去了上班","做了晚饭"],a:0},
+   {t:"type",q:"翻译：你周末做了什么？",a:"What did you do on the weekend?",alt:["What did you do on the weekend","What did you do at the weekend?","What did you do this weekend?"]},
+   {t:"type",q:"听写这句话。",say:"I cooked dinner.",a:"I cooked dinner.",alt:["I cooked dinner"]}],
+  hw:[["昨日三句","每天睡前用英语说三句昨天做的事：Yesterday I ___ . 坚持一周。"],["周一闲聊","周一对同事或邻居问一句 “How was your weekend?” 并听对方回答。"],["-ed 分类","把本章 9 个 -ed 动词写在纸上，按 t / d / id 分成三列，读一遍。"]]
+},
+{ id:"l2c5", lv:2, title:"时间与日期", goal:"能问和说时间、星期、月份、日期，会约时间和确认时间。",
+  intro:"时间是生活里<b>最容易出错、后果也最大</b>的信息：听错一个数字就会迟到或错过预约。本章把时间说法系统过一遍：整点、半点、分钟、上午下午；星期和月份的名字（注意重音）；日期要用<b>序数词</b>（first, second, third……）。最后学会约时间和确认时间的套路。",
+  learn:[{h:"几点了",p:"北美口语最常用的说法：先说小时，再说分钟。",items:[
+   {en:"What time is it? — It's three o'clock.", ipa:"", zh:"几点了？——三点整。", tip:"o'clock 只用在整点。"},
+   {en:"It's three fifteen. / It's three thirty. / It's three forty-five.", ipa:"", zh:"三点十五 / 三点半 / 三点四十五", tip:"直接读两个数字，最简单也最通用。"},
+   {en:"half past three / a quarter to four", ipa:"", zh:"三点半 / 差一刻四点", tip:"听得懂就行，自己说用数字法。"},
+   {en:"7 a.m. / 7 p.m. / at noon / at midnight", ipa:"", zh:"早上 7 点 / 晚上 7 点 / 中午 / 午夜", tip:"a.m. 读 “ay-em”，p.m. 读 “pee-em”。"}]},
+   {h:"星期与月份",p:"重音都在第一个音节。",items:[
+   {en:"Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday", ipa:"", zh:"周一到周日", tip:"Wednesday 读 “WENZ-day”，d 不发音。Thursday 开头是 th。"},
+   {en:"January, February, March, April, May, June", ipa:"", zh:"一月到六月", tip:"February 口语常读 “FEB-yoo-air-ee”。"},
+   {en:"July, August, September, October, November, December", ipa:"", zh:"七月到十二月", tip:"July 重音在后：ju-LY。"}]},
+   {h:"日期用序数词",p:"",items:[
+   {en:"first, second, third, fourth, fifth", ipa:"", zh:"1 号到 5 号", tip:"fifth 两个 f 加 th，慢慢读。"},
+   {en:"tenth, twentieth, twenty-first, thirtieth", ipa:"", zh:"10 号、20 号、21 号、30 号", tip:"-th 结尾舌尖伸到牙齿之间。"},
+   {en:"My birthday is on March tenth.", ipa:"", zh:"我的生日是 3 月 10 日。", tip:"日期前用 on。"},
+   {en:"See you on Friday at two thirty.", ipa:"", zh:"周五两点半见。", tip:"星期前 on，几点前 at。"},
+   {en:"Can we meet on Tuesday morning?", ipa:"", zh:"我们能周二上午见吗？", tip:"约时间的万能句。"},
+   {en:"Sorry, I'm not free then. How about Wednesday?", ipa:"", zh:"抱歉，那时候我没空。周三怎么样？", tip:"How about 提议另一个时间。"}]}],
+  drills:[["It's three fifteen. It's three thirty.","数字法报时"],["Monday, Tuesday, Wednesday, Thursday, Friday","WENZ-day，Thurs 的 th"],["January, February, March, April","重音在前"],["first, second, third, fourth, fifth","th 结尾"],["My birthday is on March tenth.","on + 日期"],["Can we meet on Tuesday at ten? See you then.","约时间"]],
+  ex:[
+   {t:"listen",q:"听一听，几点？",say:"It's four forty-five.",opts:["4:45","4:15","5:45","4:40"],a:0},
+   {t:"listen",q:"听一听，星期几？",say:"See you on Thursday.",opts:["周四","周二","周三","周六"],a:0},
+   {t:"mc",q:"“3 月 3 日” 怎么说？",opts:["March third","March three","three March","March the three"],a:0},
+   {t:"mc",q:"“周五两点” 用哪两个介词？",opts:["on Friday at two","at Friday on two","in Friday at two","on Friday in two"],a:0},
+   {t:"type",q:"听写这个月份。",say:"February",a:"February"},
+   {t:"type",q:"翻译：几点了？",a:"What time is it?",alt:["What time is it","what time is it"]}],
+  hw:[["报时一天","今天每次看表，都用英语小声说出时间：It's ___ ."],["读日历","打开手机日历，把本周每一天的星期和日期用英语读出来（Monday, October first……）。"],["真实预约","用英语约一次时间：理发、看牙、和朋友吃饭都可以。至少用到 “Can we meet on ___ at ___?”。"]]
+},
+{ id:"l2c6", lv:2, title:"天气与家人：闲聊的两大话题", goal:"能聊天气和家人——这是加拿大人见面最常聊的两件事。",
+  intro:"在北美，<b>天气</b>是和陌生人、同事、邻居打开话题的万能钥匙；<b>家人</b>是和熟人深聊的开始。这两个话题的句子都很简单，但要会<b>接话</b>：对方说 “Cold today, eh?”，你要能回一句，而不是只点头。本章学描述天气的形容词、家庭成员的叫法，以及几句接话的套路。",
+  learn:[{h:"天气怎么说",p:"天气句子的主语都是 It。",items:[
+   {en:"It's sunny. / It's cloudy. / It's windy.", ipa:"", zh:"晴 / 多云 / 有风", tip:"形容词结尾 -y 读短 i。"},
+   {en:"It's raining. / It's snowing.", ipa:"", zh:"在下雨 / 在下雪", tip:"用进行时，因为正在下。"},
+   {en:"It's cold. / It's freezing. / It's hot. / It's warm.", ipa:"", zh:"冷 / 冻死了 / 热 / 暖和", tip:"cold 结尾 ld 两个辅音都要有。"},
+   {en:"It's minus ten today.", ipa:"", zh:"今天零下十度。", tip:"加拿大用摄氏度，minus = 零下。"},
+   {en:"What's the weather like tomorrow?", ipa:"", zh:"明天天气怎么样？", tip:"问天气的标准句。"},
+   {en:"Nice day, eh? — Yeah, finally!", ipa:"", zh:"天气不错啊？——是啊，终于！", tip:"eh 是加拿大人的口头语，相当于“是吧？”。"}]},
+   {h:"家人",p:"",items:[
+   {en:"mother / mom, father / dad, parents", ipa:"", zh:"妈妈、爸爸、父母", tip:"mom 在加拿大也常拼 mum。"},
+   {en:"husband, wife, son, daughter", ipa:"", zh:"丈夫、妻子、儿子、女儿", tip:"daughter 的 gh 不发音：DAW-ter。"},
+   {en:"brother, sister, grandmother, grandfather", ipa:"", zh:"兄弟、姐妹、奶奶/外婆、爷爷/外公", tip:"brother 开头 br 一起读，th 舌尖伸出。"},
+   {en:"I have two kids: a son and a daughter.", ipa:"", zh:"我有两个孩子，一个儿子一个女儿。", tip:"kids 是 children 的口语说法。"},
+   {en:"Do you have any brothers or sisters?", ipa:"", zh:"你有兄弟姐妹吗？", tip:"问家人最常用的一句。"},
+   {en:"My parents live in China. I miss them.", ipa:"", zh:"我父母住在中国。我想他们。", tip:"miss 短 i，结尾 s 清楚。"}]}],
+  drills:[["It's sunny. It's cloudy. It's windy.","三个 -y 结尾"],["It's cold. It's freezing.","ld 结尾"],["What's the weather like tomorrow?","问天气"],["Nice day, eh? Yeah, finally!","接话"],["I have two kids: a son and a daughter.","DAW-ter"],["My parents live in China. I miss them.","th 舌尖"]],
+  ex:[
+   {t:"listen",q:"听一听，天气怎么样？",say:"It's snowing and it's freezing.",opts:["下雪，很冷","下雨，很暖","晴天，很热","多云，有风"],a:0},
+   {t:"mc",q:"邻居说 “Cold today, eh?”，最自然的回答是？",opts:["Yeah, it's freezing!","I am a student.","What time is it?","My name is Li."],a:0},
+   {t:"listen",q:"听一听，他有几个孩子？",say:"I have three kids: two sons and a daughter.",opts:["三个","两个","一个","四个"],a:0},
+   {t:"mc",q:"“女儿” 的英语发音是？",opts:["DAW-ter（gh 不发音）","DAUG-ter","DOG-ter","DA-ug-ter"],a:0},
+   {t:"type",q:"翻译：明天天气怎么样？",a:"What's the weather like tomorrow?",alt:["What's the weather like tomorrow","What is the weather like tomorrow?","What is the weather like tomorrow"]},
+   {t:"type",q:"听写这句话。",say:"It's raining.",a:"It's raining.",alt:["It's raining","It is raining.","It is raining"]}],
+  hw:[["每日天气","早上出门前看一眼天气，用英语说一句：It's ___ today. 坚持一周。"],["搭一次话","在电梯、公交站或排队时，对一个陌生人说一句关于天气的话（Nice day, eh? / Cold today!），看对方怎么回。"],["介绍家人","对着一张全家照，用英语把每个人介绍一遍：This is my ___ . 录下来听。"]]
+},
+{ id:"l2c7", lv:2, title:"看病与打电话", goal:"能描述身体不舒服、预约医生，并能打一通简单的英语电话。",
+  intro:"这两件事是新移民最怕的：看病说不清症状，打电话看不到对方的脸。办法是<b>把句子准备好</b>。身体不舒服只要三类句子：<b>I have a ___</b>（我有……）、<b>My ___ hurts</b>（我的……疼）、<b>I feel ___</b>（我觉得……）。打电话有固定套路：报名字、说目的、确认信息、道别。听不清就说 “Sorry, could you repeat that?”——这句话比什么都重要。",
+  learn:[{h:"说症状",p:"",items:[
+   {en:"I have a headache. / I have a fever. / I have a cough.", ipa:"", zh:"我头疼 / 发烧 / 咳嗽", tip:"headache 读 HED-ake，ache 是 /eɪk/。"},
+   {en:"My stomach hurts. / My back hurts.", ipa:"", zh:"我肚子疼 / 背疼", tip:"stomach 读 STUM-ick，ch 读 k。"},
+   {en:"I feel sick. / I feel dizzy. / I feel tired.", ipa:"", zh:"我难受 / 头晕 / 累", tip:"sick 短 i，结尾 k 停住。"},
+   {en:"I've had it for three days.", ipa:"", zh:"已经三天了。", tip:"医生一定会问多久了，先准备好。"},
+   {en:"I'm allergic to penicillin.", ipa:"", zh:"我对青霉素过敏。", tip:"allergic 重音在 LER。有过敏一定要会说。"},
+   {en:"I'd like to make an appointment, please.", ipa:"", zh:"我想预约。", tip:"appointment 重音在 POINT。"}]},
+   {h:"打电话的套路",p:"A 是对方，B 是你。",items:[
+   {en:"A: Hello, Maple Clinic. — B: Hi, this is Li Wang. I'd like to make an appointment.", ipa:"", zh:"枫叶诊所您好。——你好，我是王丽，我想预约。", tip:"电话里报名字用 This is，不用 I am。"},
+   {en:"A: What's it for? — B: I have a bad cough.", ipa:"", zh:"看什么？——我咳嗽得厉害。", tip:"一句说清目的。"},
+   {en:"A: Can you come Thursday at ten? — B: Yes, that works. Thank you.", ipa:"", zh:"周四十点可以吗？——可以，谢谢。", tip:"that works = 这个时间可以。"},
+   {en:"Sorry, could you repeat that, please?", ipa:"", zh:"抱歉，能再说一遍吗？", tip:"听不清就用，用几次都没关系。"},
+   {en:"Could you speak more slowly, please?", ipa:"", zh:"能慢一点说吗？", tip:"slowly 的 l 顶舌。"},
+   {en:"Can I have your name and phone number?", ipa:"", zh:"能给我你的名字和电话吗？", tip:"对方会这样问你，准备好拼名字、报号码。"}]}],
+  drills:[["I have a headache. I have a fever.","HED-ake"],["My stomach hurts.","STUM-ick"],["I'd like to make an appointment, please.","ap-POINT-ment"],["Hi, this is Li Wang.","电话里用 This is"],["Sorry, could you repeat that, please?","救命句"],["Can you come Thursday at ten? Yes, that works. Thank you.","确认时间"]],
+  ex:[
+   {t:"listen",q:"听一听，他哪里不舒服？",say:"My back hurts and I feel dizzy.",opts:["背疼、头晕","头疼、发烧","肚子疼、咳嗽","累、难受"],a:0},
+   {t:"mc",q:"电话里介绍自己，正确的说法是？",opts:["This is Li Wang.","I am Li Wang here.","Me Li Wang.","Here Li Wang."],a:0},
+   {t:"mc",q:"没听清对方说什么，说？",opts:["Sorry, could you repeat that?","What?","I don't know.","Yes, yes."],a:0},
+   {t:"listen",q:"听一听，预约在什么时候？",say:"Can you come Friday at two thirty?",opts:["周五 2:30","周四 2:30","周五 3:30","周二 2:00"],a:0},
+   {t:"type",q:"翻译：我想预约。（用 I'd like to）",a:"I'd like to make an appointment.",alt:["I'd like to make an appointment","I would like to make an appointment.","I would like to make an appointment","I'd like to make an appointment, please."]},
+   {t:"type",q:"听写这句话。",say:"I feel sick.",a:"I feel sick.",alt:["I feel sick"]}],
+  hw:[["症状卡","把你和家人常见的不舒服（头疼、过敏、感冒……）写成英语句子，放进手机备忘录，读 5 遍。"],["打一通电话","用英语打一通真实电话：问营业时间、预约理发或看牙都可以。打之前把要说的三句话写下来。"],["听电话录音","拨打一个有英语语音菜单的电话（银行、电信公司），听懂第一层菜单的选项，记下来。"]]
+},
+{ id:"l2c8", lv:2, title:"第二级结业：租房、银行与一通 3 分钟电话", goal:"能处理租房和银行的基本对话，并完成结业任务：一通 3 分钟的真实英语电话。",
+  intro:"第二级的最后一章把两个重要场景——<b>租房</b>和<b>银行</b>——放在一起，因为它们的句型高度相似：问有没有、问多少钱、问怎么办。然后是结业任务：<b>打一通 3 分钟的英语电话</b>。你已经有了全部零件：时间日期、过去时、进行时、天气闲聊、电话套路。别怕说错，电话那头的人每天都在和口音不同的人说话。",
+  learn:[{h:"租房",p:"",items:[
+   {en:"I'm looking for a one-bedroom apartment.", ipa:"", zh:"我在找一室一厅的公寓。", tip:"looking for = 在找。"},
+   {en:"How much is the rent? — It's fifteen hundred a month.", ipa:"", zh:"房租多少？——一个月 1500。", tip:"fifteen hundred = 1500，北美常这样读。"},
+   {en:"Are utilities included?", ipa:"", zh:"包水电吗？", tip:"utilities 重音在 TIL。"},
+   {en:"When can I move in?", ipa:"", zh:"什么时候能搬进来？", tip:"move in 连读：mo-vin。"},
+   {en:"Can I see it this weekend?", ipa:"", zh:"这周末能看房吗？", tip:"看房就说 see it。"}]},
+   {h:"银行",p:"",items:[
+   {en:"I'd like to open an account.", ipa:"", zh:"我想开一个账户。", tip:"open an 连读：o-pe-nan。"},
+   {en:"Chequing or savings?", ipa:"", zh:"支票账户还是储蓄账户？", tip:"加拿大拼 chequing，读 CHECK-ing。"},
+   {en:"Is there a monthly fee?", ipa:"", zh:"有月费吗？", tip:"fee 长 /iː/。"},
+   {en:"I'd like to deposit this cheque.", ipa:"", zh:"我想存这张支票。", tip:"deposit 重音在 PO。"},
+   {en:"My card isn't working.", ipa:"", zh:"我的卡用不了。", tip:"isn't 的 t 轻轻带过。"},
+   {en:"Can I speak to someone in Mandarin?", ipa:"", zh:"有会说普通话的人吗？", tip:"大银行通常有，别不好意思问。"}]},
+   {h:"3 分钟电话的结构",p:"结业任务用这个结构，写下来放在手边。",items:[
+   {en:"Hi, this is ___. I'm calling about ___.", ipa:"", zh:"你好，我是___。我打电话是关于___。", tip:"开头两句，报名字、说目的。"},
+   {en:"I have a few questions. First, ___? And ___?", ipa:"", zh:"我有几个问题。第一，___？还有___？", tip:"中间：两三个问题。"},
+   {en:"Okay, so it's ___ on ___ at ___. Is that right?", ipa:"", zh:"好，所以是___，___，___点。对吗？", tip:"确认信息，一定要重复一遍。"},
+   {en:"Great, thank you so much. Have a good day. Bye.", ipa:"", zh:"太好了，非常感谢。祝你愉快。再见。", tip:"结尾三句。"}]}],
+  drills:[["I'm looking for a one-bedroom apartment.","looking for"],["How much is the rent? Are utilities included?","u-TIL-ities"],["I'd like to open an account.","o-pe-nan"],["Is there a monthly fee?","长 fee"],["Hi, this is Li. I'm calling about the apartment.","电话开头"],["Okay, so it's Friday at two. Is that right? Great, thank you so much. Bye.","确认 + 结尾"]],
+  ex:[
+   {t:"listen",q:"听一听，房租多少？",say:"The rent is twelve hundred a month.",opts:["$1200/月","$1250/月","$2100/月","$1020/月"],a:0},
+   {t:"mc",q:"“包水电吗？” 英语是？",opts:["Are utilities included?","Is water money?","Have utilities?","Utilities is in?"],a:0},
+   {t:"mc",q:"银行员问 “Chequing or savings?”，意思是？",opts:["支票账户还是储蓄账户","要支票还是现金","存钱还是取钱","开户还是销户"],a:0},
+   {t:"listen",q:"听一听，他打电话是为了什么？",say:"Hi, this is Chen. I'm calling about the apartment on King Street.",opts:["King 街的公寓","开银行账户","预约医生","问天气"],a:0},
+   {t:"type",q:"翻译：我想开一个账户。（用 I'd like to）",a:"I'd like to open an account.",alt:["I'd like to open an account","I would like to open an account.","I would like to open an account"]},
+   {t:"type",q:"听写这句话。",say:"When can I move in?",a:"When can I move in?",alt:["When can I move in","when can I move in"]}],
+  hw:[["电话脚本","按“3 分钟电话的结构”写下你要打的电话：对象、目的、三个问题、确认句、结尾。读 3 遍。"],["结业电话（必做）","打一通真实的英语电话，至少 3 分钟：问房、问银行业务、问课程、改预约都可以。结束后记下：对方说了什么你没听懂？"],["复盘","把没听懂的话和说不出的词带回来，用“问老师”问清楚，然后把正确说法读 5 遍。"]]
+},
+/* ===== 第三级 · 进阶 Pre-intermediate ===== */
+{ id:"l3c1", lv:3, title:"语调与句子节奏", goal:"掌握英语句子的升降调和轻重节奏，让别人一听就知道你是在问、在说、还是在列举。",
+  intro:"到了第三级，单个词你已经能读准了。现在的差距在<b>整句的调子</b>。中文靠每个字的声调分辨意思，所以中国学习者说英语时每个词都带着一个“声调”，听起来很平、很硬。英语不一样：<b>句子的意思靠整句的升降</b>。陈述句和特殊问句<b>降调</b>，一般问句<b>升调</b>，列举时<b>前升后降</b>。另外，英语是<b>重音等时</b>的：重读的词之间时间大致相等，中间的小词要挤着快速带过。",
+  learn:[{h:"三种基本语调",p:"用手在空中画出调子，一边画一边读。",items:[
+   {en:"I live in Toronto. ↘", ipa:"", zh:"我住在多伦多。（降调）", tip:"陈述句最后一个重读词往下走，表示“说完了”。"},
+   {en:"Where do you live? ↘", ipa:"", zh:"你住在哪？（降调）", tip:"有 what/where/when 等疑问词的问句也是降调。中国学习者常错读成升调。"},
+   {en:"Do you live in Toronto? ↗", ipa:"", zh:"你住在多伦多吗？（升调）", tip:"Yes/No 问句才用升调，最后一个词往上扬。"},
+   {en:"I need eggs ↗, milk ↗, bread ↗, and butter ↘.", ipa:"", zh:"我需要鸡蛋、牛奶、面包和黄油。", tip:"列举：前面每项都升，最后一项降，表示“到此为止”。"},
+   {en:"Coffee or tea? ↗↘", ipa:"", zh:"咖啡还是茶？", tip:"选择问句：第一个选项升，第二个降。"}]},
+   {h:"节奏：重读实词，轻读虚词",p:"名词、动词、形容词重读；the、a、to、of、and、is 这些小词轻快带过。",items:[
+   {en:"I WANT to GO to the STORE.", ipa:"", zh:"我想去商店。", tip:"三个重拍：WANT、GO、STORE。to、the 几乎听不见。"},
+   {en:"She's a TEACHER at a SCHOOL in the CITY.", ipa:"", zh:"她是城里一所学校的老师。", tip:"三个重拍，中间的 a、at、in、the 挤在一起。"},
+   {en:"Can you HELP me with THIS?", ipa:"", zh:"你能帮我弄这个吗？", tip:"HELP 和 THIS 重，Can you、me、with 都轻。"},
+   {en:"I didn't SAY she STOLE the MONEY.", ipa:"", zh:"我没说她偷了钱。", tip:"把重音分别放到 I / didn't / say / she / stole / money 上，意思都不一样。试试看。"}]}],
+  drills:[["I live in Toronto. Where do you live?","两个降调"],["Do you live in Toronto?","升调"],["I need eggs, milk, bread, and butter.","升升升降"],["Coffee or tea?","升降"],["I want to go to the store.","三个重拍"],["Can you help me with this? Sure, no problem.","重 HELP、THIS"]],
+  ex:[
+   {t:"listen",q:"听一听，这句话的结尾是升还是降？",say:"Do you have a car?",opts:["升调（是 Yes/No 问句）","降调","平的","先降后升"],a:0},
+   {t:"listen",q:"听一听，这句话的结尾是升还是降？",say:"Where do you work?",opts:["降调（有疑问词的问句）","升调","平的","先升后降"],a:0},
+   {t:"mc",q:"列举 “apples, oranges, and bananas” 时，正确的调子是？",opts:["前两个升，最后一个降","三个都升","三个都降","前两个降，最后一个升"],a:0},
+   {t:"mc",q:"“I want to go to the store.” 里哪些词重读？",opts:["want, go, store","I, to, the","to, to, the","want, to, the"],a:0},
+   {t:"type",q:"听写这句话。",say:"Coffee or tea?",a:"Coffee or tea?",alt:["Coffee or tea","coffee or tea"]},
+   {t:"type",q:"听写这句话。",say:"Where do you live?",a:"Where do you live?",alt:["Where do you live","where do you live"]}],
+  hw:[["画调子","找一段 1 分钟的英语音频（新闻、播客都行），听三遍，把每句结尾是升还是降用箭头记下来。"],["影子跟读","选 5 句本章句子，播放一句、立刻跟着读一句，模仿它的调子和节奏，不是模仿单词。录下来对比。"],["真人问句","今天对真人问 3 个问题：1 个 Yes/No 问句（升调），2 个 Wh- 问句（降调）。"]]
+},
+{ id:"l3c2", lv:3, title:"将来：will 与 be going to", goal:"能谈计划、预测和临时决定，分清 will 和 be going to 的用法。",
+  intro:"英语说“将来”有两个常用工具。<b>be going to</b> 用于<b>已经决定、有计划</b>的事（I'm going to visit my parents next month）；<b>will</b> 用于<b>当场决定、承诺、预测</b>（I'll help you. / It will rain tomorrow）。中国学习者容易全用 will，听起来有点生硬。口语里 going to 常读成 <b>gonna</b>，I will 缩成 <b>I'll</b>。",
+  learn:[{h:"be going to：计划",p:"",items:[
+   {en:"I'm going to visit my parents next month.", ipa:"", zh:"我下个月要去看父母。（已经计划好）", tip:"going to 口语读 gonna：I'm gonna visit。"},
+   {en:"We're going to move to Vancouver.", ipa:"", zh:"我们要搬去温哥华。", tip:"大计划、已经决定。"},
+   {en:"What are you going to do this weekend?", ipa:"", zh:"你这周末打算做什么？", tip:"问计划。读成 What are you gonna do。"},
+   {en:"Look at the sky. It's going to rain.", ipa:"", zh:"看天。要下雨了。", tip:"有证据的预测也用 going to。"}]},
+   {h:"will：当场决定、承诺、预测",p:"",items:[
+   {en:"The phone is ringing. I'll get it.", ipa:"", zh:"电话响了。我来接。", tip:"当场决定用 I'll，不用 I'm going to。"},
+   {en:"I'll call you tonight.", ipa:"", zh:"我今晚给你打电话。（承诺）", tip:"I'll 读成一个音节 “aɪl”，l 顶舌。"},
+   {en:"Don't worry. It'll be fine.", ipa:"", zh:"别担心。会没事的。", tip:"It'll 读 “i-dl”。"},
+   {en:"I won't be late.", ipa:"", zh:"我不会迟到。", tip:"won't = will not，读 /woʊnt/，和 want 不一样。"},
+   {en:"Will you be home at six?", ipa:"", zh:"你六点会在家吗？", tip:"问句把 Will 放前面。"}]},
+   {h:"时间词",p:"",items:[
+   {en:"tomorrow, next week, next month, next year", ipa:"", zh:"明天、下周、下月、明年", tip:"next 后面不加 the。"},
+   {en:"tonight, this weekend, in two hours, soon", ipa:"", zh:"今晚、这周末、两小时后、很快", tip:"“两小时后”用 in，不用 after。"}]}],
+  drills:[["I'm going to visit my parents next month.","gonna"],["What are you going to do this weekend?","问计划"],["The phone is ringing. I'll get it.","当场决定"],["I'll call you tonight. I won't be late.","I'll / won't"],["Don't worry. It'll be fine.","i-dl"],["Will you be home at six? Yes, I will.","问答"]],
+  ex:[
+   {t:"mc",q:"门铃响了，你说“我去开”，最自然的是？",opts:["I'll get it.","I'm going to get it.","I get it.","I getting it."],a:0},
+   {t:"mc",q:"你已经买好票下周去温哥华，说？",opts:["I'm going to Vancouver next week.","I will go Vancouver next week.","I go to Vancouver next week.","I went to Vancouver next week."],a:0},
+   {t:"listen",q:"听一听，他要做什么？",say:"I'm going to cook dinner tonight.",opts:["今晚做饭","明天看父母","搬家","打电话"],a:0},
+   {t:"listen",q:"听一听，他说了什么？",say:"I won't be late.",opts:["我不会迟到","我想迟到","我会迟到","我已经迟到了"],a:0},
+   {t:"type",q:"翻译：我今晚给你打电话。（用 I'll）",a:"I'll call you tonight.",alt:["I'll call you tonight","I will call you tonight.","I will call you tonight"]},
+   {t:"type",q:"听写这句话。",say:"It's going to rain.",a:"It's going to rain.",alt:["It's going to rain","It is going to rain.","It is going to rain"]}],
+  hw:[["明天计划","每天晚上用英语说三件明天要做的事：Tomorrow I'm going to ___ ."],["承诺一次","对家人或朋友用英语承诺一件小事（I'll call you at eight. / I'll bring the coffee.），然后做到。"],["问计划","问一位同事或朋友 “What are you going to do this weekend?”，听懂并复述对方的回答。"]]
+},
+{ id:"l3c3", lv:3, title:"情态动词：can / should / must / have to", goal:"能表达能力、请求、建议和义务，知道哪个词客气、哪个词强硬。",
+  intro:"情态动词是“态度词”，放在动词前面，改变整句的态度。<b>can</b>（能、可以）、<b>could</b>（更客气的 can）、<b>should</b>（应该，建议）、<b>must / have to</b>（必须）。最重要的用法差异：请求别人时用 <b>Could you…?</b> 比 <b>Can you…?</b> 更礼貌；给建议用 <b>should</b> 温和，用 <b>must</b> 像命令。规则：情态动词后面<b>动词原形</b>，而且<b>不加 s、不加 to</b>（have to 除外）。",
+  learn:[{h:"能力与请求：can / could",p:"",items:[
+   {en:"I can speak a little English.", ipa:"", zh:"我会说一点英语。", tip:"can 在句中轻读，像 “kn”。"},
+   {en:"I can't hear you.", ipa:"", zh:"我听不见你。", tip:"北美口音 can't 读 /kænt/，比 can 重、长，而且结尾有 t。"},
+   {en:"Can I use your phone?", ipa:"", zh:"我能用一下你的手机吗？", tip:"请求许可。"},
+   {en:"Could you help me, please?", ipa:"", zh:"您能帮我一下吗？", tip:"Could 比 Can 客气，对陌生人用这个。"},
+   {en:"Could you say that again?", ipa:"", zh:"您能再说一遍吗？", tip:"比 “What?” 礼貌一百倍。"}]},
+   {h:"建议：should",p:"",items:[
+   {en:"You should see a doctor.", ipa:"", zh:"你应该去看医生。", tip:"should 的 l 不发音：/ʃʊd/。"},
+   {en:"You shouldn't eat so much sugar.", ipa:"", zh:"你不应该吃那么多糖。", tip:"shouldn't 读 SHUD-nt。"},
+   {en:"Should I bring anything?", ipa:"", zh:"我需要带什么吗？", tip:"去别人家做客前必问。"},
+   {en:"Maybe you should try again.", ipa:"", zh:"也许你应该再试一次。", tip:"加 Maybe 更温和。"}]},
+   {h:"义务：must / have to",p:"",items:[
+   {en:"I have to work tomorrow.", ipa:"", zh:"我明天必须上班。", tip:"口语里“必须”多用 have to，读 “hafta”。"},
+   {en:"You must wear a seatbelt.", ipa:"", zh:"你必须系安全带。", tip:"must 用于规则、法律，语气强。"},
+   {en:"You don't have to pay now.", ipa:"", zh:"你不用现在付。", tip:"don't have to = 不需要（不是“禁止”）。"},
+   {en:"You mustn't smoke here.", ipa:"", zh:"你不可以在这里吸烟。", tip:"mustn't = 禁止。注意和 don't have to 的区别。"}]}],
+  drills:[["I can speak a little English. I can't hear you.","can 轻 / can't 重"],["Could you help me, please?","客气请求"],["Could you say that again?","再说一遍"],["You should see a doctor.","should 的 l 不发音"],["I have to work tomorrow.","hafta"],["You don't have to pay now.","不需要"]],
+  ex:[
+   {t:"listen",q:"听一听，他说的是 can 还是 can't？",say:"I can't come tomorrow.",opts:["can't（不能）","can（能）","听不出来","两个都说了"],a:0},
+   {t:"mc",q:"对陌生人请求帮助，最礼貌的是？",opts:["Could you help me, please?","Help me.","You help me now.","Can help?"],a:0},
+   {t:"mc",q:"“You don't have to pay now.” 意思是？",opts:["你不需要现在付","你禁止现在付","你必须现在付","你不想现在付"],a:0},
+   {t:"mc",q:"哪句是对的？",opts:["She can swim.","She can swims.","She can to swim.","She cans swim."],a:0},
+   {t:"type",q:"翻译：您能再说一遍吗？（用 Could you）",a:"Could you say that again?",alt:["Could you say that again","Could you say that again, please?","Could you repeat that?","Could you repeat that, please?"]},
+   {t:"type",q:"听写这句话。",say:"You should see a doctor.",a:"You should see a doctor.",alt:["You should see a doctor","you should see a doctor"]}],
+  hw:[["三次 Could you","今天对真人用 3 次 “Could you ___, please?”（请人递东西、再说一遍、拍照都可以）。"],["给一条建议","对朋友用英语给一条建议：You should ___ . 或 Maybe you should ___ ."],["规则翻译","找一张英文告示牌（No smoking / Must wear a mask……），用 must / mustn't / don't have to 把它说成完整句子。"]]
+},
+{ id:"l3c4", lv:3, title:"工作面试", goal:"能完成一次 10 分钟的英语面试：自我介绍、谈经验、回答常见问题、反问面试官。",
+  intro:"面试是把你学过的一切放在压力下用一次。好消息是：<b>面试问题是可以预测的</b>。本章把最常见的五个问题和回答结构给你，你只要<b>填自己的内容</b>，然后练到不用看稿。关键原则：① 回答有结构（先一句总结，再两个例子）；② 说<b>做过什么</b>，用过去时；③ 说<b>能做什么</b>，用 can；④ 结尾一定要<b>反问</b>一两个问题，表示你认真。",
+  learn:[{h:"五个必考问题",p:"",items:[
+   {en:"Tell me about yourself.", ipa:"", zh:"介绍一下你自己。", tip:"不是讲人生故事。说：现在做什么、做了多久、擅长什么。30 秒。"},
+   {en:"Why do you want this job?", ipa:"", zh:"你为什么想要这份工作？", tip:"说公司吸引你的一点 + 你能带来的一点。"},
+   {en:"What are your strengths?", ipa:"", zh:"你的优点是什么？", tip:"strengths 很难读：strengkths，慢慢来，读不准就说 strong points。"},
+   {en:"Tell me about a problem you solved.", ipa:"", zh:"说一个你解决过的问题。", tip:"结构：情况 → 我做了什么 → 结果。全用过去时。"},
+   {en:"Do you have any questions for us?", ipa:"", zh:"你有什么问题要问我们吗？", tip:"永远回答 Yes，至少问一个。"}]},
+   {h:"回答的句型",p:"把下划线换成你自己的内容。",items:[
+   {en:"I've been a cook for five years.", ipa:"", zh:"我做厨师已经五年了。", tip:"I've been + 职业 + for + 时间：讲工作年限的标准句。"},
+   {en:"I'm good at working with people.", ipa:"", zh:"我擅长和人打交道。", tip:"good at 后面接名词或 -ing。"},
+   {en:"In my last job, I was responsible for the kitchen.", ipa:"", zh:"在上一份工作里，我负责厨房。", tip:"responsible 重音在 SPON。"},
+   {en:"One time, a customer was angry. I listened, and I fixed the problem.", ipa:"", zh:"有一次一位顾客很生气。我听他说，然后解决了问题。", tip:"一个小故事，三句话，过去时。"},
+   {en:"I'm a fast learner, and I'm always on time.", ipa:"", zh:"我学得快，而且从不迟到。", tip:"两个最通用的优点。"}]},
+   {h:"反问面试官",p:"",items:[
+   {en:"What does a typical day look like?", ipa:"", zh:"平常一天的工作是什么样的？", tip:"typical 读 TIP-i-kl。"},
+   {en:"When can I expect to hear back?", ipa:"", zh:"我什么时候能收到回复？", tip:"hear back = 收到回复。"},
+   {en:"Thank you for your time. I look forward to hearing from you.", ipa:"", zh:"感谢您的时间。期待您的回复。", tip:"结尾固定句，背下来。"}]}],
+  drills:[["Tell me about yourself.","听懂问题"],["I've been a cook for five years.","I've been"],["I'm good at working with people.","good at"],["In my last job, I was responsible for the kitchen.","re-SPON-sible"],["I'm a fast learner, and I'm always on time.","两个优点"],["Thank you for your time. I look forward to hearing from you.","结尾"]],
+  ex:[
+   {t:"listen",q:"听一听，面试官问的是？",say:"Why do you want this job?",opts:["为什么想要这份工作","介绍一下自己","你的优点","有问题吗"],a:0},
+   {t:"mc",q:"“Tell me about yourself.” 最好的回答方式是？",opts:["现在做什么、做了多久、擅长什么，30 秒","从出生讲起","说“我没什么好说的”","只说名字"],a:0},
+   {t:"mc",q:"面试官问 “Do you have any questions?”，应该？",opts:["问至少一个问题","说 No","沉默","说 I don't know"],a:0},
+   {t:"listen",q:"听一听，他做这份工作多久了？",say:"I've been a driver for eight years.",opts:["八年","五年","八个月","十八年"],a:0},
+   {t:"type",q:"翻译：我擅长和人打交道。（用 good at）",a:"I'm good at working with people.",alt:["I'm good at working with people","I am good at working with people.","I am good at working with people"]},
+   {t:"type",q:"听写这句话。",say:"I'm always on time.",a:"I'm always on time.",alt:["I'm always on time","I am always on time.","I am always on time"]}],
+  hw:[["写五个答案","把五个必考问题的答案写下来，每个 3 到 5 句，用自己的真实经历。"],["录像练习","对着手机摄像头把五个答案说一遍，不看稿。回看：有没有看天花板、有没有太快。"],["模拟面试（必做）","请一位会英语的朋友当面试官，用这五个问题面试你 10 分钟。结束后问对方：哪句话没听懂？"]]
+},
+{ id:"l3c5", lv:3, title:"填表格：读懂并填对", goal:"能独立填写常见英文表格（诊所、学校、工作申请、政府表格），读懂每一栏在问什么。",
+  intro:"表格是新移民遇到最多的英语文本：诊所登记、孩子的学校、工作申请、报税。好消息是<b>所有表格用的词都差不多</b>。本章把这些高频词一次学完，再学几句<b>向工作人员提问</b>的话——看不懂某一栏时，问比猜强。注意：英文表格里<b>姓和名分开填</b>，日期格式要看清楚是 MM/DD 还是 DD/MM。",
+  learn:[{h:"个人信息栏",p:"",items:[
+   {en:"first name / last name (surname, family name)", ipa:"", zh:"名 / 姓", tip:"中国人的姓填 last name。王丽：first name = Li，last name = Wang。"},
+   {en:"date of birth (DOB) / place of birth", ipa:"", zh:"出生日期 / 出生地", tip:"看清格式：MM/DD/YYYY 还是 DD/MM/YYYY。"},
+   {en:"address, postal code, city, province", ipa:"", zh:"地址、邮编、城市、省", tip:"加拿大邮编是字母数字混合，如 M5V 2T6。"},
+   {en:"phone number, email address", ipa:"", zh:"电话、邮箱", tip:"邮箱写清楚，很多通知靠它。"},
+   {en:"marital status: single / married / divorced / widowed", ipa:"", zh:"婚姻状况：单身 / 已婚 / 离异 / 丧偶", tip:"marital 重音在 MAR。"},
+   {en:"emergency contact / relationship", ipa:"", zh:"紧急联系人 / 关系", tip:"relationship 填 spouse（配偶）、friend 等。"}]},
+   {h:"常见指令词",p:"",items:[
+   {en:"Please print clearly. / Please sign here.", ipa:"", zh:"请用印刷体清楚书写。/ 请在这里签名。", tip:"print = 用印刷体一笔一画写，不是“打印”。"},
+   {en:"Check all that apply. / Check one.", ipa:"", zh:"勾选所有适用的。/ 只选一个。", tip:"check = 打勾。"},
+   {en:"Required fields are marked with an asterisk.", ipa:"", zh:"带星号的是必填项。", tip:"asterisk 就是 *。"},
+   {en:"N/A (not applicable)", ipa:"", zh:"不适用", tip:"不适用你的栏写 N/A，不要留空。"},
+   {en:"Signature / Date", ipa:"", zh:"签名 / 日期", tip:"signature 读 SIG-na-cher。"}]},
+   {h:"向工作人员提问",p:"",items:[
+   {en:"Excuse me, what does this mean?", ipa:"", zh:"打扰一下，这个是什么意思？", tip:"指着那一栏问。"},
+   {en:"Do I need to fill in this part?", ipa:"", zh:"这部分需要填吗？", tip:"fill in = 填写。"},
+   {en:"Which date format do you use?", ipa:"", zh:"你们用哪种日期格式？", tip:"避免生日写错。"},
+   {en:"Is this correct?", ipa:"", zh:"这样对吗？", tip:"填完请对方扫一眼。"}]}],
+  drills:[["first name, last name, date of birth","表格三大栏"],["address, postal code, city, province","地址栏"],["Please print clearly. Please sign here.","print 不是打印"],["Check all that apply.","打勾"],["Excuse me, what does this mean?","不懂就问"],["Do I need to fill in this part? Is this correct?","两个问题"]],
+  ex:[
+   {t:"mc",q:"你叫王丽，“last name” 一栏应该填？",opts:["Wang","Li","Wang Li","Li Wang"],a:0},
+   {t:"mc",q:"“Please print clearly.” 的意思是？",opts:["请用印刷体清楚书写","请去打印","请大声读","请清楚地签名"],a:0},
+   {t:"listen",q:"听一听，工作人员要你做什么？",say:"Please sign here and write the date.",opts:["签名并写日期","写电话号码","勾选所有项","写出生地"],a:0},
+   {t:"mc",q:"某一栏对你不适用，应该写？",opts:["N/A","留空","0","No"],a:0},
+   {t:"type",q:"听写这个词（表格里的“签名”）。",say:"signature",a:"signature"},
+   {t:"type",q:"翻译：这个是什么意思？",a:"What does this mean?",alt:["What does this mean","what does this mean","Excuse me, what does this mean?"]}],
+  hw:[["真表格","在网上下载一张真实英文表格（如诊所新患者登记表），用铅笔填一遍，不懂的词查出来。"],["翻译栏目","把你家最近收到的一份英文表格或通知的每一栏翻译成中文，写在旁边。"],["现场填表","下次在诊所、银行或学校填表时，至少问工作人员一个问题（What does this mean? / Is this correct?）。"]]
+},
+{ id:"l3c6", lv:3, title:"写一封短邮件", goal:"能写请假、预约、询问、感谢四类短邮件，格式正确、语气得体。",
+  intro:"英文邮件比中文邮件<b>短、直接</b>，但有固定的礼貌格式：<b>称呼 → 一句目的 → 细节 → 请求 → 结尾</b>。中国学习者两个常见问题：① 太客套，绕半天不说事；② 用错称呼和结尾（给老板写 Hi dear）。本章给你四个模板，每个不超过五句。记住：<b>一封邮件只说一件事</b>。",
+  learn:[{h:"开头与结尾",p:"",items:[
+   {en:"Hi Sarah, / Hello Mr. Chen, / Dear Dr. Smith,", ipa:"", zh:"三种称呼：熟人 / 一般 / 正式", tip:"不知道名字写 Hello, 或 Hi there,。不要写 Dear Sir（太旧）。"},
+   {en:"I hope you're doing well.", ipa:"", zh:"希望你一切都好。", tip:"可有可无的开场，一句就够。"},
+   {en:"I'm writing to ask about ___.", ipa:"", zh:"我写信是想问___。", tip:"第一句就说目的，这是最重要的一句。"},
+   {en:"Please let me know if you have any questions.", ipa:"", zh:"如有任何问题请告诉我。", tip:"万能结尾句。"},
+   {en:"Thanks, / Best regards, / Sincerely,", ipa:"", zh:"三种结尾：随意 / 一般 / 正式", tip:"下面空一行写你的名字。"}]},
+   {h:"四个模板",p:"",items:[
+   {en:"I won't be able to come to work tomorrow because I'm sick. I'll be back on Thursday.", ipa:"", zh:"请假：我明天生病不能上班，周四回来。", tip:"原因一句，回来时间一句。"},
+   {en:"I'd like to book an appointment next week. Is Tuesday or Wednesday afternoon available?", ipa:"", zh:"预约：我想下周预约。周二或周三下午有空吗？", tip:"给两个选项，对方好回。"},
+   {en:"Could you please send me the price list? Thank you in advance.", ipa:"", zh:"询问：能把价目表发给我吗？先谢了。", tip:"in advance = 提前。"},
+   {en:"Thank you so much for your help yesterday. I really appreciate it.", ipa:"", zh:"感谢：非常感谢你昨天的帮助。我很感激。", tip:"appreciate 重音在 PRE：a-PREE-shee-ate。"}]},
+   {h:"常用短语",p:"",items:[
+   {en:"Please find the file attached.", ipa:"", zh:"文件见附件。", tip:"attached = 附上。"},
+   {en:"Sorry for the late reply.", ipa:"", zh:"抱歉回复晚了。", tip:"开头用。"},
+   {en:"Just a quick reminder: ___", ipa:"", zh:"简短提醒一下：___", tip:"催别人时用，很客气。"},
+   {en:"Looking forward to hearing from you.", ipa:"", zh:"期待你的回复。", tip:"结尾用。"}]}],
+  drills:[["I'm writing to ask about the apartment.","第一句说目的"],["I won't be able to come to work tomorrow because I'm sick.","请假"],["Is Tuesday or Wednesday afternoon available?","给两个选项"],["Thank you so much for your help. I really appreciate it.","a-PREE-shee-ate"],["Please find the file attached.","附件"],["Please let me know if you have any questions. Best regards, Li.","结尾"]],
+  ex:[
+   {t:"mc",q:"给不太熟的客户写邮件，最合适的称呼是？",opts:["Hello Mr. Chen,","Hi dear,","Dear Sir,","Hey!"],a:0},
+   {t:"mc",q:"邮件的第一句应该？",opts:["直接说目的：I'm writing to ask about…","先问候对方全家","道歉自己英语不好","介绍自己的人生"],a:0},
+   {t:"listen",q:"听一听，这封邮件是为了什么？",say:"I'd like to book an appointment next week.",opts:["预约","请假","感谢","询价"],a:0},
+   {t:"mc",q:"“Please find the file attached.” 意思是？",opts:["文件见附件","请去找文件","请把文件发给我","文件丢了"],a:0},
+   {t:"type",q:"翻译：抱歉回复晚了。",a:"Sorry for the late reply.",alt:["Sorry for the late reply","sorry for the late reply","Sorry for my late reply."]},
+   {t:"type",q:"听写这句话。",say:"I really appreciate it.",a:"I really appreciate it.",alt:["I really appreciate it","i really appreciate it"]}],
+  hw:[["写四封","用四个模板各写一封真实的邮件草稿（请假、预约、询问、感谢），每封不超过五句。"],["发出一封","把其中一封真的发出去（给房东、诊所、孩子老师、商家都可以）。"],["读回复","收到回复后，把看不懂的句子带回来问老师，然后用英语回一句。"]]
+},
+{ id:"l3c7", lv:3, title:"第三级结业：10 分钟面对面交谈", goal:"能和一个人进行 10 分钟的真实交谈：开场、提问、追问、分享、礼貌结束。",
+  intro:"10 分钟听起来很长，其实只要会<b>接话</b>和<b>追问</b>，对话会自己往前走。本章教你交谈的“机关”：<b>开场</b>（天气、场合）→ <b>提问</b>（开放式问题）→ <b>追问</b>（Really? Why? How?）→ <b>分享</b>（Me too. / I also…）→ <b>结束</b>（It was nice talking to you）。记住：<b>听的时候要出声</b>（Uh-huh, I see, Really?），否则对方以为你没听懂。",
+  learn:[{h:"开场与提问",p:"",items:[
+   {en:"How's it going? — Pretty good. How about you?", ipa:"", zh:"最近怎么样？——挺好的，你呢？", tip:"How about you 把球抛回去。"},
+   {en:"Are you from around here?", ipa:"", zh:"你是本地人吗？", tip:"around here = 这一带。"},
+   {en:"What do you do? — I'm a nurse. What about you?", ipa:"", zh:"你做什么工作？——我是护士，你呢？", tip:"What do you do 问的是职业。"},
+   {en:"How long have you lived here?", ipa:"", zh:"你在这住多久了？", tip:"How long have you = 多久了。"},
+   {en:"What do you like to do on weekends?", ipa:"", zh:"你周末喜欢做什么？", tip:"开放式问题，对方能说很多。"}]},
+   {h:"追问与反应",p:"这些是让对话继续的关键。",items:[
+   {en:"Really? That's interesting.", ipa:"", zh:"真的？有意思。", tip:"Really 升调。"},
+   {en:"Oh, I see. / Uh-huh. / Right.", ipa:"", zh:"哦，明白。/ 嗯。/ 对。", tip:"听的时候每几秒给一个反应。"},
+   {en:"Why is that? / How come?", ipa:"", zh:"为什么呢？", tip:"How come 比 Why 更随意。"},
+   {en:"Me too! / Same here.", ipa:"", zh:"我也是！", tip:"找到共同点就说。"},
+   {en:"That sounds great. / That sounds hard.", ipa:"", zh:"听起来很棒。/ 听起来很难。", tip:"sounds + 形容词，万能反应。"},
+   {en:"Sorry, what do you mean by that?", ipa:"", zh:"抱歉，你那句话是什么意思？", tip:"没懂就问，比装懂好。"}]},
+   {h:"分享与结束",p:"",items:[
+   {en:"I moved here two years ago from China.", ipa:"", zh:"我两年前从中国搬来的。", tip:"ago 放在时间后面。"},
+   {en:"I'm still learning English, so please speak slowly.", ipa:"", zh:"我还在学英语，请说慢一点。", tip:"说出来对方会体谅你。"},
+   {en:"Well, I should get going.", ipa:"", zh:"嗯，我该走了。", tip:"结束对话的礼貌信号。"},
+   {en:"It was nice talking to you. Take care!", ipa:"", zh:"和你聊天很开心。保重！", tip:"结尾固定句。"}]}],
+  drills:[["How's it going? Pretty good. How about you?","开场"],["What do you do? I'm a nurse. What about you?","职业"],["Really? That's interesting. How come?","追问"],["Me too! That sounds great.","反应"],["I moved here two years ago from China.","ago"],["Well, I should get going. It was nice talking to you. Take care!","结束"]],
+  ex:[
+   {t:"listen",q:"听一听，对方问的是？",say:"How long have you lived here?",opts:["在这住多久了","喜欢住这吗","住在哪","什么时候搬走"],a:0},
+   {t:"mc",q:"对方说了一件有趣的事，你想让他多说点，说？",opts:["Really? How come?","OK.","I don't know.","Goodbye."],a:0},
+   {t:"mc",q:"想礼貌地结束对话，说？",opts:["Well, I should get going. It was nice talking to you.","Stop talking.","I go now.","Bye bye bye."],a:0},
+   {t:"listen",q:"听一听，他是什么时候搬来的？",say:"I moved here three years ago.",opts:["三年前","三个月前","去年","三天前"],a:0},
+   {t:"type",q:"翻译：你做什么工作？",a:"What do you do?",alt:["What do you do","what do you do"]},
+   {t:"type",q:"听写这句话。",say:"It was nice talking to you.",a:"It was nice talking to you.",alt:["It was nice talking to you","it was nice talking to you"]}],
+  hw:[["问题清单","写下 10 个开放式问题（What / How / Why 开头），背下来，这是你的“弹药”。"],["5 分钟热身","和一位会英语的人聊 5 分钟，目标：用到至少 3 次追问（Really? / How come? / What do you mean?）。"],["结业交谈（必做）","和一个人面对面用英语聊 10 分钟（语言交换伙伴、邻居、同事都可以）。结束后记下：聊了什么、卡在哪、下次想说什么。"]]
+},
+/* ===== 第四级 · 中级 Intermediate ===== */
+{ id:"l4c1", lv:4, title:"弱读与缩读：听懂真实语速", goal:"听懂并说出 wanna / gotta / 'cause 这类口语缩读，掌握虚词的弱读形式。",
+  intro:"为什么课堂英语都听得懂，真人一说就跟不上？因为真人说话时<b>虚词几乎消失</b>：to 变成 “tə”，and 变成 “n”，you 变成 “yə”；而且常用组合会<b>黏成一团</b>：want to → wanna，going to → gonna，got to → gotta。本章的目标首先是<b>听懂</b>这些；其次是在<b>随意场合</b>学着说，但在正式场合（面试、写邮件）要用完整形式。",
+  learn:[{h:"虚词的弱读",p:"重读实词，弱读虚词。弱读时元音都变成模糊的 “ə”。",items:[
+   {en:"to → tə: I want to go. → I wan-tə go.", say:"I want to go. I wanna go.", ipa:"", zh:"我想去。", tip:"to 几乎听不见。"},
+   {en:"and → n: bread and butter → brea-dn-butter", say:"bread and butter. bread n butter.", ipa:"", zh:"面包和黄油", tip:"and 只剩一个 n。"},
+   {en:"you → yə / ya: What do you want? → Wha-də-yə want?", say:"What do you want? Whaddaya want?", ipa:"", zh:"你想要什么？", tip:"do you 黏成 “də-yə”。"},
+   {en:"can → kn: I can do it. → I kn do it.", say:"I can do it.", ipa:"", zh:"我能做到。", tip:"can 弱读，所以 can't 反而更容易听出来（重、有 t）。"},
+   {en:"of → ə: a cup of coffee → a cup-ə coffee", say:"a cup of coffee. a cuppa coffee.", ipa:"", zh:"一杯咖啡", tip:"of 的 f 消失。"}]},
+   {h:"七个最常见的缩读",p:"",items:[
+   {en:"want to → wanna: I wanna go home.", ipa:"", zh:"我想回家。", tip:"随意场合用，面试别用。"},
+   {en:"going to → gonna: It's gonna rain.", ipa:"", zh:"要下雨了。", tip:"只有表将来的 going to 能缩，“I'm going to Toronto” 不能。"},
+   {en:"got to → gotta: I gotta go.", ipa:"", zh:"我得走了。", tip:"= I have got to go。"},
+   {en:"because → 'cause: I'm late 'cause of traffic.", ipa:"", zh:"我迟到是因为堵车。", tip:"读 “kəz”。"},
+   {en:"kind of → kinda: I'm kinda tired.", ipa:"", zh:"我有点累。", tip:"kinda = 有点。"},
+   {en:"don't know → dunno: I dunno.", ipa:"", zh:"我不知道。", tip:"非常随意。"},
+   {en:"let me → lemme / give me → gimme", ipa:"", zh:"让我 / 给我", tip:"Lemme see. = 让我看看。"}]},
+   {h:"听力实战",p:"先按正常速度听，再看文字。",items:[
+   {en:"Whaddaya wanna do tonight?", ipa:"", zh:"= What do you want to do tonight? 你今晚想做什么？", tip:"五个词黏成三个。"},
+   {en:"I gotta get up early 'cause I'm gonna work.", ipa:"", zh:"= I have got to get up early because I'm going to work.", tip:"一句话三个缩读。"},
+   {en:"Lemme know if you need anything.", ipa:"", zh:"= Let me know… 需要什么告诉我。", tip:"结尾 anything 的 th。"}]}],
+  drills:[["I want to go. I wanna go.","完整 / 缩读"],["It's gonna rain. I gotta go.","gonna / gotta"],["I'm kinda tired. I dunno.","kinda / dunno"],["What do you want to do tonight?","先说完整"],["Whaddaya wanna do tonight?","再说缩读"],["Lemme know if you need anything.","lemme"]],
+  ex:[
+   {t:"listen",q:"听一听，他说的完整形式是？",say:"I gotta go.",opts:["I have got to go.","I got a goal.","I go to go.","I got the gold."],a:0},
+   {t:"listen",q:"听一听，他问的是？",say:"Whaddaya wanna do tonight?",opts:["你今晚想做什么","你今晚在哪","你今晚几点来","你今晚累不累"],a:0},
+   {t:"mc",q:"哪句里的 going to 可以缩成 gonna？",opts:["I'm going to call you.","I'm going to Toronto.","I'm going to the store.","I'm going to school."],a:0},
+   {t:"mc",q:"面试时应该说？",opts:["I want to work here.","I wanna work here.","I gotta work here.","I kinda want to work here."],a:0},
+   {t:"type",q:"把这句缩读写成完整形式：I dunno.",a:"I don't know.",alt:["I don't know","I do not know.","I do not know"]},
+   {t:"type",q:"听写这句话（写完整形式）。",say:"It's gonna rain.",a:"It's going to rain.",alt:["It's going to rain","It is going to rain.","It's gonna rain.","It's gonna rain"]}],
+  hw:[["抓缩读","看 10 分钟英语剧或访谈（开英文字幕），每听到一个 wanna / gonna / gotta 就记一笔，数数有多少个。"],["慢放对比","找一句带缩读的台词，0.75 倍速听三遍、正常速度听三遍，直到正常速度也能听清每个词。"],["随意场合用一次","和熟人（不是正式场合）说一句 “I gotta go.” 或 “Lemme know.”，观察对方的反应。"]]
+},
+{ id:"l4c2", lv:4, title:"完成时：have done 与 have been doing", goal:"能用现在完成时谈经历、变化和持续到现在的事，分清它和过去时的区别。",
+  intro:"现在完成时是中国学习者的一道坎，因为中文没有对应的形式。记住一个核心：<b>have + 过去分词</b> 讲的是<b>“到现在为止”</b>——经历（我去过）、结果（我做完了）、持续（我住了五年了）。和过去时的区别：<b>过去时有明确时间点</b>（I went there in 2019），<b>完成时不说具体什么时候</b>（I've been there）。口语里 have 缩成 <b>'ve</b>，has 缩成 <b>'s</b>。",
+  learn:[{h:"三种用法",p:"",items:[
+   {en:"I've been to Vancouver twice.", ipa:"", zh:"我去过温哥华两次。（经历）", tip:"been to = 去过。不说具体哪年。"},
+   {en:"I've finished my homework.", ipa:"", zh:"我做完作业了。（结果：现在是完成状态）", tip:"重点是“现在做完了”。"},
+   {en:"I've lived here for five years.", ipa:"", zh:"我在这住了五年了。（持续到现在）", tip:"for + 一段时间。还在住。"},
+   {en:"She's worked here since 2020.", ipa:"", zh:"她从 2020 年起在这工作。", tip:"since + 起点。She's = She has。"},
+   {en:"Have you ever eaten poutine?", ipa:"", zh:"你吃过肉汁奶酪薯条吗？", tip:"ever = 曾经。问经历的标准句。"},
+   {en:"I haven't seen that movie yet.", ipa:"", zh:"我还没看那部电影。", tip:"yet 放句尾，= 还没。"}]},
+   {h:"过去时 vs 完成时",p:"对比着看。",items:[
+   {en:"I went to Montreal last year. / I've been to Montreal.", ipa:"", zh:"我去年去了蒙特利尔。/ 我去过蒙特利尔。", tip:"有 last year 就用过去时。"},
+   {en:"I lost my keys yesterday. / I've lost my keys!", ipa:"", zh:"我昨天丢了钥匙。/ 我钥匙丢了！（现在还没找到）", tip:"完成时强调现在的后果。"},
+   {en:"Did you eat? / Have you eaten?", ipa:"", zh:"你吃了吗？（两种都对）", tip:"北美口语两种都常用，Did you eat 更随意。"}]},
+   {h:"进行完成时：have been doing",p:"强调动作一直在进行。",items:[
+   {en:"I've been learning English for two years.", ipa:"", zh:"我学英语两年了（还在学）。", tip:"I've been + -ing。"},
+   {en:"It's been raining all day.", ipa:"", zh:"下了一整天雨了。", tip:"It's been = It has been。"},
+   {en:"What have you been up to?", ipa:"", zh:"你最近在忙什么？", tip:"老朋友见面必问。回答：Not much. / Just working."},
+   {en:"I've been waiting for an hour!", ipa:"", zh:"我等了一个小时了！", tip:"带点抱怨。"}]},
+   {h:"常用过去分词",p:"",items:[
+   {en:"be → been, do → done, go → gone, see → seen", ipa:"", zh:"", tip:"gone 和 been 不一样：He's gone = 他走了；He's been there = 他去过。"},
+   {en:"eat → eaten, take → taken, write → written, speak → spoken", ipa:"", zh:"", tip:"都是 -en 结尾。"},
+   {en:"have → had, make → made, buy → bought, think → thought", ipa:"", zh:"", tip:"这组和过去式一样。"}]}],
+  drills:[["I've been to Vancouver twice.","经历"],["I've lived here for five years.","持续"],["Have you ever eaten poutine? Yes, I have.","问经历"],["I haven't seen that movie yet.","yet"],["I've been learning English for two years.","have been -ing"],["What have you been up to? Not much, just working.","老友重逢"]],
+  ex:[
+   {t:"mc",q:"“我在这住了五年了（还在住）。” 哪句对？",opts:["I've lived here for five years.","I lived here for five years.","I live here five years.","I am living here since five years."],a:0},
+   {t:"mc",q:"哪句应该用过去时？",opts:["我 2019 年去了北京。","我去过北京。","我住在这五年了。","我还没吃饭。"],a:0},
+   {t:"listen",q:"听一听，他学英语多久了？",say:"I've been studying English for six months.",opts:["六个月","六年","六周","十六个月"],a:0},
+   {t:"listen",q:"听一听，她看过那部电影了吗？",say:"I haven't seen it yet.",opts:["还没看","看过了","正在看","不想看"],a:0},
+   {t:"type",q:"翻译：你最近在忙什么？",a:"What have you been up to?",alt:["What have you been up to","what have you been up to"]},
+   {t:"type",q:"听写这句话。",say:"I've finished my homework.",a:"I've finished my homework.",alt:["I've finished my homework","I have finished my homework.","I have finished my homework"]}],
+  hw:[["经历清单","用 I've been to… / I've never… 写 5 句自己的经历（去过的地方、做过的事、从没做过的事）。"],["分辨练习","今天说的每一句关于过去的话，问自己：有具体时间吗？有→过去时；没有→完成时。记下 5 个例子。"],["老友问候","给一位久未联系的会英语的朋友发消息：“Hey, long time! What have you been up to?”"]]
+},
+{ id:"l4c3", lv:4, title:"条件句：如果……就……", goal:"能用三种条件句谈真实可能、假设和遗憾，掌握 If 句的时态搭配。",
+  intro:"“如果……就……”是表达计划、建议、假设和遗憾的核心结构。英语有三种：<b>第一条件句</b>（真实可能：If it rains, I'll stay home）、<b>第二条件句</b>（现在的假设：If I had a car, I would drive）、<b>第三条件句</b>（过去的遗憾：If I had known, I would have come）。关键是<b>时态搭配</b>：If 后面的时态要“往后退一步”，主句用 will / would / would have。中国学习者最常见的错误是在 If 后面用 will。",
+  learn:[{h:"第一条件句：真实可能",p:"If + 现在时，will + 动词原形。",items:[
+   {en:"If it rains tomorrow, I'll stay home.", ipa:"", zh:"如果明天下雨，我就待在家。", tip:"If 后面用 rains（现在时），不是 will rain。"},
+   {en:"If you need help, just call me.", ipa:"", zh:"如果你需要帮助，打电话给我就行。", tip:"主句可以是命令句。"},
+   {en:"You'll miss the bus if you don't hurry.", ipa:"", zh:"你不快点就赶不上公交了。", tip:"If 句也可以放后面。"},
+   {en:"If I have time, I'll come to the party.", ipa:"", zh:"如果有时间我就来参加派对。", tip:"真实可能发生的事。"}]},
+   {h:"第二条件句：现在的假设",p:"If + 过去时，would + 动词原形。说的是“不太可能”或“并非事实”。",items:[
+   {en:"If I had a car, I would drive to work.", ipa:"", zh:"如果我有车，我就开车上班。（但我没有）", tip:"had 不是过去，是“假设”。"},
+   {en:"If I were you, I would take the job.", ipa:"", zh:"如果我是你，我会接受这份工作。", tip:"给建议的经典句。If I were you，用 were 不用 was。"},
+   {en:"What would you do if you won the lottery?", ipa:"", zh:"如果你中了彩票会做什么？", tip:"would 读 /wʊd/，l 不发音。"},
+   {en:"I'd travel the world if I had the money.", ipa:"", zh:"如果有钱我会环游世界。", tip:"I'd = I would。"}]},
+   {h:"第三条件句：过去的遗憾",p:"If + had + 过去分词，would have + 过去分词。",items:[
+   {en:"If I had known, I would have come.", ipa:"", zh:"如果我早知道，我就来了。（但我不知道，所以没来）", tip:"would have 口语读 “would-ə”。"},
+   {en:"If you had called me, I would have helped you.", ipa:"", zh:"你要是给我打电话，我就帮你了。", tip:"带一点责备。"},
+   {en:"I would have passed if I had studied more.", ipa:"", zh:"我多学点就能及格了。", tip:"典型的遗憾句。"}]}],
+  drills:[["If it rains tomorrow, I'll stay home.","If + 现在，will"],["If you need help, just call me.","If + 命令"],["If I were you, I would take the job.","If I were you"],["What would you do if you won the lottery?","would 的 l 不发音"],["If I had known, I would have come.","would-ə"],["I would have passed if I had studied more.","遗憾"]],
+  ex:[
+   {t:"mc",q:"哪句是对的？",opts:["If it rains, I'll stay home.","If it will rain, I'll stay home.","If it rains, I stay home will.","If it rained, I'll stay home."],a:0},
+   {t:"mc",q:"给朋友建议“如果我是你，我会去看医生”，说？",opts:["If I were you, I would see a doctor.","If I am you, I will see a doctor.","If I was you, I see a doctor.","If I be you, I would see a doctor."],a:0},
+   {t:"listen",q:"听一听，这是真实可能、现在假设，还是过去遗憾？",say:"If I had known, I would have come.",opts:["过去的遗憾","真实可能","现在的假设","将来的计划"],a:0},
+   {t:"listen",q:"听一听，他会做什么？",say:"If I had the money, I'd buy a house.",opts:["买房子（假设有钱）","已经买了房子","明天去买房子","不想买房子"],a:0},
+   {t:"type",q:"翻译：如果你需要帮助，打电话给我就行。",a:"If you need help, just call me.",alt:["If you need help, just call me","If you need help, call me.","If you need help call me"]},
+   {t:"type",q:"听写这句话。",say:"If I were you, I would take the job.",a:"If I were you, I would take the job.",alt:["If I were you, I would take the job","If I were you I would take the job","If I were you, I'd take the job."]}],
+  hw:[["三句假设","用三种条件句各写一句关于自己的真话：一件可能发生的事、一个假设、一个遗憾。"],["If I were you","今天对一个人用 “If I were you, I would…” 给一条建议。"],["中彩票问题","问一位朋友 “What would you do if you won the lottery?”，听懂并复述对方的答案。"]]
+},
+{ id:"l4c4", lv:4, title:"被动语态：事情被怎样了", goal:"能理解和使用被动语态，读懂通知、新闻和说明里的被动句。",
+  intro:"通知、新闻、产品说明里到处是被动句：<b>The store is closed. / The meeting was cancelled. / Made in Canada.</b> 被动语态的结构是 <b>be + 过去分词</b>，重点在<b>事情本身</b>，而不是谁做的。中国学习者容易漏掉 be（说成 “The meeting cancelled”），或者把过去分词用错。本章先学会<b>读懂</b>被动句，再学在<b>不知道或不重要谁做的</b>时候用它。",
+  learn:[{h:"被动语态的结构",p:"be 的时态变，过去分词不变。",items:[
+   {en:"The store is closed on Sundays.", ipa:"", zh:"商店周日关门。", tip:"is + closed。"},
+   {en:"The meeting was cancelled.", ipa:"", zh:"会议被取消了。", tip:"was + cancelled。谁取消的不重要。"},
+   {en:"The package will be delivered tomorrow.", ipa:"", zh:"包裹明天送到。", tip:"will be + delivered。"},
+   {en:"The room has been cleaned.", ipa:"", zh:"房间已经打扫过了。", tip:"has been + cleaned。"},
+   {en:"My car is being repaired.", ipa:"", zh:"我的车正在修。", tip:"is being + repaired：正在被……"}]},
+   {h:"生活里的被动句",p:"",items:[
+   {en:"Made in Canada. / Sold out. / Closed for renovation.", ipa:"", zh:"加拿大制造。/ 售完。/ 装修中暂停营业。", tip:"标牌上常省略 be。"},
+   {en:"Your order has been shipped.", ipa:"", zh:"您的订单已发出。", tip:"网购邮件必见。"},
+   {en:"Masks are required. / Dogs are not allowed.", ipa:"", zh:"须戴口罩。/ 禁止带狗。", tip:"required = 必须；not allowed = 不许。"},
+   {en:"I was born in Shanghai.", ipa:"", zh:"我在上海出生。", tip:"“出生”永远是被动：was born。"},
+   {en:"English is spoken here.", ipa:"", zh:"这里说英语。", tip:"spoken 是 speak 的过去分词。"}]},
+   {h:"主动 vs 被动",p:"",items:[
+   {en:"Someone stole my bike. → My bike was stolen.", ipa:"", zh:"有人偷了我的自行车。→ 我的自行车被偷了。", tip:"不知道谁偷的，用被动更自然。"},
+   {en:"They built this bridge in 1950. → This bridge was built in 1950.", ipa:"", zh:"这座桥建于 1950 年。", tip:"谁建的不重要。"},
+   {en:"The bike was stolen by a teenager.", ipa:"", zh:"自行车被一个青少年偷了。", tip:"要说谁做的，加 by。"}]}],
+  drills:[["The store is closed on Sundays.","is + closed"],["The meeting was cancelled.","was + cancelled"],["The package will be delivered tomorrow.","will be + delivered"],["Your order has been shipped.","has been + shipped"],["I was born in Shanghai.","was born"],["My bike was stolen. My car is being repaired.","两种时态"]],
+  ex:[
+   {t:"mc",q:"“会议被取消了。” 哪句对？",opts:["The meeting was cancelled.","The meeting cancelled.","The meeting is cancel.","The meeting has cancel."],a:0},
+   {t:"listen",q:"听一听，包裹什么时候到？",say:"Your package will be delivered on Friday.",opts:["周五","今天","明天","周四"],a:0},
+   {t:"mc",q:"“Dogs are not allowed.” 意思是？",opts:["禁止带狗","狗没有被允许离开","狗不喜欢","这里有狗"],a:0},
+   {t:"listen",q:"听一听，发生了什么？",say:"My phone was stolen yesterday.",opts:["手机被偷了","手机修好了","买了新手机","手机送到了"],a:0},
+   {t:"type",q:"翻译：我在北京出生。",a:"I was born in Beijing.",alt:["I was born in Beijing","i was born in beijing"]},
+   {t:"type",q:"听写这句话。",say:"The store is closed.",a:"The store is closed.",alt:["The store is closed","the store is closed"]}],
+  hw:[["找被动句","今天收到的英文邮件、看到的标牌里找出 5 个被动句，写下来并翻译。"],["改写练习","把 5 个主动句改成被动句（Someone broke the window. → The window was broken.）。"],["描述一件事","用被动语态向朋友描述一件最近发生的事（My order was delayed. / The flight was cancelled.）。"]]
+},
+{ id:"l4c5", lv:4, title:"看懂新闻：标题、结构与高频词", goal:"能看懂英文新闻标题和导语，掌握新闻英语的特殊语法和 30 个高频词。",
+  intro:"新闻英语是一种<b>特殊方言</b>：标题省略 be 和冠词、用现在时讲过去的事、用短词代替长词（<b>cut</b> 代替 reduce，<b>bid</b> 代替 attempt）。但新闻的<b>结构非常固定</b>：标题 → 导语（第一段，回答谁、什么、哪里、何时）→ 细节 → 背景。所以读新闻的办法是：<b>先读标题和第一段</b>，懂了就够了，后面都是补充。本章教你解码标题，再给你 30 个新闻高频词。",
+  learn:[{h:"标题的语法",p:"",items:[
+   {en:"City to Build New Hospital", ipa:"", zh:"= The city is going to build a new hospital. 市政府将建新医院", tip:"to + 动词 = 将要。省略 the、a、is going。"},
+   {en:"Prices Rise as Rent Hits Record High", ipa:"", zh:"= Prices are rising as rent has hit a record high. 物价上涨，房租创新高", tip:"现在时讲最近发生的事。"},
+   {en:"Three Injured in Highway Crash", ipa:"", zh:"= Three people were injured in a highway crash. 高速车祸三人受伤", tip:"省略 be：Injured = were injured。"},
+   {en:"PM Announces Tax Cut", ipa:"", zh:"= The Prime Minister has announced a tax cut. 总理宣布减税", tip:"PM = Prime Minister。cut 代替 reduction。"}]},
+   {h:"新闻高频词（一）",p:"",items:[
+   {en:"announce, report, confirm, deny, claim", ipa:"", zh:"宣布、报道、确认、否认、声称", tip:"deny 重音在后：de-NY。"},
+   {en:"increase, decrease, rise, fall, drop", ipa:"", zh:"增加、减少、上升、下降、下跌", tip:"数字新闻的五个动词。"},
+   {en:"government, minister, mayor, official, police", ipa:"", zh:"政府、部长、市长、官员、警方", tip:"official 重音在 FI。"},
+   {en:"economy, inflation, interest rate, unemployment", ipa:"", zh:"经济、通胀、利率、失业", tip:"inflation 重音在 FLA。"}]},
+   {h:"新闻高频词（二）",p:"",items:[
+   {en:"according to, due to, as a result, meanwhile", ipa:"", zh:"据……、由于、结果、与此同时", tip:"according to = 根据某人/机构说。"},
+   {en:"a record high, a sharp drop, a slight increase", ipa:"", zh:"创纪录的高、急剧下降、略微增加", tip:"形容幅度的三种说法。"},
+   {en:"According to the report, unemployment fell to five percent last month.", ipa:"", zh:"据报告，上月失业率降至 5%。", tip:"典型导语句。"},
+   {en:"The mayor confirmed that the project will be delayed due to costs.", ipa:"", zh:"市长确认项目将因成本推迟。", tip:"confirmed that + 完整句子。"}]}],
+  drills:[["City to Build New Hospital","标题：to = 将要"],["Three Injured in Highway Crash","省略 be"],["announce, confirm, deny, claim","新闻动词"],["increase, decrease, rise, fall, drop","数字动词"],["According to the report, unemployment fell to five percent last month.","导语句"],["The mayor confirmed that the project will be delayed due to costs.","confirmed that"]],
+  ex:[
+   {t:"mc",q:"标题 “City to Build New Hospital” 的意思是？",opts:["市政府将建新医院","市政府已建成新医院","市政府反对建新医院","新医院建在城市里"],a:0},
+   {t:"mc",q:"标题 “Three Injured in Crash” 里省略了什么？",opts:["were（被动的 be）","to","will","the three"],a:0},
+   {t:"listen",q:"听一听，失业率怎么样了？",say:"Unemployment rose to seven percent.",opts:["升到 7%","降到 7%","保持 7%","升了 7 倍"],a:0},
+   {t:"mc",q:"“according to the police” 意思是？",opts:["据警方说","为了警方","和警方一起","反对警方"],a:0},
+   {t:"type",q:"听写这个词（“宣布”）。",say:"announce",a:"announce"},
+   {t:"type",q:"把标题补成完整句：“Prices Rise”",a:"Prices are rising.",alt:["Prices are rising","The prices are rising.","Prices rise.","Prices are rising"]}],
+  hw:[["每日一标题","每天读 3 个英文新闻标题（CBC、CTV 网站），把每个标题补成完整句子。坚持一周。"],["读一段导语","选一篇新闻只读第一段，回答：谁？做了什么？在哪？什么时候？"],["讲给别人","用三句英语把一条新闻讲给朋友：According to ___, ___ . 对方能听懂就算成功。"]]
+},
+{ id:"l4c6", lv:4, title:"讨论观点：同意、不同意与说明理由", goal:"能在讨论中表达观点、礼貌地不同意、给出理由和举例，不只是说 yes 或 no。",
+  intro:"到了中级，能不能<b>参与讨论</b>是分水岭。北美文化里，有不同意见是正常的，但<b>怎么说</b>很重要：直接说 “You're wrong” 很冒犯；说 “I see your point, but…” 就得体。本章给你一套完整工具：<b>表达观点</b>（I think / In my opinion）→ <b>同意</b>（Exactly / I agree）→ <b>部分不同意</b>（That's true, but…）→ <b>给理由</b>（because / the reason is）→ <b>举例</b>（For example）→ <b>总结</b>（So, overall）。",
+  learn:[{h:"表达观点",p:"",items:[
+   {en:"I think / I believe / In my opinion, ___.", ipa:"", zh:"我认为 / 我相信 / 在我看来", tip:"三种开头，In my opinion 最正式。"},
+   {en:"Personally, I prefer working from home.", ipa:"", zh:"就我个人而言，我更喜欢在家工作。", tip:"Personally 表示“这只是我的看法”。"},
+   {en:"It seems to me that prices are too high.", ipa:"", zh:"我觉得价格太高了。", tip:"It seems to me 比 I think 更委婉。"},
+   {en:"The way I see it, we have two options.", ipa:"", zh:"在我看来，我们有两个选择。", tip:"口语常用。"}]},
+   {h:"同意与不同意",p:"",items:[
+   {en:"Exactly. / I totally agree. / That's a good point.", ipa:"", zh:"没错。/ 我完全同意。/ 说得好。", tip:"三种程度的同意。"},
+   {en:"I see your point, but I'm not sure I agree.", ipa:"", zh:"我明白你的意思，但我不太同意。", tip:"最礼貌的不同意：先肯定，再 but。"},
+   {en:"That's true, but on the other hand, ___.", ipa:"", zh:"那没错，但另一方面……", tip:"on the other hand = 另一方面。"},
+   {en:"I'm afraid I disagree.", ipa:"", zh:"恐怕我不同意。", tip:"I'm afraid 软化语气。"},
+   {en:"I don't think that's quite right.", ipa:"", zh:"我觉得那不太对。", tip:"比 You're wrong 好一万倍。"}]},
+   {h:"理由、举例、总结",p:"",items:[
+   {en:"The main reason is that it saves time.", ipa:"", zh:"主要原因是省时间。", tip:"The main reason is that + 句子。"},
+   {en:"For example, last week I finished early.", ipa:"", zh:"比如说，上周我提前完成了。", tip:"观点 + 例子 = 有说服力。"},
+   {en:"Another thing is that it's cheaper.", ipa:"", zh:"另一点是它更便宜。", tip:"加第二个理由。"},
+   {en:"So, overall, I think it's a good idea.", ipa:"", zh:"所以总的来说，我觉得是个好主意。", tip:"overall 总结。"},
+   {en:"What do you think? / How do you feel about that?", ipa:"", zh:"你怎么看？", tip:"说完自己的，把球抛给对方。"}]}],
+  drills:[["In my opinion, prices are too high.","表达观点"],["I see your point, but I'm not sure I agree.","礼貌不同意"],["That's true, but on the other hand, it's expensive.","另一方面"],["The main reason is that it saves time.","理由"],["For example, last week I finished early.","举例"],["So, overall, I think it's a good idea. What do you think?","总结 + 抛球"]],
+  ex:[
+   {t:"mc",q:"礼貌地表示不同意，最好的说法是？",opts:["I see your point, but I'm not sure I agree.","You're wrong.","No.","That's stupid."],a:0},
+   {t:"listen",q:"听一听，他同意还是不同意？",say:"That's true, but on the other hand, it costs a lot.",opts:["部分同意、部分不同意","完全同意","完全不同意","没有表态"],a:0},
+   {t:"mc",q:"给出理由时用？",opts:["The main reason is that…","For example…","Overall…","What do you think?"],a:0},
+   {t:"listen",q:"听一听，他的观点是？",say:"Personally, I prefer working from home because it saves time.",opts:["更喜欢在家工作，因为省时间","更喜欢去办公室","觉得在家工作浪费时间","没有观点"],a:0},
+   {t:"type",q:"翻译：你怎么看？（用 What do you think）",a:"What do you think?",alt:["What do you think","what do you think"]},
+   {t:"type",q:"听写这句话。",say:"I totally agree.",a:"I totally agree.",alt:["I totally agree","i totally agree"]}],
+  hw:[["一分钟观点","选一个话题（在家工作好不好？），用“观点 → 理由 → 例子 → 总结”说一分钟，录下来。"],["礼貌反驳","今天在一次对话里用一次 “I see your point, but…” 或 “That's true, but…”。"],["参加讨论（必做）","参加一次英语讨论（语言交换、读书会、工作会议都可以），至少发言两次：一次表达观点，一次回应别人。"]]
+},
+{ id:"l4c7", lv:4, title:"第四级结业：5 分钟工作汇报", goal:"能做一个 5 分钟的结构化口头汇报：背景、做了什么、结果、下一步，并回答一两个提问。",
+  intro:"工作汇报是中级英语最实用的输出。它比闲聊容易，因为<b>结构是固定的</b>，你可以提前准备。标准结构：<b>开场</b>（说明主题和时长）→ <b>背景</b>（为什么做）→ <b>做了什么</b>（过去时）→ <b>结果</b>（数字 + 完成时）→ <b>下一步</b>（将来时）→ <b>提问</b>。关键技巧：<b>路标词</b>（First / Next / Finally）让听众知道你讲到哪了；每部分不超过四句。",
+  learn:[{h:"开场与路标词",p:"",items:[
+   {en:"Good morning, everyone. Today I'd like to give you a quick update on the new website.", ipa:"", zh:"大家早上好。今天我想简短汇报一下新网站的进展。", tip:"一句话说主题。update on = 关于……的进展。"},
+   {en:"I'll cover three things: the background, what we did, and the next steps.", ipa:"", zh:"我会讲三点：背景、我们做了什么、下一步。", tip:"先告诉听众结构。"},
+   {en:"First, / Next, / Then, / Finally,", ipa:"", zh:"首先 / 接着 / 然后 / 最后", tip:"每换一部分就用一个。"},
+   {en:"Let me move on to the results.", ipa:"", zh:"我接着说结果。", tip:"move on to = 转到。"}]},
+   {h:"背景、行动、结果",p:"",items:[
+   {en:"The problem was that customers couldn't find the contact page.", ipa:"", zh:"问题是客户找不到联系页面。", tip:"背景：The problem was that…"},
+   {en:"So we redesigned the menu and added a search bar.", ipa:"", zh:"所以我们重新设计了菜单，加了搜索栏。", tip:"行动：过去时。"},
+   {en:"As a result, calls to support have dropped by thirty percent.", ipa:"", zh:"结果，客服电话减少了 30%。", tip:"结果：数字 + 完成时。dropped by = 下降了（幅度）。"},
+   {en:"We've also received positive feedback from users.", ipa:"", zh:"我们也收到了用户的正面反馈。", tip:"feedback 不可数，不加 s。"}]},
+   {h:"下一步与提问",p:"",items:[
+   {en:"Next, we're going to test it on mobile.", ipa:"", zh:"接下来我们要在手机上测试。", tip:"下一步：将来时。"},
+   {en:"We expect to finish by the end of the month.", ipa:"", zh:"我们预计月底前完成。", tip:"by = 不迟于。"},
+   {en:"That's all from me. Any questions?", ipa:"", zh:"我就说这些。有问题吗？", tip:"结尾固定句。"},
+   {en:"Good question. Let me check and get back to you.", ipa:"", zh:"好问题。我查一下再回复你。", tip:"回答不了时的万能句。"},
+   {en:"If I understand correctly, you're asking about the cost?", ipa:"", zh:"如果我理解得对，你是问成本？", tip:"没听清问题时先确认。"}]}],
+  drills:[["Today I'd like to give you a quick update on the new website.","开场"],["I'll cover three things: the background, what we did, and the next steps.","说结构"],["The problem was that customers couldn't find the contact page.","背景"],["As a result, calls to support have dropped by thirty percent.","结果"],["Next, we're going to test it on mobile. We expect to finish by the end of the month.","下一步"],["That's all from me. Any questions? Good question. Let me check and get back to you.","结尾 + 应答"]],
+  ex:[
+   {t:"mc",q:"汇报开场应该先说？",opts:["主题和要讲的几点","自己的英语不好","详细的数字","谢谢大家"],a:0},
+   {t:"listen",q:"听一听，结果是什么？",say:"As a result, sales have increased by twenty percent.",opts:["销售额增加了 20%","销售额减少了 20%","成本增加了 20%","客户减少了 20%"],a:0},
+   {t:"mc",q:"被问到一个答不上来的问题，说？",opts:["Good question. Let me check and get back to you.","I don't know.","No.","Next question."],a:0},
+   {t:"listen",q:"听一听，他接下来要讲什么？",say:"Let me move on to the next steps.",opts:["下一步","背景","结果","问题"],a:0},
+   {t:"type",q:"翻译：我就说这些。有问题吗？",a:"That's all from me. Any questions?",alt:["That's all from me. Any questions","That's all. Any questions?","That's all from me, any questions?"]},
+   {t:"type",q:"听写这句话。",say:"We expect to finish by the end of the month.",a:"We expect to finish by the end of the month.",alt:["We expect to finish by the end of the month","we expect to finish by the end of the month"]}],
+  hw:[["写汇报稿","选一件你最近做的事（工作项目、家里的事都可以），按“开场 → 背景 → 做了什么 → 结果 → 下一步”写一份 5 分钟的稿子。"],["计时练习","对着手机录像讲一遍，计时。超过 6 分钟就删内容，不到 4 分钟就加例子。练到不看稿。"],["结业汇报（必做）","对至少一个真人做这个 5 分钟汇报（同事、朋友、语言伙伴），请对方提两个问题，你当场回答。"]]
+},
+/* ===== 第五级 · 高级 Advanced / Expert ===== */
+{ id:"l5c1", lv:5, title:"口音打磨：北美音的细节", goal:"掌握北美口音的四个标志性特征，让你的英语听起来更自然、更容易被听懂。",
+  intro:"到了第五级，你的发音已经“正确”了。现在追求的是<b>自然</b>。北美口音有几个标志：① <b>闪音 t</b>：water 读成 “wadder”，better 读成 “bedder”；② <b>卷舌 r</b>：car、hard、work 的 r 都要卷；③ <b>鼻音前的元音</b>：can't、man 带一点鼻音；④ <b>句尾 t 的吞音</b>：what、that 的结尾 t 不完全释放。这些不是“必须”，但做到了会让母语者<b>不用费力就能听懂你</b>——这才是口音的意义。",
+  learn:[{h:"闪音 t：两个元音之间的 t 读成轻快的 d",p:"",items:[
+   {en:"water, better, little, city", ipa:"", zh:"水、更好、小、城市", tip:"wadder, bedder, liddle, ciddy。舌尖轻轻弹一下。"},
+   {en:"What a beautiful day!", ipa:"", zh:"多美的一天！", tip:"What a → “wadda”；beautiful → “byoodiful”。"},
+   {en:"I got it. / Get out of here.", ipa:"", zh:"我明白了。/ 出去。", tip:"got it → “goddit”；out of → “oudda”。"},
+   {en:"Put it on the table.", ipa:"", zh:"把它放在桌上。", tip:"Put it on → “pudidon”。"}]},
+   {h:"卷舌 r 与吞音 t",p:"",items:[
+   {en:"car, far, hard, park, start", ipa:"", zh:"车、远、硬、公园、开始", tip:"北美音 r 一定要卷：舌头后缩、不碰任何地方。英式音不卷，北美音必须卷。"},
+   {en:"work, word, world, first, nurse", ipa:"", zh:"工作、词、世界、第一、护士", tip:"/ɜːr/ 全程带 r，world 的 rl 最难，慢慢来。"},
+   {en:"What? / That's right. / I don't know.", ipa:"", zh:"什么？/ 对。/ 我不知道。", tip:"句尾的 t 和 n't 的 t 不释放：喉头轻轻一卡就停。"},
+   {en:"button, mountain, certain", ipa:"", zh:"按钮、山、确定", tip:"t 后面是 n 时，t 变成喉塞音：“bu'n”、“moun'n”。"}]},
+   {h:"整句模仿",p:"先听三遍，再影子跟读。",items:[
+   {en:"I'd better get a little water before we start.", ipa:"", zh:"开始前我最好喝点水。", tip:"better、little、water 三个闪音 t；start 卷舌。"},
+   {en:"What are you doing later? Wanna get a bite to eat?", ipa:"", zh:"你一会儿干什么？想去吃点东西吗？", tip:"Whaddaya、lader、bide to eat。"},
+   {en:"It's not that hard once you get the hang of it.", ipa:"", zh:"一旦掌握了窍门就不难了。", tip:"not that → 两个吞音 t；get the hang of it = 掌握窍门。"}]}],
+  drills:[["water, better, little, city","闪音 t"],["What a beautiful day!","wadda byoodiful"],["car, far, hard, work, world","卷舌 r"],["button, mountain, certain","喉塞音 t"],["I'd better get a little water before we start.","整句"],["It's not that hard once you get the hang of it.","吞音 + 短语"]],
+  ex:[
+   {t:"listen",q:"听一听，这个词的 t 读成了什么？",say:"better",opts:["轻快的 d（闪音）","清楚的 t","没读","s"],a:0},
+   {t:"mc",q:"北美口音里，car 的 r 应该？",opts:["卷舌，舌头后缩不碰任何地方","不发音","像中文的“日”","像 l"],a:0},
+   {t:"listen",q:"听一听，他说的是？",say:"Put it on the table.",opts:["把它放在桌上","把它拿下来","桌子上有东西","放在哪儿"],a:0},
+   {t:"mc",q:"“I got it.” 北美口语听起来像？",opts:["I goddit.","I go tit.","I got eat.","I god."],a:0},
+   {t:"type",q:"听写这句话。",say:"What a beautiful day!",a:"What a beautiful day!",alt:["What a beautiful day","what a beautiful day"]},
+   {t:"type",q:"听写这句话。",say:"It's not that hard.",a:"It's not that hard.",alt:["It's not that hard","It is not that hard.","It is not that hard"]}],
+  hw:[["闪音 t 清单","从今天的对话、节目里收集 10 个有闪音 t 的词，录音读，回听是否自然。"],["影子跟读 10 分钟","选一段北美播客或剧，逐句影子跟读 10 分钟，模仿 r 和 t 的处理方式。"],["真人反馈","请一位母语者听你读本章六句，问：“Which word sounds the least natural?” 只改那一个词。"]]
+},
+{ id:"l5c2", lv:5, title:"演讲技巧：开场、结构与停顿", goal:"能设计并发表一场有结构、有停顿、有互动的演讲，掌握开场钩子和结尾升华。",
+  intro:"好的演讲不是流利，而是<b>节奏和结构</b>。母语者讲得好的秘诀：① <b>开场有钩子</b>（一个问题、一个数字、一个故事）；② <b>三段结构</b>（听众只记得住三点）；③ <b>停顿</b>（重要的话之前停两秒，比大声更有力）；④ <b>互动</b>（反问、举手）；⑤ <b>结尾回到开头</b>。本章先给你这些工具的英文说法，再练一个 3 分钟的小演讲。记住：<b>说慢、停顿，是自信的表现，不是英语不好</b>。",
+  learn:[{h:"开场钩子",p:"",items:[
+   {en:"Raise your hand if you've ever forgotten someone's name.", ipa:"", zh:"如果你曾忘过别人的名字，请举手。", tip:"举手式开场，立刻让听众参与。"},
+   {en:"Three years ago, I couldn't order a coffee in English.", ipa:"", zh:"三年前，我连用英语点咖啡都不会。", tip:"故事式开场，用自己的经历。"},
+   {en:"Did you know that most people forget 90 percent of what they hear within a week?", ipa:"", zh:"你知道吗，大多数人一周内会忘掉听到的 90%。", tip:"数字式开场。Did you know that…"},
+   {en:"Today I want to share three simple ideas with you.", ipa:"", zh:"今天我想和你们分享三个简单的想法。", tip:"钩子之后，马上告诉听众结构。"}]},
+   {h:"过渡与强调",p:"",items:[
+   {en:"That brings me to my second point.", ipa:"", zh:"这就引出我的第二点。", tip:"过渡句。"},
+   {en:"Here's the thing: it's not about talent.", ipa:"", zh:"关键是：这和天赋无关。", tip:"Here's the thing 后面停两秒，再说重点。"},
+   {en:"Let me say that again.", ipa:"", zh:"我再说一遍。", tip:"强调重点的方法：重复一次。"},
+   {en:"Think about that for a second.", ipa:"", zh:"想一想。", tip:"给听众两秒停顿。"},
+   {en:"And this is the part that surprised me.", ipa:"", zh:"而这是让我惊讶的部分。", tip:"制造期待。"}]},
+   {h:"结尾",p:"",items:[
+   {en:"So, to sum up: start small, practise daily, and don't be afraid to make mistakes.", ipa:"", zh:"总结一下：从小处开始、每天练、别怕犯错。", tip:"三点总结，和开头呼应。"},
+   {en:"Remember that coffee I couldn't order? Last week, I gave a presentation in English.", ipa:"", zh:"还记得我点不了的那杯咖啡吗？上周，我用英语做了一场演讲。", tip:"回到开头的故事，这是最有力的结尾。"},
+   {en:"I'll leave you with one question: what will you try this week?", ipa:"", zh:"最后留给大家一个问题：这周你会尝试什么？", tip:"I'll leave you with = 最后给大家留下。"},
+   {en:"Thank you. I'm happy to take any questions.", ipa:"", zh:"谢谢。欢迎提问。", tip:"结尾固定句。"}]}],
+  drills:[["Raise your hand if you've ever forgotten someone's name.","举手式开场"],["Three years ago, I couldn't order a coffee in English.","故事式开场"],["Today I want to share three simple ideas with you.","说结构"],["Here's the thing: it's not about talent.","停顿再说重点"],["That brings me to my second point.","过渡"],["I'll leave you with one question: what will you try this week? Thank you.","结尾"]],
+  ex:[
+   {t:"mc",q:"演讲开场最有效的是？",opts:["一个问题、数字或故事（钩子）","道歉自己英语不好","念出全部提纲","直接讲第一点"],a:0},
+   {t:"listen",q:"听一听，这是哪种开场？",say:"Did you know that most people forget 90 percent of what they hear?",opts:["数字式","故事式","举手式","道歉式"],a:0},
+   {t:"mc",q:"说到最重要的一句话之前，应该？",opts:["停顿两秒","加快速度","提高音量喊出来","看稿子"],a:0},
+   {t:"listen",q:"听一听，他要做什么？",say:"That brings me to my second point.",opts:["转到第二点","结束演讲","回答问题","重复第一点"],a:0},
+   {t:"type",q:"翻译：谢谢。欢迎提问。",a:"Thank you. I'm happy to take any questions.",alt:["Thank you. I'm happy to take any questions","Thank you, I'm happy to take any questions.","Thank you. I am happy to take any questions."]},
+   {t:"type",q:"听写这句话。",say:"Let me say that again.",a:"Let me say that again.",alt:["Let me say that again","let me say that again"]}],
+  hw:[["写一个 3 分钟演讲","主题：我学英语的故事。结构：钩子 → 三点 → 回到开头的结尾。写在纸上，标出要停顿的地方。"],["停顿练习","录下自己讲这 3 分钟，回听：重点前有没有停两秒？语速是不是太快？再录一次。"],["讲给三个人","把这个演讲讲给至少三个人（可以分三次），每次结束问一句：“What's one thing you remember?”"]]
+},
+{ id:"l5c3", lv:5, title:"复杂语法：定语从句与间接引语", goal:"能用 who / which / that 把句子连成复杂句，能转述别人说的话。",
+  intro:"高级英语的句子不是更长的单句，而是<b>把几个意思连成一句</b>。两个最重要的工具：<b>定语从句</b>——用 who / which / that / where 把两句合并（The man who lives next door is a doctor）；<b>间接引语</b>——转述别人说的话（She said she was tired）。间接引语有一个中国学习者常忽略的规则：<b>时态往后退一步</b>（“I am tired” → she said she <b>was</b> tired），人称也要换。",
+  learn:[{h:"定语从句：把两句合成一句",p:"",items:[
+   {en:"The man who lives next door is a doctor.", ipa:"", zh:"住在隔壁的那个人是医生。", tip:"who 指人。= The man is a doctor. He lives next door."},
+   {en:"This is the phone that I bought last week.", ipa:"", zh:"这是我上周买的手机。", tip:"that 指物。口语里 that 常省略：the phone I bought。"},
+   {en:"The restaurant where we met has closed.", ipa:"", zh:"我们相遇的那家餐厅关门了。", tip:"where 指地方。"},
+   {en:"My sister, who lives in Calgary, is visiting next week.", ipa:"", zh:"我姐姐（她住在卡尔加里）下周来看我。", tip:"有逗号的从句只是补充信息，可以去掉不影响意思。"},
+   {en:"That's the reason why I moved here.", ipa:"", zh:"那就是我搬来这里的原因。", tip:"the reason why 固定搭配。"}]},
+   {h:"间接引语：转述别人的话",p:"时态退一步，人称换掉。",items:[
+   {en:"\"I'm tired.\" → She said she was tired.", ipa:"", zh:"“我累了。”→ 她说她累了。", tip:"am → was，I → she。"},
+   {en:"\"I'll call you.\" → He said he would call me.", ipa:"", zh:"“我会给你打电话。”→ 他说他会给我打电话。", tip:"will → would，you → me。"},
+   {en:"\"I've finished.\" → She told me she had finished.", ipa:"", zh:"“我做完了。”→ 她告诉我她做完了。", tip:"have → had。told 后面要有人（told me），said 后面不用。"},
+   {en:"\"Where do you live?\" → He asked me where I lived.", ipa:"", zh:"“你住哪？”→ 他问我住哪。", tip:"转述问句：不再倒装，do 消失。"},
+   {en:"\"Can you help?\" → She asked if I could help.", ipa:"", zh:"“你能帮忙吗？”→ 她问我能不能帮忙。", tip:"Yes/No 问句用 if。"}]},
+   {h:"用在生活里",p:"",items:[
+   {en:"The doctor said I should rest for a week.", ipa:"", zh:"医生说我应该休息一周。", tip:"转述医嘱。"},
+   {en:"My manager told me that the meeting had been moved to Friday.", ipa:"", zh:"经理告诉我会议改到周五了。", tip:"told me that + 退一步的时态。"},
+   {en:"The lady who helped me at the bank was very patient.", ipa:"", zh:"在银行帮我的那位女士很有耐心。", tip:"定语从句形容人。"}]}],
+  drills:[["The man who lives next door is a doctor.","who 指人"],["This is the phone that I bought last week.","that 指物"],["The restaurant where we met has closed.","where 指地方"],["She said she was tired. He said he would call me.","时态退一步"],["He asked me where I lived.","转述问句"],["The doctor said I should rest for a week.","转述医嘱"]],
+  ex:[
+   {t:"mc",q:"把 “The woman is a nurse. She lives upstairs.” 合成一句：",opts:["The woman who lives upstairs is a nurse.","The woman which lives upstairs is a nurse.","The woman she lives upstairs is a nurse.","The woman where lives upstairs is a nurse."],a:0},
+   {t:"mc",q:"她说：“I'm busy.” 转述为：",opts:["She said she was busy.","She said I'm busy.","She said she is busy I.","She said that busy."],a:0},
+   {t:"listen",q:"听一听，医生说了什么？",say:"The doctor said I should drink more water.",opts:["应该多喝水","应该少喝水","应该休息","应该吃药"],a:0},
+   {t:"listen",q:"听一听，他问了什么？",say:"She asked me if I could come on Monday.",opts:["问我周一能不能来","问我周一在哪","让我周一别来","说她周一会来"],a:0},
+   {t:"type",q:"合成一句：This is the book. I bought it yesterday.（用 that）",a:"This is the book that I bought yesterday.",alt:["This is the book that I bought yesterday","This is the book I bought yesterday.","This is the book I bought yesterday"]},
+   {t:"type",q:"转述：He said: \"I will help you.\"",a:"He said he would help me.",alt:["He said he would help me","He said that he would help me.","He said that he would help me"]}],
+  hw:[["合句练习","写 5 组两句话，再把每组用 who / that / where 合成一句。"],["转述一天","今天别人对你说的三句话，用英语转述出来：My coworker said that… / My daughter asked me if…"],["描述一个人","用至少三个定语从句描述一位你认识的人（The friend who…, the place where we…）。讲给别人听。"]]
+},
+{ id:"l5c4", lv:5, title:"地道表达：习语、委婉与幽默", goal:"听懂并恰当使用 30 个北美高频习语，掌握委婉表达和轻松幽默的分寸。",
+  intro:"你能说正确的英语了，但母语者说的不是“正确的英语”，而是<b>地道的英语</b>：“It's a piece of cake”（小事一桩）、“Let's touch base”（我们碰一下）。习语不能硬背全部，<b>只学高频的</b>。另外两个高级技能：<b>委婉</b>——北美人很少直接说 no，而说 “I'll think about it”；<b>自嘲式幽默</b>——拿自己的口音、自己的失误开玩笑，立刻拉近距离。本章的原则：<b>先听懂，确定场合对了再用</b>。",
+  learn:[{h:"工作场合高频习语",p:"",items:[
+   {en:"Let's touch base tomorrow.", ipa:"", zh:"我们明天碰一下（简短沟通）。", tip:"touch base = 简短联络。"},
+   {en:"I'm on the same page.", ipa:"", zh:"我们想法一致。", tip:"on the same page = 看法一致。"},
+   {en:"Let's not reinvent the wheel.", ipa:"", zh:"别重复造轮子。", tip:"= 用现成的办法。"},
+   {en:"That's a piece of cake.", ipa:"", zh:"小事一桩。", tip:"= 很容易。"},
+   {en:"I'll keep you in the loop.", ipa:"", zh:"我会随时告诉你进展。", tip:"in the loop = 知道情况。"},
+   {en:"It's a win-win.", ipa:"", zh:"双赢。", tip:"直接用。"}]},
+   {h:"日常高频习语",p:"",items:[
+   {en:"It's up to you.", ipa:"", zh:"你决定。", tip:"up to you = 由你定。"},
+   {en:"I'm under the weather today.", ipa:"", zh:"我今天有点不舒服。", tip:"比 I'm sick 轻。"},
+   {en:"Hang in there.", ipa:"", zh:"坚持住。", tip:"安慰别人。"},
+   {en:"It cost an arm and a leg.", ipa:"", zh:"贵得要命。", tip:"= 非常贵。"},
+   {en:"Let's play it by ear.", ipa:"", zh:"看情况再说。", tip:"= 不提前定。"},
+   {en:"Break a leg!", ipa:"", zh:"祝你成功！（演出、面试前）", tip:"不是真的断腿，是祝好运。"}]},
+   {h:"委婉与幽默",p:"",items:[
+   {en:"I'll think about it. / Let me get back to you.", ipa:"", zh:"我考虑一下。/ 我再回复你。", tip:"北美式的“不”。听到这两句，多半是拒绝。"},
+   {en:"That's an interesting idea, but I'm not sure it's the right fit.", ipa:"", zh:"想法很有意思，但我不确定合适。", tip:"interesting 在这里常常是委婉的“不行”。"},
+   {en:"Sorry, my English is still a work in progress.", ipa:"", zh:"抱歉，我的英语还在“施工中”。", tip:"自嘲式幽默，对方一定会笑着说 Your English is great。"},
+   {en:"I'm still getting used to the cold. Ask me again in ten years.", ipa:"", zh:"我还在适应这里的冷。十年后再问我。", tip:"关于天气的自嘲，加拿大人最爱。"},
+   {en:"No worries. / No big deal.", ipa:"", zh:"没事。/ 不是什么大事。", tip:"别人道歉时的轻松回应。"}]}],
+  drills:[["Let's touch base tomorrow. I'll keep you in the loop.","工作习语"],["That's a piece of cake. It's a win-win.","两个常用"],["It's up to you. Let's play it by ear.","日常习语"],["I'm under the weather today. Hang in there.","身体 + 安慰"],["I'll think about it. Let me get back to you.","委婉的不"],["Sorry, my English is still a work in progress.","自嘲"]],
+  ex:[
+   {t:"listen",q:"听一听，他的意思是？",say:"Let's touch base tomorrow.",opts:["明天简短沟通一下","明天去打棒球","明天碰面吃饭","明天别联系"],a:0},
+   {t:"mc",q:"“It cost an arm and a leg.” 意思是？",opts:["贵得要命","受了伤","很便宜","付了手脚的钱"],a:0},
+   {t:"listen",q:"听一听，这更可能是同意还是拒绝？",say:"That's an interesting idea. Let me think about it.",opts:["委婉的拒绝（或至少不确定）","明确同意","明确拒绝","没听懂"],a:0},
+   {t:"mc",q:"朋友明天要面试，你说？",opts:["Break a leg!","Hang in there.","It's up to you.","No big deal."],a:0},
+   {t:"type",q:"翻译：你决定。（用 up to）",a:"It's up to you.",alt:["It's up to you","It is up to you.","It is up to you","Up to you."]},
+   {t:"type",q:"听写这句话。",say:"I'm on the same page.",a:"I'm on the same page.",alt:["I'm on the same page","I am on the same page.","I am on the same page"]}],
+  hw:[["习语笔记","本周听到的每个不认识的习语都记下来（节目、同事、朋友），查意思，一周至少 5 个。"],["用三个","这周在真实对话中用 3 个本章习语，用完记下对方反应。"],["一个笑话","准备一句关于自己（口音、天气、学英语）的自嘲，在合适的时候说出来，看对方笑不笑。"]]
+},
+{ id:"l5c5", lv:5, title:"专业英语与谈判", goal:"能在专业场合清晰表达需求、提出条件、礼貌拒绝和达成一致，掌握谈判的语言套路。",
+  intro:"谈判不只是商务：谈薪水、和房东谈租金、和装修工谈价格、和学校谈孩子的安排，都是谈判。英语谈判的风格是<b>软语气、硬内容</b>：用 “I was hoping…”、“Would it be possible…” 这样柔软的句子，提出明确的要求。本章给你完整的谈判语言：<b>开场定调</b> → <b>提出需求</b> → <b>讨价还价</b>（If you…, we could…）→ <b>礼貌拒绝</b> → <b>达成一致</b>。",
+  learn:[{h:"开场与提出需求",p:"",items:[
+   {en:"Thanks for taking the time to meet. I'd like to discuss the rent.", ipa:"", zh:"感谢你抽时间见面。我想谈谈房租。", tip:"先感谢，再一句说主题。"},
+   {en:"I was hoping we could talk about my salary.", ipa:"", zh:"我希望我们能谈谈我的薪水。", tip:"I was hoping 是最柔软的开场。"},
+   {en:"Would it be possible to start a week later?", ipa:"", zh:"有可能晚一周开始吗？", tip:"Would it be possible to = 最礼貌的请求。"},
+   {en:"What I'm looking for is a two-year lease at the current rate.", ipa:"", zh:"我想要的是按现在的价格签两年。", tip:"What I'm looking for is = 明确说出需求。"},
+   {en:"Based on my research, the market rate is around sixty thousand.", ipa:"", zh:"根据我的调查，市场价大约是六万。", tip:"用数据支撑。"}]},
+   {h:"讨价还价",p:"",items:[
+   {en:"If you can include utilities, I could sign today.", ipa:"", zh:"如果你能包水电，我今天就能签。", tip:"If you…, I could… 是谈判的核心句型。"},
+   {en:"I understand your position, but that's a bit higher than I expected.", ipa:"", zh:"我理解你的立场，但这比我预期的高一些。", tip:"a bit higher 比 too high 柔和。"},
+   {en:"Could you meet me halfway?", ipa:"", zh:"我们各让一步？", tip:"meet halfway = 折中。"},
+   {en:"What would it take to get to fifteen hundred?", ipa:"", zh:"要怎样才能做到 1500？", tip:"把问题抛给对方。"},
+   {en:"I'm not comfortable with that, I'm afraid.", ipa:"", zh:"恐怕我不太能接受。", tip:"礼貌但明确的拒绝。"},
+   {en:"Let me think it over and get back to you by Friday.", ipa:"", zh:"让我考虑一下，周五前回复你。", tip:"不当场答应，给自己时间。"}]},
+   {h:"达成一致",p:"",items:[
+   {en:"That works for me. Let's go with that.", ipa:"", zh:"我可以接受。就这么定。", tip:"go with = 选择、采用。"},
+   {en:"Just to confirm: twelve hundred a month, utilities included, starting March first.", ipa:"", zh:"确认一下：每月 1200，包水电，3 月 1 日开始。", tip:"口头达成后一定要重复确认。"},
+   {en:"Could you put that in writing?", ipa:"", zh:"能写下来吗？", tip:"in writing = 书面。重要的事一定要。"},
+   {en:"I appreciate your flexibility. I think we have a deal.", ipa:"", zh:"感谢你的灵活。我想我们成交了。", tip:"结尾感谢 + we have a deal。"}]}],
+  drills:[["I was hoping we could talk about my salary.","柔软开场"],["Would it be possible to start a week later?","礼貌请求"],["If you can include utilities, I could sign today.","If…, I could…"],["I understand your position, but that's a bit higher than I expected.","柔和反对"],["Could you meet me halfway?","折中"],["Just to confirm: twelve hundred a month, utilities included. Could you put that in writing?","确认 + 书面"]],
+  ex:[
+   {t:"mc",q:"谈薪水最柔软的开场是？",opts:["I was hoping we could talk about my salary.","Give me more money.","My salary is too low.","I want a raise now."],a:0},
+   {t:"listen",q:"听一听，他提的条件是？",say:"If you can include parking, I could sign today.",opts:["包停车位就今天签","今天不签","不要停车位","明天再谈"],a:0},
+   {t:"mc",q:"“Could you meet me halfway?” 意思是？",opts:["我们各让一步","在半路见面","你能来接我吗","你走一半"],a:0},
+   {t:"listen",q:"听一听，他接受了吗？",say:"I'm not comfortable with that, I'm afraid.",opts:["没接受（礼貌拒绝）","接受了","还在考虑","没听懂"],a:0},
+   {t:"type",q:"翻译：能写下来吗？（用 in writing）",a:"Could you put that in writing?",alt:["Could you put that in writing","Can you put that in writing?","Could you put it in writing?"]},
+   {t:"type",q:"听写这句话。",say:"That works for me.",a:"That works for me.",alt:["That works for me","that works for me"]}],
+  hw:[["写谈判脚本","选一件你真要谈的事（租金、薪水、价格、安排），按“开场 → 需求 → 条件 → 拒绝句 → 确认”写脚本。"],["角色扮演","请朋友扮演对方，谈 10 分钟。目标：至少用一次 If you…, I could… 和一次礼貌拒绝。"],["真实谈判（必做）","进行一次真实的英语谈判（和房东、商家、雇主、学校）。结束后记录：结果如何？哪句话最有用？"]]
+},
+{ id:"l5c6", lv:5, title:"第五级结业：正式文件与 15 分钟演讲", goal:"能读懂并起草正式文件（合同要点、正式信函、投诉信），并完成结业任务：一场 15 分钟的英语演讲加问答。",
+  intro:"这是整个课程的最后一章。两件事：第一，<b>正式书面英语</b>——合同、正式信函、投诉信的结构和用语，这是你在加拿大维护自己权益的工具；第二，<b>结业演讲</b>——15 分钟演讲加问答。从一个字母都不会读，到站着用英语讲 15 分钟——这就是你走过的路。演讲的主题由你定，但建议讲<b>你最懂的事</b>：你的专业、你的经历、你的文化。你懂的事，英语会跟上。",
+  learn:[{h:"读懂合同：高频词",p:"",items:[
+   {en:"The tenant shall pay the rent on the first day of each month.", ipa:"", zh:"租户须在每月一日支付房租。", tip:"shall = 必须（法律用语）；tenant = 租户；landlord = 房东。"},
+   {en:"Either party may terminate this agreement with sixty days' written notice.", ipa:"", zh:"任何一方可提前 60 天书面通知终止本协议。", tip:"party = 一方；terminate = 终止；notice = 通知。"},
+   {en:"This offer is valid until March thirty-first.", ipa:"", zh:"本报价有效期至 3 月 31 日。", tip:"valid until = 有效至。"},
+   {en:"The employee is entitled to two weeks of paid vacation.", ipa:"", zh:"员工享有两周带薪假。", tip:"be entitled to = 有权享有。"},
+   {en:"Please read the terms and conditions carefully before signing.", ipa:"", zh:"签字前请仔细阅读条款。", tip:"terms and conditions = 条款。"}]},
+   {h:"正式信函与投诉信",p:"",items:[
+   {en:"To Whom It May Concern,", ipa:"", zh:"敬启者：（不知道收信人姓名时）", tip:"正式信的万能称呼。"},
+   {en:"I am writing to formally request a refund for order number 4471.", ipa:"", zh:"我写信正式要求退还订单 4471 的款项。", tip:"正式信里不用缩写：I am，不是 I'm。"},
+   {en:"Despite two phone calls, the issue has not been resolved.", ipa:"", zh:"尽管打过两次电话，问题仍未解决。", tip:"Despite + 名词。"},
+   {en:"I would appreciate a response within ten business days.", ipa:"", zh:"希望在十个工作日内收到回复。", tip:"business days = 工作日。给出明确期限。"},
+   {en:"Please find attached copies of the receipt and our previous correspondence.", ipa:"", zh:"随信附上收据和之前通信的副本。", tip:"correspondence = 往来信件。"},
+   {en:"Sincerely, / Yours truly,", ipa:"", zh:"敬上（正式结尾）", tip:"正式信用这两个，不用 Thanks。"}]},
+   {h:"15 分钟演讲与问答",p:"结业任务的语言工具。",items:[
+   {en:"Before I begin, let me tell you why this topic matters to me.", ipa:"", zh:"开始之前，让我说说为什么这个话题对我重要。", tip:"个人联系，让听众在意。"},
+   {en:"I'll be speaking for about fifteen minutes, and then we'll have time for questions.", ipa:"", zh:"我会讲大约 15 分钟，然后留时间提问。", tip:"告诉听众时长。"},
+   {en:"That's a great question, and it's one I've thought about a lot.", ipa:"", zh:"这是个好问题，也是我想过很多的问题。", tip:"问答时先肯定问题。"},
+   {en:"I'm not sure I have a complete answer, but here's my view.", ipa:"", zh:"我不确定有完整的答案，但这是我的看法。", tip:"诚实但不退缩。"},
+   {en:"Thank you all for listening. It's been a privilege.", ipa:"", zh:"感谢大家的聆听。这是我的荣幸。", tip:"privilege 读 PRIV-lij。"}]}],
+  drills:[["The tenant shall pay the rent on the first day of each month.","合同句"],["Either party may terminate this agreement with sixty days' written notice.","terminate / notice"],["I am writing to formally request a refund.","正式信开头"],["I would appreciate a response within ten business days.","期限"],["Before I begin, let me tell you why this topic matters to me.","演讲开场"],["That's a great question, and it's one I've thought about a lot. Thank you all for listening.","问答 + 结尾"]],
+  ex:[
+   {t:"mc",q:"合同里 “shall” 的意思是？",opts:["必须（法律义务）","可能","将来会","应该（建议）"],a:0},
+   {t:"listen",q:"听一听，提前多久通知可以终止？",say:"Either party may terminate this agreement with thirty days' notice.",opts:["30 天","60 天","13 天","3 天"],a:0},
+   {t:"mc",q:"不知道收信人姓名的正式信，称呼用？",opts:["To Whom It May Concern,","Hi there,","Hey,","Dear friend,"],a:0},
+   {t:"listen",q:"听一听，他希望多久内收到回复？",say:"I would appreciate a response within five business days.",opts:["5 个工作日","5 天","15 个工作日","50 天"],a:0},
+   {t:"type",q:"翻译：我写信正式要求退款。（I am writing to formally…）",a:"I am writing to formally request a refund.",alt:["I am writing to formally request a refund","I'm writing to formally request a refund.","I am writing to request a refund."]},
+   {t:"type",q:"听写这句话。",say:"Thank you all for listening.",a:"Thank you all for listening.",alt:["Thank you all for listening","thank you all for listening"]}],
+  hw:[["读一份真合同","找出你签过的一份英文合同（租房、工作、手机），用本章的词读懂关键条款：付款、终止、通知期。写下三条中文摘要。"],["写一封正式信","就一件真实的事写一封正式信或投诉信（退款、维修、申诉），用本章的结构和用语。可以请老师帮你检查后发出。"],["结业演讲（必做）","准备并发表一场 15 分钟的英语演讲，主题自选，之后回答至少三个问题。至少三位听众。讲完后，回到本课堂的第 1 章，听一遍字母表——你会发现自己走了多远。"]]
 }
 ];
 
 const LEVELS = [
- {n:"第一级",en:"Level 1 · 入门 Beginner",now:true,pts:["26 个字母的名字和声音","五个短元音、th / r / l / v / w 四大难点","打招呼、自我介绍、数字 0–20","this / that、a / an、have / want / need","问问题、购物点餐、问路交通","结业：2 分钟真实对话"]},
+ {n:"第一级",en:"Level 1 · 入门 Beginner",pts:["26 个字母的名字和声音","五个短元音、th / r / l / v / w 四大难点","打招呼、自我介绍、数字 0–20","this / that、a / an、have / want / need","问问题、购物点餐、问路交通","结业：2 分钟真实对话"]},
  {n:"第二级",en:"Level 2 · 基础 Elementary",pts:["长元音与双元音、重音与连读","现在进行时、过去时","时间、日期、天气、家人","看病、打电话、租房、银行","结业：打一通 3 分钟电话"]},
  {n:"第三级",en:"Level 3 · 进阶 Pre-intermediate",pts:["语调与句子节奏","将来时、情态动词 can / should / must","工作面试、填表、写短邮件","结业：10 分钟面对面交谈"]},
  {n:"第四级",en:"Level 4 · 中级 Intermediate",pts:["弱读、缩读、口语自然度","完成时、条件句、被动语态","看懂新闻、讨论观点、工作汇报","结业：5 分钟口头汇报"]},
  {n:"第五级",en:"Level 5 · 高级 Advanced / Expert",pts:["口音打磨与演讲技巧","复杂语法与地道表达","专业领域英语、谈判、写正式文件","结业：15 分钟演讲 + 问答"]}
 ];
+
+/* ---------- levels ---------- */
+const LV_N = ["","第一级","第二级","第三级","第四级","第五级"];
+function lvOf(c){ return c.lv||1; }
+function lvChapters(l){ return COURSE.filter(c=>lvOf(c)===l); }
+function lvDone(l){ return lvChapters(l).every(chapDone); }
+function curLevel(){ const c=COURSE.find(x=>!chapDone(x)); return c? lvOf(c) : LEVELS.length; }
+function lvIndex(c){ return lvChapters(lvOf(c)).indexOf(c)+1; }
+// what the voice actually says for a displayed phrase (arrows, A:/B: labels, blanks, IPA marks removed)
+function spokenOf(it){
+  if(it.say) return it.say;
+  return it.en.replace(/[↗↘]/g,"").replace(/\b[AB]:\s*/g,"").replace(/\s*→\s*/g,", ").replace(/\s*\/\s*/g,". ").replace(/\s*—\s*/g,". ")
+    .replace(/_{2,}/g,"blank").replace(/\s*\(DOB\)/,"").replace(/\bN\/A\b/,"N A").replace(/\s+/g," ").replace(/\s+([.,?!])/g,"$1").trim();
+}
 
 /* ---------- mascot face ---------- */
 const FACE_SVG = `<svg viewBox="0 0 100 100" aria-hidden="true">
@@ -744,12 +1555,13 @@ function voiceHelp(){
   else tip="声音来自你的设备。Microsoft Edge 浏览器自带最自然的加拿大英语声音（Clara、Liam）；Mac 和 iPhone 可以在辅助功能里下载增强声音。";
   toast(tip, 9000);
 }
-const AUDIO = {"A.": "e1354cc842", "apple": "1f3870be27", "B": "9d5ed678fe", "book": "821f032888", "C": "0d61f8370c", "cat": "d077f244de", "D": "f623e75af3", "dog": "06d80eb0c5", "E": "3a3ea00cfc", "egg": "0e9312087f", "F": "8006189430", "fish": "83e4a96aed", "G": "dfcf28d073", "go": "34d1f91fb2", "H": "c1d9f50f86", "hat": "46b5e59b2f", "I": "dd7536794b", "ice": "7bdff76536", "J": "ff44570aca", "juice": "57f7e96f37", "K": "a5f3c6a11b", "key": "3c6e0b8a9c", "L": "d20caec3b4", "love": "b5c0b187fe", "M": "69691c7bdc", "milk": "ecbdb882ae", "N": "8d9c307cb7", "no": "7fa3b767c4", "O": "f186217753", "open": "7cef8a7348", "P": "44c29edb10", "pen": "03f00e8e9d", "Q": "f09564c9ca", "queen": "72545f3f86", "R": "e1e1d3d405", "red": "bda9643ac6", "S": "5dbc98dcc9", "sun": "ebd556e6df", "T": "b9ece18c95", "tea": "7239ea2b5d", "U": "4c614360da", "up": "46c48bec0d", "V": "5206560a30", "very": "f016441d00", "W": "61e9c06ea9", "water": "9460370bb0", "X": "02129bb861", "box": "34be958a92", "Y": "57cec4137b", "yes": "a6105c0a61", "Z": "21c2e59531", "zoo": "d2cbe65f53", "F. V": "d436a3fd6f", "B. D. G": "cb3cdb9ef8", "A B C D E F G": "94a0b0e4ad", "H I J K L M": "2996f8e7ee", "apple, book, cat": "23f7f4134b", "fish, go, hat": "ec36b076c1", "ice, juice, key, love, milk": "2ab4fe6fe0", "V vs W": "b75d5bf13f", "R vs L": "15d0de4af3", "N vs M (词尾)": "1426ac2b7c", "My name is Li. L-I.": "aece770881", "My email is wang at gmail dot com.": "77cf4b3477", "Can you spell that, please?": "bc74adfc60", "N O P Q R S T": "771ce3d697", "U V W X Y Z": "d86e594e2f", "red, run, rice": "494bcee97f", "very, water, very, water": "57c74e877e", "My name is Wang. W-A-N-G.": "755c79f8b8", "a. cat, bad, map": "b773c27b8a", "e. pen, bed, red": "3bcfe261d4", "i. sit, big, fish": "5bd9cd95d5", "o. hot, dog, box": "3fd592a01a", "u. cup, bus, sun": "1443dd5899", "bad. bed": "838e9f58f3", "sit. seat": "aa783912fa", "cup. cop": "a29e025c6e", "cat, bad, map": "ca96f8c4e2", "pen, bed, red": "ee0188343f", "sit, big, fish": "9831e6b962", "hot, dog, box": "9856d45c77", "cup, bus, sun": "dd6b08b0d6", "bad, bed, bid, bod, bud": "81f41727b3", "bed": "001cbc059a", "cup": "f3f58ee455", "sit": "87d4eeb7de", "hot": "27369b3bf4", "think, thank you, three": "d02d2e709a", "this, that, the, they": "8451355608", "bus, bag, big": "7265de620d", "cold, world, friend": "cee2139e3a", "books, cats, dogs": "bdc973471b", "right. light": "8238240b7b", "rice. lice": "ff98a6848b", "very. wary": "413e7776c5", "vest. west": "e9c4cfaf48", "think, thank you, three, thirty": "17bf71e4ea", "this, that, the, they, there": "001c7f78e4", "bus, bag, big, cold, world, friend": "81841b4b6e", "right, light, rice, lice, read, lead": "20f6384852", "very, wary, vest, west, we, V": "c6ef10e808", "Thank you very much.": "9d197f9a18", "three": "35d6d33467", "light": "2ac43aa43b", "west": "da4f0053a5", "friend": "3af00c6cad", "zero, one, two, three": "bc05a69f79", "four, five, six, seven": "1256f28b27", "eight, nine, ten": "d72b254716", "eleven, twelve, thirteen, fourteen, fifteen": "cad8c48ef2", "sixteen, seventeen, eighteen, nineteen, twenty": "e5612d53e5", "Hello.. Hi.": "de0b18364b", "Good morning.. Good afternoon.. Good evening.": "8df8386e14", "How are you?": "04e35eb3e4", "I'm good, thank you. And you?": "a01beff98f", "Nice to meet you.": "67bd7ea9f2", "Goodbye.. Bye.. See you.": "ea45927bbf", "zero, one, two, three, four, five": "90f9647150", "six, seven, eight, nine, ten": "12e6fc1244", "Hello. How are you?": "cc70815398", "Nice to meet you. Goodbye.": "d4a20c6bc7", "thirteen": "422ecc084f", "five": "30056e1cab", "twelve": "15f6f8dc03", "seven": "bb3aec0fdc", "I am a student.": "2f1f75e8bb", "You are my friend.": "4254f1e9df", "She is a doctor. He is a driver.": "e6dacd3d93", "We are from China.": "1c6a4d6aeb", "Hello, my name is Wang Li.": "eaa7c46b22", "I am from Beijing, China.": "9403b4365f", "I am a nurse.": "5d9bfb7220", "I live in Toronto now.": "83a056bef2", "I like cooking and music.": "9f0ec5d819", "teacher, student, nurse, doctor": "3eaafe5f09", "driver, cook, worker, engineer": "2ac768625e", "I am retired.. I am a homemaker.": "05a6612fe6", "I am a student. You are my friend.": "dc57bf7de7", "I live in Toronto now. I like cooking and music.": "87982f57e6", "Hello, my name is Li. I am from China. I am a cook. I live in Toronto. I like music.": "7dba6a714f", "She is a nurse.": "29682fba1e", "This is a pen.": "26df8d1ff2", "That is a car.": "a3fa0acf7e", "What is this?. It is a key.": "f92db4f0eb", "a book, a cup, a phone": "81e626f9f8", "an apple, an egg, an orange, an umbrella": "a815fbdbe1", "table, chair, bed, door": "ef478ea490", "window, phone, cup, bowl": "f46bf3b32a", "key, bag, clock, light": "df663fdd60", "This is a pen. That is a car.": "95b904bdbf", "What is this? It is a key.": "d6c184d4f9", "an apple, an egg, an orange": "785ea719c6", "table, chair, bed, door, window, phone": "4087d12bc8", "This is a table. That is a window. This is an apple.": "48d229738d", "This is a clock.": "a108b97721", "What is this?": "efc45797dd", "I have a car.": "263370c615", "I want water.": "33b9c8dce6", "I need help.": "d79273b035", "I don't want it.. I don't need it.": "887762dc7c", "one book. two books": "f88dbc812b", "one dog. three dogs": "333bd36925", "one bus. two buses": "d4b9db86ad", "one child. two children; one man. two men": "ebb78cdd33", "I have two children.": "d52f4013a8", "I want a coffee, please.": "f23c88d30f", "I need a doctor.": "9e5af80488", "Do you have a bag?": "aa2c284379", "I have a car. I want water. I need help.": "99b2415b3e", "I don't want it. I don't need it.": "701aa7db8f", "books, cats, cups": "f440bc4ec3", "dogs, pens, bags": "a35b9323c6", "buses, boxes, watches": "9f77674974", "I have two children. I want a coffee, please.": "a676f9af71", "Do you have a bag? Do you have water?": "a88ac3e462", "I have three dogs.": "f40f407def", "I don't want it.": "1d2f1dce92", "What": "124433700b", "Where": "b3c5b21d2c", "Who": "4ee972120b", "When": "4e97aeeaa8", "How much": "3ad058e79e", "What is your name?": "f6429fe0f1", "Where is the bathroom?": "fafa77963a", "Who is he?": "6e04300264", "When is the bus?": "72f4cb3957", "How much is this?": "adf447f1f1", "Sorry, again please?. Slowly, please.": "030fbd1d75", "What, Where, Who, When, How much": "05326ff509", "Sorry, again please? Slowly, please.": "83780ab1b1", "Where is the bus? When is the bus? How much is the bus?": "2b2d098502", "Hi, what can I get you?": "813ace0794", "Can I have a small coffee, please?": "1bfa842c60", "Anything else?": "b16d9ec360", "No, that's all. Thank you.": "723007c5a6", "That's three fifty.": "b4eb5c32ab", "Here you go.. Card, please.": "9990bdd622", "Excuse me, where is the milk?": "682a8cf278", "Do you have this in large?": "cf592fe178", "I'll take it.": "76f427f252", "Just looking, thanks.": "3c9bf5749d", "Can I get a receipt?": "56067640ea", "one dollar, five dollars, ten dollars": "94c661f551", "two fifty, nine ninety-nine": "a1530bc216", "cash. card. tap": "0fe572d469", "Just looking, thanks. I'll take it.": "7b3c5b1291", "one dollar, two fifty, nine ninety-nine, ten dollars": "277209bc71", "Hi. Can I have a tea, please? No, that's all. Card, please. Thank you.": "cc2a249232", "That's four seventy-five.": "a7d82b1699", "Can I have a large tea, please?": "90ac99258a", "left. right": "1d5b52305d", "go straight": "20e2177eab", "turn left. turn right": "7298bd2681", "next to. across from. near": "b38b1cd9cd", "Excuse me, where is the subway station?": "5f945087e6", "Is it far?": "fdba824ddb", "How do I get to the hospital?": "5c78fc87bf", "Which bus goes downtown?": "300da32f6e", "Go straight, then turn left.": "cacd2355be", "It's on your right, next to the bank.": "7379d3d105", "Take bus number 52.": "ecc8bbd1ad", "It's about ten minutes.": "72858d9210", "left, right, go straight": "80176f98c7", "turn left, turn right, next to the bank": "0033658240", "Is it far? How do I get to the hospital?": "3a66197891", "Go straight, then turn left. It's on your right.": "b78b2d6fee", "Which bus goes downtown? Take bus number 52.": "1d7d7f750e", "Turn right at the bank.": "0b2f59e4ab", "Take bus number fifteen.": "295a8d3e62", "Where is the bus stop?": "a4199dcd3f", "th. think, this, thank you": "a2ba4b3b16", "v. very, five, have": "4d58f4a354", "l (词尾). ball, call, I'll": "1eea9642d3", "r. right, red, from": "b8ecfab6bd", "词尾辅音. cold, friend, books": "360cc68c3e", "Hi! Are you new here?": "d0aee92d90", "Yes. Hello, my name is Chen. Nice to meet you.": "a07bfd4711", "Nice to meet you too. I'm Sarah. Where are you from?": "464db2f32a", "I'm from China. I live in apartment three now.": "59f21b138b", "Great! Do you need any help?": "79d7b96b93", "Yes, please. Where is the bus stop?": "bd5b15de17", "Go straight and turn left. It's next to the bank.": "59f7bfe335", "Straight, then left. Thank you very much! See you.": "d54e15e783", "think, this, very, five, ball, right, cold, friend": "6d8eddb868", "Hello, my name is Chen. Nice to meet you.": "769750965a", "Hello, my name is Chen. Nice to meet you. I'm from China. I live in apartment three now. Yes, please. Where is the bus stop? Straight, then left. Thank you very much! See you.": "74cb430161", "How much is the coffee?": "693eeca07d", "Go straight and turn left.": "d83fd0e2b7", "Hello! Nice to meet you.": "cba43328c2", "hello": "5d41402abc"};
+const AUDIO = {"A.": "e1354cc842", "apple": "1f3870be27", "B": "9d5ed678fe", "book": "821f032888", "C": "0d61f8370c", "cat": "d077f244de", "D": "f623e75af3", "dog": "06d80eb0c5", "E": "3a3ea00cfc", "egg": "0e9312087f", "F": "8006189430", "fish": "83e4a96aed", "G": "dfcf28d073", "go": "34d1f91fb2", "H": "c1d9f50f86", "hat": "46b5e59b2f", "I": "dd7536794b", "ice": "7bdff76536", "J": "ff44570aca", "juice": "57f7e96f37", "K": "a5f3c6a11b", "key": "3c6e0b8a9c", "L": "d20caec3b4", "love": "b5c0b187fe", "M": "69691c7bdc", "milk": "ecbdb882ae", "N": "8d9c307cb7", "no": "7fa3b767c4", "O": "f186217753", "open": "7cef8a7348", "P": "44c29edb10", "pen": "03f00e8e9d", "Q": "f09564c9ca", "queen": "72545f3f86", "R": "e1e1d3d405", "red": "bda9643ac6", "S": "5dbc98dcc9", "sun": "ebd556e6df", "T": "b9ece18c95", "tea": "7239ea2b5d", "U": "4c614360da", "up": "46c48bec0d", "V": "5206560a30", "very": "f016441d00", "W": "61e9c06ea9", "water": "9460370bb0", "X": "02129bb861", "box": "34be958a92", "Y": "57cec4137b", "yes": "a6105c0a61", "Z": "21c2e59531", "zoo": "d2cbe65f53", "F. V": "d436a3fd6f", "B. D. G": "cb3cdb9ef8", "A B C D E F G": "94a0b0e4ad", "H I J K L M": "2996f8e7ee", "apple, book, cat": "23f7f4134b", "fish, go, hat": "ec36b076c1", "ice, juice, key, love, milk": "2ab4fe6fe0", "V vs W": "b75d5bf13f", "R vs L": "15d0de4af3", "N vs M (词尾)": "1426ac2b7c", "My name is Li. L-I.": "aece770881", "My email is wang at gmail dot com.": "77cf4b3477", "Can you spell that, please?": "bc74adfc60", "N O P Q R S T": "771ce3d697", "U V W X Y Z": "d86e594e2f", "red, run, rice": "494bcee97f", "very, water, very, water": "57c74e877e", "My name is Wang. W-A-N-G.": "755c79f8b8", "a. cat, bad, map": "b773c27b8a", "e. pen, bed, red": "3bcfe261d4", "i. sit, big, fish": "5bd9cd95d5", "o. hot, dog, box": "3fd592a01a", "u. cup, bus, sun": "1443dd5899", "bad. bed": "838e9f58f3", "sit. seat": "aa783912fa", "cup. cop": "a29e025c6e", "cat, bad, map": "ca96f8c4e2", "pen, bed, red": "ee0188343f", "sit, big, fish": "9831e6b962", "hot, dog, box": "9856d45c77", "cup, bus, sun": "dd6b08b0d6", "bad, bed, bid, bod, bud": "81f41727b3", "bed": "001cbc059a", "cup": "f3f58ee455", "sit": "87d4eeb7de", "hot": "27369b3bf4", "think, thank you, three": "d02d2e709a", "this, that, the, they": "8451355608", "bus, bag, big": "7265de620d", "cold, world, friend": "cee2139e3a", "books, cats, dogs": "bdc973471b", "right. light": "8238240b7b", "rice. lice": "ff98a6848b", "very. wary": "413e7776c5", "vest. west": "e9c4cfaf48", "think, thank you, three, thirty": "17bf71e4ea", "this, that, the, they, there": "001c7f78e4", "bus, bag, big, cold, world, friend": "81841b4b6e", "right, light, rice, lice, read, lead": "20f6384852", "very, wary, vest, west, we, V": "c6ef10e808", "Thank you very much.": "9d197f9a18", "three": "35d6d33467", "light": "2ac43aa43b", "west": "da4f0053a5", "friend": "3af00c6cad", "zero, one, two, three": "bc05a69f79", "four, five, six, seven": "1256f28b27", "eight, nine, ten": "d72b254716", "eleven, twelve, thirteen, fourteen, fifteen": "cad8c48ef2", "sixteen, seventeen, eighteen, nineteen, twenty": "e5612d53e5", "Hello.. Hi.": "de0b18364b", "Good morning.. Good afternoon.. Good evening.": "8df8386e14", "How are you?": "04e35eb3e4", "I'm good, thank you. And you?": "a01beff98f", "Nice to meet you.": "67bd7ea9f2", "Goodbye.. Bye.. See you.": "ea45927bbf", "zero, one, two, three, four, five": "90f9647150", "six, seven, eight, nine, ten": "12e6fc1244", "Hello. How are you?": "cc70815398", "Nice to meet you. Goodbye.": "d4a20c6bc7", "thirteen": "422ecc084f", "five": "30056e1cab", "twelve": "15f6f8dc03", "seven": "bb3aec0fdc", "I am a student.": "2f1f75e8bb", "You are my friend.": "4254f1e9df", "She is a doctor. He is a driver.": "e6dacd3d93", "We are from China.": "1c6a4d6aeb", "Hello, my name is Wang Li.": "eaa7c46b22", "I am from Beijing, China.": "9403b4365f", "I am a nurse.": "5d9bfb7220", "I live in Toronto now.": "83a056bef2", "I like cooking and music.": "9f0ec5d819", "teacher, student, nurse, doctor": "3eaafe5f09", "driver, cook, worker, engineer": "2ac768625e", "I am retired.. I am a homemaker.": "05a6612fe6", "I am a student. You are my friend.": "dc57bf7de7", "I live in Toronto now. I like cooking and music.": "87982f57e6", "Hello, my name is Li. I am from China. I am a cook. I live in Toronto. I like music.": "7dba6a714f", "She is a nurse.": "29682fba1e", "This is a pen.": "26df8d1ff2", "That is a car.": "a3fa0acf7e", "What is this?. It is a key.": "f92db4f0eb", "a book, a cup, a phone": "81e626f9f8", "an apple, an egg, an orange, an umbrella": "a815fbdbe1", "table, chair, bed, door": "ef478ea490", "window, phone, cup, bowl": "f46bf3b32a", "key, bag, clock, light": "df663fdd60", "This is a pen. That is a car.": "95b904bdbf", "What is this? It is a key.": "d6c184d4f9", "an apple, an egg, an orange": "785ea719c6", "table, chair, bed, door, window, phone": "4087d12bc8", "This is a table. That is a window. This is an apple.": "48d229738d", "This is a clock.": "a108b97721", "What is this?": "efc45797dd", "I have a car.": "263370c615", "I want water.": "33b9c8dce6", "I need help.": "d79273b035", "I don't want it.. I don't need it.": "887762dc7c", "one book. two books": "f88dbc812b", "one dog. three dogs": "333bd36925", "one bus. two buses": "d4b9db86ad", "one child. two children; one man. two men": "ebb78cdd33", "I have two children.": "d52f4013a8", "I want a coffee, please.": "f23c88d30f", "I need a doctor.": "9e5af80488", "Do you have a bag?": "aa2c284379", "I have a car. I want water. I need help.": "99b2415b3e", "I don't want it. I don't need it.": "701aa7db8f", "books, cats, cups": "f440bc4ec3", "dogs, pens, bags": "a35b9323c6", "buses, boxes, watches": "9f77674974", "I have two children. I want a coffee, please.": "a676f9af71", "Do you have a bag? Do you have water?": "a88ac3e462", "I have three dogs.": "f40f407def", "I don't want it.": "1d2f1dce92", "What": "124433700b", "Where": "b3c5b21d2c", "Who": "4ee972120b", "When": "4e97aeeaa8", "How much": "3ad058e79e", "What is your name?": "f6429fe0f1", "Where is the bathroom?": "fafa77963a", "Who is he?": "6e04300264", "When is the bus?": "72f4cb3957", "How much is this?": "adf447f1f1", "Sorry, again please?. Slowly, please.": "030fbd1d75", "What, Where, Who, When, How much": "05326ff509", "Sorry, again please? Slowly, please.": "83780ab1b1", "Where is the bus? When is the bus? How much is the bus?": "2b2d098502", "Hi, what can I get you?": "813ace0794", "Can I have a small coffee, please?": "1bfa842c60", "Anything else?": "b16d9ec360", "No, that's all. Thank you.": "723007c5a6", "That's three fifty.": "b4eb5c32ab", "Here you go.. Card, please.": "9990bdd622", "Excuse me, where is the milk?": "682a8cf278", "Do you have this in large?": "cf592fe178", "I'll take it.": "76f427f252", "Just looking, thanks.": "3c9bf5749d", "Can I get a receipt?": "56067640ea", "one dollar, five dollars, ten dollars": "94c661f551", "two fifty, nine ninety-nine": "a1530bc216", "cash. card. tap": "0fe572d469", "Just looking, thanks. I'll take it.": "7b3c5b1291", "one dollar, two fifty, nine ninety-nine, ten dollars": "277209bc71", "Hi. Can I have a tea, please? No, that's all. Card, please. Thank you.": "cc2a249232", "That's four seventy-five.": "a7d82b1699", "Can I have a large tea, please?": "90ac99258a", "left. right": "1d5b52305d", "go straight": "20e2177eab", "turn left. turn right": "7298bd2681", "next to. across from. near": "b38b1cd9cd", "Excuse me, where is the subway station?": "5f945087e6", "Is it far?": "fdba824ddb", "How do I get to the hospital?": "5c78fc87bf", "Which bus goes downtown?": "300da32f6e", "Go straight, then turn left.": "cacd2355be", "It's on your right, next to the bank.": "7379d3d105", "Take bus number 52.": "ecc8bbd1ad", "It's about ten minutes.": "72858d9210", "left, right, go straight": "80176f98c7", "turn left, turn right, next to the bank": "0033658240", "Is it far? How do I get to the hospital?": "3a66197891", "Go straight, then turn left. It's on your right.": "b78b2d6fee", "Which bus goes downtown? Take bus number 52.": "1d7d7f750e", "Turn right at the bank.": "0b2f59e4ab", "Take bus number fifteen.": "295a8d3e62", "Where is the bus stop?": "a4199dcd3f", "th. think, this, thank you": "a2ba4b3b16", "v. very, five, have": "4d58f4a354", "l (词尾). ball, call, I'll": "1eea9642d3", "r. right, red, from": "b8ecfab6bd", "词尾辅音. cold, friend, books": "360cc68c3e", "Hi! Are you new here?": "d0aee92d90", "Yes. Hello, my name is Chen. Nice to meet you.": "a07bfd4711", "Nice to meet you too. I'm Sarah. Where are you from?": "464db2f32a", "I'm from China. I live in apartment three now.": "59f21b138b", "Great! Do you need any help?": "79d7b96b93", "Yes, please. Where is the bus stop?": "bd5b15de17", "Go straight and turn left. It's next to the bank.": "59f7bfe335", "Straight, then left. Thank you very much! See you.": "d54e15e783", "think, this, very, five, ball, right, cold, friend": "6d8eddb868", "Hello, my name is Chen. Nice to meet you.": "769750965a", "Hello, my name is Chen. Nice to meet you. I'm from China. I live in apartment three now. Yes, please. Where is the bus stop? Straight, then left. Thank you very much! See you.": "74cb430161", "How much is the coffee?": "693eeca07d", "Go straight and turn left.": "d83fd0e2b7", "Hello! Nice to meet you.": "cba43328c2", "hello": "5d41402abc", "sheep. ship": "13fafed885", "food. foot": "e0bca918e6", "car. cup": "f571656bb4", "four. fox": "9f3c27a1d9", "bird. bed": "6dc17cab57", "I need a seat, please.": "96eecda199", "The food is good.": "f246ca1234", "My car is far.": "28c061aefc", "The girl works first.": "aa7d84c9b4", "sheep, ship, sheep, ship": "3c2ac8887f", "food, foot, food, foot": "67925953cd", "car, cup, four, fox": "5fc890964d", "Please leave the keys here.": "c6068ebf95", "ship": "2a3f1166b0", "food": "62506be34d", "first": "8b04d5e377", "day, name, late": "5e8e8b838c", "time, like, nice": "8e2e76fd97", "go, no, home": "14de14c057", "house, now, how": "285ec23860", "boy, toy, enjoy": "2d0f2ae42b", "BAnana, toMAto, poTAto": "ca5e2c91f4", "COffee, WAter, MOrning": "2731575ec3", "REcord. reCORD": "f1de6322b8", "I'd like a baNAna and a toMAto, please.": "9f6597c543", "an apple, a-napple": "37d1ed5af0", "Turn it off., Tur-ni-toff.": "9f764041a3", "I like it a lot., I li-ki-ta lot.": "e75f9a69fe", "Pick it up., Pi-ki-tup.": "780b3b5387", "day, time, go, house, boy": "b3fe3f2411", "banana, tomato, potato, coffee, water": "5c33a206b0", "an apple, an orange, an egg": "5ecea99e0c", "Turn it off. Pick it up.": "fe4649c9a6", "I like it a lot.": "82b8b9dac1", "I'd like a banana and a coffee, please.": "2784829854", "banana": "72b302bf29", "home": "106a6c241b", "Turn it off.": "ba35b96407", "tomato": "006f87892f", "I am, I'm": "b591b79e51", "You are, You're. We are, We're. They are, They're": "6d2fdbdf15", "He is, He's. She is, She's. It is, It's": "3a92303762", "eat, eating, read, reading, work, working": "9c1b83b3ab", "make, making, write, writing, come, coming": "504258c311", "sit, sitting, run, running, shop, shopping": "988604e124", "I'm eating lunch.": "628ab2f420", "What are you doing?": "5933280e2f", "She's talking on the phone.": "b4d052439e", "They're waiting for the bus.": "62a160e642", "I'm not working today.": "62757a197c", "Are you coming?. Yes, I'm coming.": "3d40b7a8a6", "Are you coming? Yes, I'm coming.": "84ca25ffa9", "I'm waiting for the bus.": "8d78ebf9d3", "worked, cooked, washed": "16c3af01fd", "played, called, cleaned": "547b57c8f0", "wanted, needed, visited": "b3ee6ac493", "go, went, eat, ate, see, saw": "6c099f714b", "have, had, do, did, make, made": "8f2d32ed7f", "buy, bought, take, took, come, came, get, got": "d36037c5e1", "Yesterday I went to work.": "a40489ecbe", "I cooked dinner and watched TV.": "ffc73961c8", "Did you sleep well?": "1e97767f1e", "I didn't go out last night.": "3a3f75e167", "What did you do on the weekend?": "f8a0b3ac9b", "It was great.. It was okay.": "ecdd558263", "worked, played, wanted": "e8a8314701", "went, ate, saw, had, did, made": "a9c2dc16ad", "What did you do on the weekend? It was great.": "9b52be7aed", "wanted": "dc1f3d93b4", "I bought a new phone yesterday.": "e02eae2b3e", "I cooked dinner.": "29ed59fff7", "What time is it?. It's three o'clock.": "1ad1c8cf3e", "It's three fifteen.. It's three thirty.. It's three forty-five.": "302a695a82", "half past three. a quarter to four": "5f455eb8f9", "7 a.m.. 7 p.m.. at noon. at midnight": "4791e13078", "Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday": "40806f1703", "January, February, March, April, May, June": "d618be5c99", "July, August, September, October, November, December": "7b3db592ae", "first, second, third, fourth, fifth": "b7477725cb", "tenth, twentieth, twenty-first, thirtieth": "745d0ec27f", "My birthday is on March tenth.": "5a8dee9513", "See you on Friday at two thirty.": "6c0a9bd843", "Can we meet on Tuesday morning?": "52b0580ab7", "Sorry, I'm not free then. How about Wednesday?": "0591d39d4a", "It's three fifteen. It's three thirty.": "598406c6ed", "Monday, Tuesday, Wednesday, Thursday, Friday": "fea3d82533", "January, February, March, April": "8a8b05019e", "Can we meet on Tuesday at ten? See you then.": "4e7c6dc572", "It's four forty-five.": "5617235510", "See you on Thursday.": "6f1ce88dab", "February": "659e59f062", "It's sunny.. It's cloudy.. It's windy.": "413a37a0fb", "It's raining.. It's snowing.": "81b297043a", "It's cold.. It's freezing.. It's hot.. It's warm.": "bf0274ae1c", "It's minus ten today.": "bf80e88f96", "What's the weather like tomorrow?": "346544e572", "Nice day, eh?. Yeah, finally!": "73bcc5d3e1", "mother. mom, father. dad, parents": "c4573d309f", "husband, wife, son, daughter": "334eeba575", "brother, sister, grandmother, grandfather": "fb894027e7", "I have two kids: a son and a daughter.": "78f7c0b216", "Do you have any brothers or sisters?": "308c713a6f", "My parents live in China. I miss them.": "a131fa34f1", "It's sunny. It's cloudy. It's windy.": "4e5308619d", "It's cold. It's freezing.": "68806bf648", "Nice day, eh? Yeah, finally!": "ceb8eaffee", "It's snowing and it's freezing.": "10801e0955", "I have three kids: two sons and a daughter.": "ba4c498e35", "It's raining.": "08e74278d6", "I have a headache.. I have a fever.. I have a cough.": "f2a0c3965e", "My stomach hurts.. My back hurts.": "8dab70ccd2", "I feel sick.. I feel dizzy.. I feel tired.": "a227d0ad26", "I've had it for three days.": "591dc5e5dd", "I'm allergic to penicillin.": "ff89600857", "I'd like to make an appointment, please.": "58134480fa", "Hello, Maple Clinic.. Hi, this is Li Wang. I'd like to make an appointment.": "20190e6e57", "What's it for?. I have a bad cough.": "b57ee5a7aa", "Can you come Thursday at ten?. Yes, that works. Thank you.": "8b9449931a", "Sorry, could you repeat that, please?": "97a2b6ff52", "Could you speak more slowly, please?": "649c259620", "Can I have your name and phone number?": "06b50722e0", "I have a headache. I have a fever.": "fc47b7b060", "My stomach hurts.": "fb46fd65a8", "Hi, this is Li Wang.": "d63fffa1f5", "Can you come Thursday at ten? Yes, that works. Thank you.": "feb7c8f05a", "My back hurts and I feel dizzy.": "dca24df289", "Can you come Friday at two thirty?": "91822a1f7a", "I feel sick.": "f50b3d8c17", "I'm looking for a one-bedroom apartment.": "502ccff9a7", "How much is the rent?. It's fifteen hundred a month.": "c472a29a13", "Are utilities included?": "1b8e252c29", "When can I move in?": "c31d14100f", "Can I see it this weekend?": "0931fbe4ae", "I'd like to open an account.": "774f730262", "Chequing or savings?": "c35b490055", "Is there a monthly fee?": "889e0080e2", "I'd like to deposit this cheque.": "cee3342a71", "My card isn't working.": "f1fa156297", "Can I speak to someone in Mandarin?": "71a1151c97", "Hi, this is blank. I'm calling about blank.": "112791b583", "I have a few questions. First, blank? And blank?": "b50c187fa9", "Okay, so it's blank on blank at blank. Is that right?": "dd9236fbd9", "Great, thank you so much. Have a good day. Bye.": "5b304c9cad", "How much is the rent? Are utilities included?": "9afdd01afc", "Hi, this is Li. I'm calling about the apartment.": "55fd51e06b", "Okay, so it's Friday at two. Is that right? Great, thank you so much. Bye.": "fa42d35d8b", "The rent is twelve hundred a month.": "51c5a439fc", "Hi, this is Chen. I'm calling about the apartment on King Street.": "9e3e31ad79", "I live in Toronto.": "43222f3a2e", "Where do you live?": "b035a70957", "Do you live in Toronto?": "a6e2414c31", "I need eggs, milk, bread, and butter.": "5b75212532", "Coffee or tea?": "65b330e883", "I WANT to GO to the STORE.": "868fc38ad0", "She's a TEACHER at a SCHOOL in the CITY.": "9dfee43e0e", "Can you HELP me with THIS?": "2bd03a88e7", "I didn't SAY she STOLE the MONEY.": "ef4bdc6de0", "I live in Toronto. Where do you live?": "ac12290779", "I want to go to the store.": "8d3c3ed939", "Can you help me with this? Sure, no problem.": "d69684d05e", "Do you have a car?": "e29bc934db", "Where do you work?": "865233e42e", "I'm going to visit my parents next month.": "cf3f71469d", "We're going to move to Vancouver.": "6266f11a6c", "What are you going to do this weekend?": "3600d50c16", "Look at the sky. It's going to rain.": "5ec67bca5a", "The phone is ringing. I'll get it.": "264d8e8b0a", "I'll call you tonight.": "d7a435bcec", "Don't worry. It'll be fine.": "ba25aba4d6", "I won't be late.": "a33328e2b3", "Will you be home at six?": "a7dcd7a53f", "tomorrow, next week, next month, next year": "f6cc9d25f3", "tonight, this weekend, in two hours, soon": "436174be6d", "I'll call you tonight. I won't be late.": "0be7eebe61", "Will you be home at six? Yes, I will.": "ab6d3a329e", "I'm going to cook dinner tonight.": "1eac641493", "It's going to rain.": "bab842a2fe", "I can speak a little English.": "65e3dc4e67", "I can't hear you.": "b298531e87", "Can I use your phone?": "76e5928226", "Could you help me, please?": "cb1ce3660d", "Could you say that again?": "4f75966e49", "You should see a doctor.": "095590f094", "You shouldn't eat so much sugar.": "247eaddc8e", "Should I bring anything?": "70cf7f6915", "Maybe you should try again.": "2b74359d2f", "I have to work tomorrow.": "bd850adc43", "You must wear a seatbelt.": "9407909d2c", "You don't have to pay now.": "6359067fa3", "You mustn't smoke here.": "8e5677d536", "I can speak a little English. I can't hear you.": "9a0929c693", "I can't come tomorrow.": "8dbe53f02b", "Tell me about yourself.": "63265893d7", "Why do you want this job?": "8d851700ac", "What are your strengths?": "20a890fb37", "Tell me about a problem you solved.": "eb45def6ae", "Do you have any questions for us?": "4e6e6c1680", "I've been a cook for five years.": "06defea6b8", "I'm good at working with people.": "f40edf3741", "In my last job, I was responsible for the kitchen.": "66fa110c23", "One time, a customer was angry. I listened, and I fixed the problem.": "e34a644c7f", "I'm a fast learner, and I'm always on time.": "8e1a2180cb", "What does a typical day look like?": "ccbc45a016", "When can I expect to hear back?": "465b0420a2", "Thank you for your time. I look forward to hearing from you.": "54963d0932", "I've been a driver for eight years.": "c6c963b847", "I'm always on time.": "c40f1ca125", "first name. last name (surname, family name)": "b87d8064d3", "date of birth. place of birth": "fd9c10d6e8", "address, postal code, city, province": "01c3de9443", "phone number, email address": "6cfe2354ab", "marital status: single. married. divorced. widowed": "c0aaf2fda9", "emergency contact. relationship": "36a6505102", "Please print clearly.. Please sign here.": "7ecb779176", "Check all that apply.. Check one.": "13f648d6aa", "Required fields are marked with an asterisk.": "5d13d6bfd8", "N. A (not applicable)": "d4596bd454", "Signature. Date": "e6988a83a1", "Excuse me, what does this mean?": "c514da9dd0", "Do I need to fill in this part?": "1834126e81", "Which date format do you use?": "8b973d45a2", "Is this correct?": "e0df87a5f2", "first name, last name, date of birth": "4d34db131d", "Please print clearly. Please sign here.": "88d36a657f", "Check all that apply.": "47416202e1", "Do I need to fill in this part? Is this correct?": "c86d80d879", "Please sign here and write the date.": "e5313cb1c4", "signature": "ac201fd270", "Hi Sarah,. Hello Mr. Chen,. Dear Dr. Smith,": "01213c734e", "I hope you're doing well.": "c90d90535e", "I'm writing to ask about blank.": "4138dd6736", "Please let me know if you have any questions.": "a7f3ba35be", "Thanks,. Best regards,. Sincerely,": "ac35c8cd61", "I won't be able to come to work tomorrow because I'm sick. I'll be back on Thursday.": "9ee8798e17", "I'd like to book an appointment next week. Is Tuesday or Wednesday afternoon available?": "3d9b799940", "Could you please send me the price list? Thank you in advance.": "d426289b3a", "Thank you so much for your help yesterday. I really appreciate it.": "3618db3f8f", "Please find the file attached.": "a262ff24ed", "Sorry for the late reply.": "1401b29c48", "Just a quick reminder: blank": "46ecc95015", "Looking forward to hearing from you.": "a277f3ce1f", "I'm writing to ask about the apartment.": "d97e3627ed", "I won't be able to come to work tomorrow because I'm sick.": "a204ecc438", "Is Tuesday or Wednesday afternoon available?": "d0564e0af5", "Thank you so much for your help. I really appreciate it.": "323eff5139", "Please let me know if you have any questions. Best regards, Li.": "1e0a72a371", "I'd like to book an appointment next week.": "68bd25bfed", "I really appreciate it.": "9ff9bb26a6", "How's it going?. Pretty good. How about you?": "6c792a635c", "Are you from around here?": "3e3a9d8a71", "What do you do?. I'm a nurse. What about you?": "41362a97da", "How long have you lived here?": "87ba9a1a5d", "What do you like to do on weekends?": "43513db619", "Really? That's interesting.": "2810fdc0ee", "Oh, I see.. Uh-huh.. Right.": "e3cecb9722", "Why is that?. How come?": "4b29e155b0", "Me too!. Same here.": "bc56cba387", "That sounds great.. That sounds hard.": "6b23306b6e", "Sorry, what do you mean by that?": "0b5a61bbc9", "I moved here two years ago from China.": "7f97ba328b", "I'm still learning English, so please speak slowly.": "32e3df6340", "Well, I should get going.": "de46f1c852", "It was nice talking to you. Take care!": "5b003cef84", "How's it going? Pretty good. How about you?": "1464bd7022", "What do you do? I'm a nurse. What about you?": "31736ec7f4", "Really? That's interesting. How come?": "f0ec3ae1ee", "Me too! That sounds great.": "37b4adc46c", "Well, I should get going. It was nice talking to you. Take care!": "4be2b05819", "I moved here three years ago.": "5dd4ab4065", "It was nice talking to you.": "c74e29e17b", "I want to go. I wanna go.": "ff139a3a63", "bread and butter. bread n butter.": "7ee29ff255", "What do you want? Whaddaya want?": "354dbb1b4c", "I can do it.": "d5ac5c0cfc", "a cup of coffee. a cuppa coffee.": "c963238cf2", "want to, wanna: I wanna go home.": "f0aa8f82c0", "going to, gonna: It's gonna rain.": "fd571926da", "got to, gotta: I gotta go.": "5b3ad87eab", "because, 'cause: I'm late 'cause of traffic.": "5b53e86578", "kind of, kinda: I'm kinda tired.": "c23d6c6483", "don't know, dunno: I dunno.": "a252937c3b", "let me, lemme. give me, gimme": "1e08fefed3", "Whaddaya wanna do tonight?": "af0e8f99c4", "I gotta get up early 'cause I'm gonna work.": "d72641469b", "Lemme know if you need anything.": "9ffa119166", "It's gonna rain. I gotta go.": "54b964a57f", "I'm kinda tired. I dunno.": "2b7fd542de", "What do you want to do tonight?": "a60fe6386e", "I gotta go.": "7db072836e", "It's gonna rain.": "13baf85380", "I've been to Vancouver twice.": "9f0f7e15f7", "I've finished my homework.": "d3b363f9d6", "I've lived here for five years.": "069efccbd0", "She's worked here since 2020.": "85cc3b53ed", "Have you ever eaten poutine?": "7dfade4fdf", "I haven't seen that movie yet.": "f28cd75265", "I went to Montreal last year.. I've been to Montreal.": "7028cfc910", "I lost my keys yesterday.. I've lost my keys!": "da5e4ba917", "Did you eat?. Have you eaten?": "40a91d7e93", "I've been learning English for two years.": "4d8d83d79e", "It's been raining all day.": "2247f2bc6f", "What have you been up to?": "ec6e35e86e", "I've been waiting for an hour!": "cc016e6a16", "be, been, do, done, go, gone, see, seen": "10d8c3f675", "eat, eaten, take, taken, write, written, speak, spoken": "af1d74192d", "have, had, make, made, buy, bought, think, thought": "aa641f6b28", "Have you ever eaten poutine? Yes, I have.": "4b94d43ad5", "What have you been up to? Not much, just working.": "f530ac5fbb", "I've been studying English for six months.": "35e8477317", "I haven't seen it yet.": "28011dbf70", "If it rains tomorrow, I'll stay home.": "584adccb4e", "If you need help, just call me.": "1fac1be3a1", "You'll miss the bus if you don't hurry.": "f6bf4fc175", "If I have time, I'll come to the party.": "f7707bdcc8", "If I had a car, I would drive to work.": "d4429757db", "If I were you, I would take the job.": "61902fac11", "What would you do if you won the lottery?": "728dd2949b", "I'd travel the world if I had the money.": "66f34c306f", "If I had known, I would have come.": "6471f28a6c", "If you had called me, I would have helped you.": "d989c0b245", "I would have passed if I had studied more.": "d102f4ad2f", "If I had the money, I'd buy a house.": "1014814fef", "The store is closed on Sundays.": "80ba4c57a0", "The meeting was cancelled.": "d10e6360bb", "The package will be delivered tomorrow.": "a69c722a3d", "The room has been cleaned.": "85321f32c0", "My car is being repaired.": "fb56da3fcd", "Made in Canada.. Sold out.. Closed for renovation.": "136cd772fd", "Your order has been shipped.": "502d66af35", "Masks are required.. Dogs are not allowed.": "88bfa70d05", "I was born in Shanghai.": "393aafbe68", "English is spoken here.": "1d46ab517c", "Someone stole my bike., My bike was stolen.": "0b81a8c891", "They built this bridge in 1950., This bridge was built in 1950.": "9275469672", "The bike was stolen by a teenager.": "29620ff546", "My bike was stolen. My car is being repaired.": "8e8ca54001", "Your package will be delivered on Friday.": "cee1d6666f", "My phone was stolen yesterday.": "4fbb1d91ef", "The store is closed.": "f104bb06a0", "City to Build New Hospital": "90c75a9438", "Prices Rise as Rent Hits Record High": "2a30c74a53", "Three Injured in Highway Crash": "4ceafafe78", "PM Announces Tax Cut": "4b87b12362", "announce, report, confirm, deny, claim": "7ce4423bdc", "increase, decrease, rise, fall, drop": "61f8819487", "government, minister, mayor, official, police": "fed4826d96", "economy, inflation, interest rate, unemployment": "67b04ce8cf", "according to, due to, as a result, meanwhile": "ec41395f80", "a record high, a sharp drop, a slight increase": "d1f775fb35", "According to the report, unemployment fell to five percent last month.": "316e279964", "The mayor confirmed that the project will be delayed due to costs.": "127ca9968a", "announce, confirm, deny, claim": "975c37870d", "Unemployment rose to seven percent.": "6f1c5ee470", "announce": "9c94241f2f", "I think. I believe. In my opinion, blank.": "543d52309c", "Personally, I prefer working from home.": "927bbe0cd0", "It seems to me that prices are too high.": "29fa60951d", "The way I see it, we have two options.": "5675b2575b", "Exactly.. I totally agree.. That's a good point.": "2b9e3cf1c1", "I see your point, but I'm not sure I agree.": "5b51d6e0f5", "That's true, but on the other hand, blank.": "21a3ff2f04", "I'm afraid I disagree.": "950fec81da", "I don't think that's quite right.": "9ba1f03afc", "The main reason is that it saves time.": "929bb4ff78", "For example, last week I finished early.": "9cc80c0a20", "Another thing is that it's cheaper.": "5b07b7db3b", "So, overall, I think it's a good idea.": "b7c25a6fef", "What do you think?. How do you feel about that?": "52cecf633a", "In my opinion, prices are too high.": "8a8487dc0c", "That's true, but on the other hand, it's expensive.": "51089730f0", "So, overall, I think it's a good idea. What do you think?": "7bd93edb36", "That's true, but on the other hand, it costs a lot.": "8170bbe5b7", "Personally, I prefer working from home because it saves time.": "4764324fe4", "I totally agree.": "c48977f452", "Good morning, everyone. Today I'd like to give you a quick update on the new website.": "5a0dd9d878", "I'll cover three things: the background, what we did, and the next steps.": "91a94d2a7b", "First,. Next,. Then,. Finally,": "d6a5d9fa75", "Let me move on to the results.": "cb438d0d87", "The problem was that customers couldn't find the contact page.": "14b2ca2adb", "So we redesigned the menu and added a search bar.": "99fab99ef3", "As a result, calls to support have dropped by thirty percent.": "738f1b4611", "We've also received positive feedback from users.": "e5c0f0732c", "Next, we're going to test it on mobile.": "89c6191e92", "We expect to finish by the end of the month.": "a21657ee3b", "That's all from me. Any questions?": "0282d15590", "Good question. Let me check and get back to you.": "19586f2763", "If I understand correctly, you're asking about the cost?": "7ff2924951", "Today I'd like to give you a quick update on the new website.": "aab2b17b62", "Next, we're going to test it on mobile. We expect to finish by the end of the month.": "7829284100", "That's all from me. Any questions? Good question. Let me check and get back to you.": "d3ad206cff", "As a result, sales have increased by twenty percent.": "d23aeb6250", "Let me move on to the next steps.": "0de7438222", "water, better, little, city": "28808f915a", "What a beautiful day!": "94463c5a7c", "I got it.. Get out of here.": "1ca59b3f68", "Put it on the table.": "4e6a2ddad9", "car, far, hard, park, start": "19e55169c9", "work, word, world, first, nurse": "e5fc0f40e7", "What?. That's right.. I don't know.": "aa0e932de9", "button, mountain, certain": "a1cbd102de", "I'd better get a little water before we start.": "471753c5db", "What are you doing later? Wanna get a bite to eat?": "2eee86e0b0", "It's not that hard once you get the hang of it.": "1930078670", "car, far, hard, work, world": "378d9ce4f6", "better": "8518008e88", "It's not that hard.": "99ecb291dc", "Raise your hand if you've ever forgotten someone's name.": "017af8c007", "Three years ago, I couldn't order a coffee in English.": "c1b6efac64", "Did you know that most people forget 90 percent of what they hear within a week?": "a17f4027b9", "Today I want to share three simple ideas with you.": "841174fbab", "That brings me to my second point.": "1fc9ba5ac4", "Here's the thing: it's not about talent.": "b68785155c", "Let me say that again.": "8d14275061", "Think about that for a second.": "ea8863c878", "And this is the part that surprised me.": "035a1d9996", "So, to sum up: start small, practise daily, and don't be afraid to make mistakes.": "4645f79e06", "Remember that coffee I couldn't order? Last week, I gave a presentation in English.": "e85645408d", "I'll leave you with one question: what will you try this week?": "79e3f214f5", "Thank you. I'm happy to take any questions.": "1220bb9ece", "I'll leave you with one question: what will you try this week? Thank you.": "be9d816959", "Did you know that most people forget 90 percent of what they hear?": "9a3c3a5676", "The man who lives next door is a doctor.": "c32694ae9e", "This is the phone that I bought last week.": "013cf593b3", "The restaurant where we met has closed.": "3aab191f9b", "My sister, who lives in Calgary, is visiting next week.": "9b84ecc768", "That's the reason why I moved here.": "7e877b3803", "\"I'm tired.\", She said she was tired.": "d12c64a8d1", "\"I'll call you.\", He said he would call me.": "5ce76f3081", "\"I've finished.\", She told me she had finished.": "9c38b29dd4", "\"Where do you live?\", He asked me where I lived.": "56e3327ada", "\"Can you help?\", She asked if I could help.": "4840de2ad5", "The doctor said I should rest for a week.": "dc1a2fec16", "My manager told me that the meeting had been moved to Friday.": "396f7f4b36", "The lady who helped me at the bank was very patient.": "247f05952e", "She said she was tired. He said he would call me.": "fca7074ecb", "He asked me where I lived.": "7e86337024", "The doctor said I should drink more water.": "1700701ba0", "She asked me if I could come on Monday.": "5108b4c805", "Let's touch base tomorrow.": "2c958a9834", "I'm on the same page.": "705969f2bc", "Let's not reinvent the wheel.": "8e91d83098", "That's a piece of cake.": "96c6308510", "I'll keep you in the loop.": "9ed31ab39c", "It's a win-win.": "7889c14bac", "It's up to you.": "e1fece81af", "I'm under the weather today.": "33ed850396", "Hang in there.": "76dc33a586", "It cost an arm and a leg.": "9aaf4623b6", "Let's play it by ear.": "fb9de69d05", "Break a leg!": "debab28964", "I'll think about it.. Let me get back to you.": "0c6999437d", "That's an interesting idea, but I'm not sure it's the right fit.": "db836b348c", "Sorry, my English is still a work in progress.": "b7705fe313", "I'm still getting used to the cold. Ask me again in ten years.": "19c095af2d", "No worries.. No big deal.": "8f5e1c1b49", "Let's touch base tomorrow. I'll keep you in the loop.": "fb3839b6e1", "That's a piece of cake. It's a win-win.": "3bfb0d6b1a", "It's up to you. Let's play it by ear.": "210e98f113", "I'm under the weather today. Hang in there.": "4309462f5b", "I'll think about it. Let me get back to you.": "a7a586e139", "That's an interesting idea. Let me think about it.": "bd1566d4f1", "Thanks for taking the time to meet. I'd like to discuss the rent.": "04c83aebe9", "I was hoping we could talk about my salary.": "7702beaaef", "Would it be possible to start a week later?": "5a7a41ad1a", "What I'm looking for is a two-year lease at the current rate.": "32b3ddde47", "Based on my research, the market rate is around sixty thousand.": "48d441a78e", "If you can include utilities, I could sign today.": "3e2fe84996", "I understand your position, but that's a bit higher than I expected.": "2b726081a4", "Could you meet me halfway?": "9614452af1", "What would it take to get to fifteen hundred?": "d95a40e15e", "I'm not comfortable with that, I'm afraid.": "0a9e8e8bc0", "Let me think it over and get back to you by Friday.": "976525cf9b", "That works for me. Let's go with that.": "70ef2cfe77", "Just to confirm: twelve hundred a month, utilities included, starting March first.": "b14a1c9c8e", "Could you put that in writing?": "bcb6315694", "I appreciate your flexibility. I think we have a deal.": "8a7d9cb1ed", "Just to confirm: twelve hundred a month, utilities included. Could you put that in writing?": "3ac1b645d3", "If you can include parking, I could sign today.": "20560dbfd4", "That works for me.": "5879fc8fc0", "The tenant shall pay the rent on the first day of each month.": "6c931abc35", "Either party may terminate this agreement with sixty days' written notice.": "1d3ca17207", "This offer is valid until March thirty-first.": "446ac493eb", "The employee is entitled to two weeks of paid vacation.": "2dbbe3f5b1", "Please read the terms and conditions carefully before signing.": "f5656933ec", "To Whom It May Concern,": "be9e191731", "I am writing to formally request a refund for order number 4471.": "5677cda840", "Despite two phone calls, the issue has not been resolved.": "c494944e92", "I would appreciate a response within ten business days.": "e4b30d08f1", "Please find attached copies of the receipt and our previous correspondence.": "1e365ea1c7", "Sincerely,. Yours truly,": "c131171dce", "Before I begin, let me tell you why this topic matters to me.": "38c44cadfa", "I'll be speaking for about fifteen minutes, and then we'll have time for questions.": "90d205dab9", "That's a great question, and it's one I've thought about a lot.": "246557759f", "I'm not sure I have a complete answer, but here's my view.": "21f0b0c09f", "Thank you all for listening. It's been a privilege.": "e9dffcbfcf", "I am writing to formally request a refund.": "ad2d817742", "That's a great question, and it's one I've thought about a lot. Thank you all for listening.": "bf6c81dd64", "Either party may terminate this agreement with thirty days' notice.": "4324ae4ee7", "I would appreciate a response within five business days.": "f987f2cc76", "Thank you all for listening.": "beacd150f7"};
 const AUDIO_BASE = "audio/";
 let curAudio=null; const blobCache={};
 function stopAll(){ try{ speechSynthesis.cancel(); }catch(e){} if(curAudio){ curAudio.pause(); curAudio=null; } if(curSrc){ try{ curSrc.stop(); }catch(e){} curSrc=null; } face.talk(false); }
 /* iOS Safari: once an HTML <audio> element has played, every later SpeechRecognition session is deaf
    (WebKit bugs 317741 / 321436). Playing clips through the Web Audio API avoids that. iOS only. */
+const NOSLOW = [];
 const USE_WEBAUDIO = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
 let actx=null, curSrc=null; const pcmCache={};
 function getCtx(){ if(!actx){ const C=window.AudioContext||window.webkitAudioContext; actx=new C(); } if(actx.state==="suspended") actx.resume(); return actx; }
@@ -763,8 +1575,9 @@ async function say(text, rate){
   stopAll();
   const h = AUDIO[text];
   if(h && USE_WEBAUDIO){
-    const f = h + (r>=0.9 ? "" : "-s") + ".mp3";
-    const pr = r>=0.9 ? 1 : r>=0.7 ? 1 : 0.88;
+    const ns = (typeof NOSLOW!=="undefined") && NOSLOW.includes(h);
+    const f = h + (r>=0.9 || ns ? "" : "-s") + ".mp3";
+    const pr = r>=0.9 ? 1 : ns ? (r>=0.7 ? 0.82 : 0.72) : r>=0.7 ? 1 : 0.88;
     try{
       let buf=pcmCache[f];
       if(!buf){ const res=await fetch(AUDIO_BASE+f); if(!res.ok) throw new Error("audio"); const ab=await res.arrayBuffer();
@@ -774,8 +1587,9 @@ async function say(text, rate){
   }
   if(h){
     // r >= 0.9: natural-speed clip; 0.7-0.9: slow clip; below 0.7: slow clip, slightly slower
-    const f = h + (r>=0.9 ? "" : "-s") + ".mp3";
-    const pr = r>=0.9 ? 1 : r>=0.7 ? 1 : 0.88;
+    const ns = (typeof NOSLOW!=="undefined") && NOSLOW.includes(h);
+    const f = h + (r>=0.9 || ns ? "" : "-s") + ".mp3";
+    const pr = r>=0.9 ? 1 : ns ? (r>=0.7 ? 0.82 : 0.72) : r>=0.7 ? 1 : 0.88;
     try{
       let url=blobCache[f];
       if(!url){ const res=await fetch(AUDIO_BASE+f); if(!res.ok) throw new Error("audio"); url=URL.createObjectURL(await res.blob()); blobCache[f]=url; }
@@ -927,15 +1741,16 @@ function stepState(c){
 }
 function chapPct(c){ const st=stepState(c); return Math.round(st.filter(x=>x.done).length/4*100); }
 function trackerHTML(c){
-  const i=COURSE.indexOf(c), n=COURSE.filter(chapDone).length, st=stepState(c), pct=chapPct(c);
-  return '<div class="ptrack"><div class="top"><span>第一级进度：<b>'+n+' / '+COURSE.length+' 章</b></span><span>本章：<b>'+pct+'%</b></span></div><div class="bar"><i style="width:'+Math.round((n+pct/100)/COURSE.length*100)+'%"></i></div><div class="steps">'+st.map(x=>'<button class="step'+(tab===x.k?" on":"")+'" aria-current="'+(tab===x.k?"step":"false")+'" onclick="go(\''+c.id+'\',\''+x.k+'\')">'+(x.done?'<span class="ok" title="已完成">✓</span>':'')+x.n+'<small>'+esc(x.sub)+'</small></button>').join("")+'</div></div>';
+  const L=lvChapters(lvOf(c)), n=L.filter(chapDone).length, st=stepState(c), pct=chapPct(c);
+  return '<div class="ptrack"><div class="top"><span>'+LV_N[lvOf(c)]+'进度：<b>'+n+' / '+L.length+' 章</b></span><span>本章：<b>'+pct+'%</b></span></div><div class="bar"><i style="width:'+Math.round((n+pct/100)/L.length*100)+'%"></i></div><div class="steps">'+st.map(x=>'<button class="step'+(tab===x.k?" on":"")+'" aria-current="'+(tab===x.k?"step":"false")+'" onclick="go(\''+c.id+'\',\''+x.k+'\')">'+(x.done?'<span class="ok" title="已完成">✓</span>':'')+x.n+'<small>'+esc(x.sub)+'</small></button>').join("")+'</div></div>';
 }
-function progress(){ const n=COURSE.filter(chapDone).length; const p=Math.round(COURSE.reduce((a,c)=>a+(chapDone(c)?1:chapPct(c)/100),0)/COURSE.length*100); $("#pct").textContent=p+"%"; $("#pbar").style.width=p+"%"; $("#tbBar").style.width=p+"%"; const c=COURSE.find(x=>x.id===cur); $("#tbTitle").textContent=c?((COURSE.indexOf(c)+1)+". "+c.title.split("：")[0]):"英语起步课堂"; $("#tbSub").textContent=c?("第一级 · 进度 "+p+"%"):("第一级 · 入门 · "+n+"/"+COURSE.length+" 章完成"); }
+function progress(){ const n=COURSE.filter(chapDone).length; const p=Math.round(COURSE.reduce((a,c)=>a+(chapDone(c)?1:chapPct(c)/100),0)/COURSE.length*100); $("#pct").textContent=p+"%"; $("#pbar").style.width=p+"%"; $("#tbBar").style.width=p+"%"; const c=COURSE.find(x=>x.id===cur); $("#tbTitle").textContent=c?(lvIndex(c)+". "+c.title.split("：")[0]):"英语起步课堂"; $("#tbSub").textContent=c?(LV_N[lvOf(c)]+" · 总进度 "+p+"%"):("五个级别 · "+n+"/"+COURSE.length+" 章完成"); }
 function renderRail(){
-  const l=$("#chapList"); l.querySelectorAll(".chap").forEach(e=>e.remove());
-  COURSE.forEach((c,i)=>{ const b=document.createElement("button"); b.className="chap"; b.setAttribute("aria-current", cur===c.id?"true":"false");
-    b.innerHTML='<span class="n">'+(i+1)+'</span><span class="t">'+esc(c.title.split("：")[0])+'</span><span class="d'+(chapDone(c)?" done":"")+'"></span>';
-    b.onclick=()=>go(c.id); l.appendChild(b); });
+  const l=$("#chapList"); l.innerHTML="";
+  LEVELS.forEach((L,li)=>{ const lv=li+1, ch=lvChapters(lv); if(!ch.length) return; const h=document.createElement("h2"); h.textContent=L.n+" · "+L.en.split("·")[1].trim()+(lvDone(lv)?" ✓":""); if(li) h.style.marginTop="14px"; l.appendChild(h);
+    ch.forEach((c,i)=>{ const b=document.createElement("button"); b.className="chap"; b.setAttribute("aria-current", cur===c.id?"true":"false");
+      b.innerHTML='<span class="n">'+(i+1)+'</span><span class="t">'+esc(c.title.split("：")[0])+'</span><span class="d'+(chapDone(c)?" done":"")+'"></span>';
+      b.onclick=()=>go(c.id); l.appendChild(b); }); });
   $("#homeBtn").setAttribute("aria-current", cur==="home"?"true":"false");
   const on=l.querySelector('[aria-current="true"]'); if(on && innerWidth<=760) on.scrollIntoView({block:"nearest",inline:"center"});
   progress();
@@ -949,7 +1764,7 @@ function render(){
   if(cur==="review"){ v.innerHTML = reviewHTML(); return; }
   const c = COURSE.find(x=>x.id===cur); const i=COURSE.indexOf(c);
   if(tab==="learn" && !(S.seen[c.id+"-learn"])){ S.seen[c.id+"-learn"]=true; save(); }
-  let h = '<div class="eyebrow">第一级 · 第 '+(i+1)+' 章</div><h2 class="title">'+esc(c.title)+'</h2><p class="goal">本章目标：'+esc(c.goal)+'</p>'+trackerHTML(c);
+  let h = '<div class="eyebrow">'+LV_N[lvOf(c)]+' · 第 '+lvIndex(c)+' 章 · '+esc(LEVELS[lvOf(c)-1].en)+'</div><h2 class="title">'+esc(c.title)+'</h2><p class="goal">本章目标：'+esc(c.goal)+'</p>'+trackerHTML(c);
   h += '<div class="tabs" role="tablist">'+[["learn","① 学"],["speak","② 听与说"],["ex","③ 练习"],["hw","④ 作业"]].map(([k,n])=>'<button class="tab" role="tab" aria-selected="'+(tab===k)+'" onclick="go(\''+c.id+'\',\''+k+'\')">'+n+'</button>').join("")+'</div>';
   if(tab==="learn") h+=learnHTML(c);
   if(tab==="speak") h+=speakHTML(c);
@@ -981,12 +1796,16 @@ async function playAllFrom(i){
 function homeHTML(){
   const n=COURSE.filter(chapDone).length;
   let h='<div class="home"><div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><span data-face style="--fs:84px"></span><div><div class="eyebrow">课程总览</div><h2 class="title" style="margin:0">'+(me?esc(me.name)+'，':'')+'从零开始，学到能在生活里开口</h2></div></div>';
-  h+='<p class="goal">这门课假设你一个英文字母都不会读。每一章都按“学 → 听与说 → 练习 → 作业”四步走，前一章是后一章的基础，请按顺序学。<b>作业都是要在真实生活里完成的</b>（对真人说话、去店里点单、问路），这样学到的英语才能走出手机。</p>';
+  h+='<p class="goal">这门课假设你一个英文字母都不会读，一路学到能用英语做 15 分钟演讲。每一章都按“学 → 听与说 → 练习 → 作业”四步走，前一章是后一章的基础，请按顺序学。<b>作业都是要在真实生活里完成的</b>（对真人说话、去店里点单、问路），这样学到的英语才能走出手机。</p>';
   h+='<div class="callout"><b>学习方法（请先读）</b><br>1. 每章先把“学”里的嘴型做到，再去背句子。发音做对一次，比读十遍错的有用。<br>2. “听与说”里，先听标准读音（可以调慢），再按“🎤 我来读”，看哪些词没被听清。<br>3. 卡住了随时按右下角“问老师”，用中文问，老师会用中文解释、用英文示范。<br>4. 作业必须在生活里完成，打勾才算。每章作业完成后，本章自动标记为完成。</div>';
-  h+='<div class="card"><b>第一级进度：</b>'+n+' / '+COURSE.length+' 章完成 '+(n===COURSE.length?'<span class="badge">第一级结业 🎉</span>':'')+'<div class="bar" style="margin-top:8px"><i style="width:'+Math.round(n/COURSE.length*100)+'%"></i></div>';
-  h+='<div class="row" style="margin-top:12px"><button class="btn" onclick="go(\''+(COURSE.find(c=>!chapDone(c))||COURSE[0]).id+'\')">'+(n?'继续学习 →':'开始第 1 章 →')+'</button></div></div>';
-  h+='<div class="levels">'+LEVELS.map(l=>'<div class="lv'+(l.now?" now":"")+'"><b>'+l.n+'</b>'+(l.now?'<span class="badge">当前</span>':'<span class="badge" style="background:var(--line);color:var(--muted)">即将开放</span>')+'<div class="en">'+esc(l.en)+'</div><ul>'+l.pts.map(p=>'<li>'+esc(p)+'</li>').join("")+'</ul></div>').join("")+'</div>';
-  h+='<div class="sec" style="margin-top:24px"><h3>第一级 12 章</h3><div class="items">'+COURSE.map((c,i)=>'<button class="item" style="cursor:pointer;text-align:left" onclick="go(\''+c.id+'\')"><div><div class="w" style="font-family:var(--zh);font-size:16px">'+(i+1)+'. '+esc(c.title)+'</div><div class="zh" style="color:var(--muted);font-size:13px">'+esc(c.goal)+'</div></div><div class="btns"><span class="ib" style="border-color:'+(chapDone(c)?'var(--good)':'var(--line)')+';color:'+(chapDone(c)?'var(--good)':'var(--muted)')+'">'+(chapDone(c)?'✓ 完成':'未完成')+'</span></div></button>').join("")+'</div></div><p style="font-size:13px;color:var(--muted);margin-top:20px"><button class="ib" onclick="go(\'review\')">🎧 录音检查（逐条试听全部录音）</button></p></div>';
+  const cl=curLevel(), nxt=COURSE.find(c=>!chapDone(c))||COURSE[0];
+  h+='<div class="card"><b>总进度：</b>'+n+' / '+COURSE.length+' 章完成 '+(n===COURSE.length?'<span class="badge">全部结业 🎉</span>':'<span class="badge">当前：'+LV_N[cl]+'</span>')+'<div class="bar" style="margin-top:8px"><i style="width:'+Math.round(n/COURSE.length*100)+'%"></i></div>';
+  h+='<div class="row" style="margin-top:12px"><button class="btn" onclick="go(\''+nxt.id+'\')">'+(n?'继续学习：'+esc(nxt.title.split("：")[0])+' →':'开始第 1 章 →')+'</button></div></div>';
+  h+='<p class="goal" style="margin-top:18px">五个级别、'+COURSE.length+' 章，从字母表到 15 分钟演讲。建议按顺序学，但每一章都可以随时打开。</p>';
+  LEVELS.forEach((L,li)=>{ const lv=li+1, ch=lvChapters(lv); if(!ch.length) return; const dn=ch.filter(chapDone).length, done=dn===ch.length, now=lv===cl;
+    h+='<details class="lvsec'+(now?" now":"")+'"'+(now?' open':'')+'><summary><div class="lvhead"><div><b>'+L.n+'</b> <span class="en" style="color:var(--muted);font-size:13px">'+esc(L.en)+'</span>'+(done?' <span class="badge">结业 ✓</span>':now?' <span class="badge">当前</span>':'')+'</div><div style="font-size:13px;color:var(--muted)">'+dn+' / '+ch.length+' 章</div></div><div class="bar" style="margin-top:8px"><i style="width:'+Math.round(dn/ch.length*100)+'%"></i></div><ul class="pts">'+L.pts.map(p=>'<li>'+esc(p)+'</li>').join("")+'</ul></summary>';
+    h+='<div class="items" style="margin-top:10px">'+ch.map((c,i)=>'<button class="item" style="cursor:pointer;text-align:left" onclick="go(\''+c.id+'\')"><div><div class="w" style="font-family:var(--zh);font-size:16px">'+(i+1)+'. '+esc(c.title)+'</div><div class="zh" style="color:var(--muted);font-size:13px">'+esc(c.goal)+'</div></div><div class="btns"><span class="ib" style="border-color:'+(chapDone(c)?'var(--good)':'var(--line)')+';color:'+(chapDone(c)?'var(--good)':'var(--muted)')+'">'+(chapDone(c)?'✓ 完成':chapPct(c)?chapPct(c)+'%':'未开始')+'</span></div></button>').join("")+'</div></details>'; });
+  h+='<p style="font-size:13px;color:var(--muted);margin-top:20px"><button class="ib" onclick="go(\'review\')">🎧 录音检查（逐条试听全部录音）</button></p></div>';
   return h;
 }
 
@@ -998,7 +1817,7 @@ function learnHTML(c){
     LETTERS.slice(a,b).forEach(([L,ex,tip])=>{ h+='<div class="l"><div class="big">'+L+'<span style="font-size:22px;font-weight:400;opacity:.6">'+L.toLowerCase()+'</span></div><div class="nm">'+V[L]+'</div><div class="row" style="justify-content:center"><button class="ib" onclick="sayLetter(\''+L+'\')">🔊 '+L+'</button><button class="ib" onclick="say(\''+ex+'\',0.7)">🔊 '+ex+'</button></div><div class="tp">'+esc(tip)+'</div></div>'; });
     h+='</div></div>'; }
   c.learn.forEach(sec=>{ h+='<div class="sec"><h3>'+esc(sec.h)+'</h3>'+(sec.p?'<p class="note">'+esc(sec.p)+'</p>':'')+'<div class="items">';
-    sec.items.forEach(it=>{ const sayText = it.en.replace(/^[AB]:\s*/,"").replace(/\s*\/\s*/g,". ").replace(/\s*—\s*/g,". ");
+    sec.items.forEach(it=>{ const sayText = spokenOf(it);
       h+='<div class="item"><div><div class="w">'+esc(it.en)+'</div>'+(it.ipa?'<div class="ipa">'+esc(it.ipa)+'</div>':'')+'<div class="zh">'+esc(it.zh)+'</div></div><div class="btns"><button class="ib" onclick="say('+JSON.stringify(sayText).replace(/"/g,"&quot;")+')">🔊 听</button><button class="ib" onclick="say('+JSON.stringify(sayText).replace(/"/g,"&quot;")+',0.6)">🐢 慢</button></div>'+(it.tip?'<div class="tip">💡 '+esc(it.tip)+'</div>':'')+'</div>'; });
     h+='</div></div>'; });
   h+='<div class="row"><button class="btn" onclick="go(\''+c.id+'\',\'speak\')">学完了，去听与说 →</button></div>';
@@ -1046,7 +1865,7 @@ const RULES = `你是一位耐心的英语老师，学生是中国人，英语�
 1. 永远用简单的中文解释。英文只出现在需要示范的单词和句子里，并且每个英文例子后面都用括号写中文意思。
 2. 讲发音时，用“嘴型/舌头位置”的动作描述（例如：上牙轻咬下唇），不要只给音标。可以给“近似的中文发音”帮助理解，但要说明只是近似。
 3. 回答要短：3 到 6 句，像在课堂上面对面说话。一次只讲一个重点。
-4. 如果学生问的内容超出入门级（第一级），先用最简单的方式回答，再说“这个在后面的级别会详细学”。
+4. 课程分五个级别（入门、基础、进阶、中级、高级）。如果学生问的内容超出他现在所在的级别，先用最简单的方式回答，再说“这个在后面的级别会详细学”。
 5. 鼓励学生到真实生活里去用。可以在结尾给一个今天就能做的“小任务”。
 6. 如果学生写的英文有错，先说对的地方，再指出错误并给出正确说法。
 7. 不要用 markdown 标题或表格，可以用简单的换行。`;
@@ -1075,7 +1894,7 @@ async function askTeacher(){
   $("#ask").value=""; addMsg("me",q);
   if(!sampleFn){ const d=addMsg("ai","“问老师”在这个网址上不能回答（它需要你的 Claude 账户）。请打开课堂的 claude.ai 版本提问。课程内容一样，进度是分开记录的。"); const a=document.createElement("a"); a.href="https://claude.ai/artifact/UAoxtesh5KrBp7drdj8bd9"; a.target="_blank"; a.rel="noopener"; a.textContent="打开 claude.ai 版本 →"; a.className="btn"; a.style.cssText="display:inline-block;margin-top:8px;text-decoration:none"; d.appendChild(a); return; }
   const c = COURSE.find(x=>x.id===cur);
-  const ctx = c? "学生现在在学：第一级第"+(COURSE.indexOf(c)+1)+"章《"+c.title+"》。本章目标："+c.goal+"。本章重点句："+c.drills.map(d=>d[0]).join(" | ") : "学生在课程总览页。";
+  const ctx = c? "学生现在在学："+LV_N[lvOf(c)]+"第"+lvIndex(c)+"章《"+c.title+"》。本章目标："+c.goal+"。本章重点句："+c.drills.map(d=>d[0]).join(" | ") : "学生在课程总览页。";
   turns.push({role:"user",content:q}); if(turns.length>12) turns=turns.slice(-12);
   const bubble=addMsg("ai","小英在想……"); $("#askBtn").disabled=true;
   face.mood("think");
