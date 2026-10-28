@@ -800,8 +800,17 @@ function sayLetter(l){ say(l==="A"?"A.":l, 0.8); }
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 let activeRec=null;
 function norm(s){ return s.toLowerCase().replace(/[’']/g,"'").replace(/[^a-z0-9' ]+/g," ").replace(/\s+/g," ").trim(); }
+// sound-alike words recognisers return for spelled letters ("A B C" often comes back as "hey be see" or "ABC")
+const LSOUND = {a:["hey","eh","ay","eight"],b:["be","bee"],c:["see","sea","si"],d:["dee","the","de"],e:["ee","he","eat"],f:["ef","eff"],g:["gee","jee","ji"],h:["aitch","age","each"],i:["eye","aye","hi"],j:["jay"],k:["kay","okay","ok","que"],l:["el","ell"],m:["em","am"],n:["en","and","an"],o:["oh","owe","ou"],p:["pee","pea","pi"],q:["cue","queue","kyu"],r:["are","our","ar"],s:["es","ess","yes"],t:["tea","tee","ti"],u:["you","yu"],v:["vee","ve"],w:["doubleyou","doubleu","w"],x:["ex","axe","eggs"],y:["why","wye"],z:["zee","zed","zi"]};
+const LSOUND_REV = {}; for(const L in LSOUND) LSOUND[L].forEach(w=>{ LSOUND_REV[w]=L; });
 function compare(target, heard){
-  const t = norm(target).split(" ").filter(Boolean), h = norm(heard).split(" ").filter(Boolean);
+  const t = norm(target).split(" ").filter(Boolean);
+  const spelled = new Set(t.filter(w=>w.length===1));                     // single letters the learner has to say
+  let hraw = String(heard).replace(/double\s*(you|u)\b/gi,"doubleyou");
+  // "ABCDEFG" / "W-A-N-G" come back as one chunk: split into letters when the target spells letters
+  if(spelled.size) hraw = hraw.replace(/\b[A-Z](?:[-. ]?[A-Z])+\b/g, s=>s.replace(/[-.]/g," ").split("").join(" "));
+  let h = norm(hraw).split(" ").filter(Boolean);
+  if(spelled.size) h = h.map(w=>{ const L=LSOUND_REV[w]; return (L && spelled.has(L) && !t.includes(w)) ? L : w; });
   const hs = new Set(h); let ok=0;
   const marks = t.map(w=>{ const m = hs.has(w) || hs.has(w.replace("'","")); if(m) ok++; return {w,m}; });
   return {marks, score: t.length? Math.round(ok/t.length*100):0};
@@ -884,6 +893,7 @@ function showResult(target, heard, box){
   const missed = c.marks.filter(m=>!m.m).map(m=>m.w);
   if(missed.length){ html += '<div style="margin-top:6px;font-size:14px;color:var(--muted)">红色的词没被识别出来。点一下单独听：'+missed.map(w=>'<button class="ib" onclick="say(\''+esc(w)+'\',0.6)">🔊 '+esc(w)+'</button>').join(" ")+'</div>';
     html += '<div style="margin-top:6px;font-size:14px">'+missed.map(hint).filter(Boolean).join("<br>")+'</div>'; }
+  if(c.score<85) html += '<div class="row" style="margin-top:8px"><button class="btn" onclick="startRec('+JSON.stringify(target).replace(/"/g,"&quot;")+',this.closest(\'.result\'))">🎤 再试一次</button><button class="btn sec2" onclick="markSpoken(this.closest(\'.result\'))">✓ 我已经大声读过了</button></div><div style="margin-top:4px;font-size:13px;color:var(--muted)">识别不准也没关系：认真读过了就点“✓”，这一句就算达标。</div>';
   box.innerHTML = html;
 }
 function hint(w){
